@@ -25,8 +25,8 @@ class GoogleCalTime(BaseModel):
     @root_validator(pre=True)
     def date_or_dateTime_provided(cls, values):
         date, datetime = values.get('date'), values.get('dateTime')
-        assert date is None or datetime is None, "You have to provide a date for all day events or a datetime for " \
-                                                 "timed events"
+        assert (date is None and datetime is not None) or (date is not None and datetime is None), \
+            "You have to provide a date for all day events OR a datetime for timed events!"
         return values
 
     # guarantee that date has format "yyyy-mm-dd" (if provided)

@@ -5,7 +5,12 @@ import pytest
 
 def test_date_or_datetime_check():
     with pytest.raises(ValidationError):
+        # supply only either date or datetime
         gtime = GoogleCalTime(date="2020-02-09", dateTime="sometime")
+
+    with pytest.raises(ValidationError):
+        # at least one date type has to be provided
+        gtime = GoogleCalTime(date=None, dateTime=None)
 
 def test_date_format():
     with pytest.raises(ValidationError):
