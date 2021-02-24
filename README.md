@@ -1,4 +1,4 @@
-# Purpose
+# Purpose 🌞🌞🌞
 Create google calendar with sunrise, sunset, golden hour etc. for specified
 location and date.
 
