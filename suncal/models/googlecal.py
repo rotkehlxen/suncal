@@ -1,5 +1,6 @@
 from pydantic import BaseModel, validator, root_validator
 from typing import Optional
+import re
 
 
 class GoogleCalEvent(BaseModel):
@@ -20,11 +21,20 @@ class GoogleCalTime(BaseModel):
     dateTime: Optional[str] = None
     timeZone: Optional[str] = None
 
-    # make sure that either date OR dateTime is provided
+    # make sure that either date OR dateTime is provided (but not both at the same time)
     @root_validator(pre=True)
     def date_or_dateTime_provided(cls, values):
         date, datetime = values.get('date'), values.get('dateTime')
         assert date is None or datetime is None, "You have to provide a date for all day events or a datetime for " \
                                                  "timed events"
         return values
+
+    # guarantee that date has format "yyyy-mm-dd" (if provided)
+    @validator('date')
+    def check_date_format(cls, val):
+        # only accept dates of the 3rd chiliad :-)
+        assert val is None or re.match(r"^2\d{3}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$", val) is not None, \
+            "Date has to be of format 'yyyy-mm-dd'!"
+
+
 
