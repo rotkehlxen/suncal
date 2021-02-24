@@ -28,7 +28,3 @@ class GoogleCalTime(BaseModel):
                                                  "timed events"
         return values
 
-
-if __name__ == "__main__":
-    # should throw an assertion error --> TODO: add this to tests!
-    gtime = GoogleCalTime(date="1", dateTime="2")
