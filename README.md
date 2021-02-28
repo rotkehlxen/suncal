@@ -59,7 +59,7 @@ Set up the cli using click or some other tool.
 
 #### astral wrapper
 Write a function that returns start and end datetime of a given event ("sunrise", "sunset" or "goldenhour"). 
-For sunrise and sunset, start and end are identical (but astral returns just one timestamp).
+For sunrise and sunset, start and end are identical (but astral returns just one timestamp). (Franzi, \%)
 
 #### date ranges
 Write a function that creates a list of dates between "from" and "to". E.g. if from="2021-02-01" and to="2021-02-03",
