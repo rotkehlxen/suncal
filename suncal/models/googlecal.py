@@ -54,9 +54,9 @@ class GoogleCalEvent(BaseModel):
 def google_cal_summary(event: str, time: Optional[dt.datetime] = None) -> str:
     """Create event summary. """
 
-    assert event in ["sunrise", "sunset", "goldenhour"]
+    assert event in ["sunrise", "sunset", "goldenhour"], "We only support events 'sunrise', 'sunset' and 'goldenhour'!"
     if event != "goldenhour":
-        assert time is not None
+        assert time is not None, "Provide argument 'time' (datetime object) for calender summary!"
 
     if event == "sunrise":
         # time in format "06:00 AM"
