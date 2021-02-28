@@ -10,7 +10,8 @@ To avoid all the above mentioned issues, the script should be able to create a .
 imported using the google calendar web interface. 
 
 # Rules for collaborators
-If you add a function/class, you also add a corresponding test.
+If you add a function/class, you also add a corresponding test. If you want to work on one of the items in the todo
+list, write your name next to it, so we don't do things several times.
 
 ## Specifications
 
@@ -53,6 +54,9 @@ date for this.
 ### TO DO
 Some of the following todos can surely be split into several tasks (and can result in multiple functions/classes).
 
+#### CLI
+Set up the cli using click or some other tool.
+
 #### astral wrapper
 Write a function that returns start and end datetime of a given event ("sunrise", "sunset" or "goldenhour"). 
 For sunrise and sunset, start and end are identical (but astral returns just one timestamp).
@@ -64,6 +68,10 @@ return list ["2021-02-01", "2021-02-02", "2021-02-03"]. Of course using python d
 #### ics support
 Implement mapping from list of GoogleCalEvents to ics file. 
 
+#### event styles
+Function that returns the event title string provided a type of event and the datetime object. Using the event styles 
+shown above.
+
 #### authentication flow
 Function for authentication flow. Creates a token if it does not exit yet. The file suncal/capi-quickstart.py in this 
 repo serves as an orientation! The SCOPE has to be changed to 'https://www.googleapis.com/auth/calendar' to obtain read
@@ -71,10 +79,10 @@ and write permissions for calendars and 'https://www.googleapis.com/auth/calenda
 calendar events (see [here](https://developers.google.com/calendar/auth)).
 
 #### main function (controlled by CLI)
-Loop over all requested events and dates. Calculate start and end time using the astral wrapper. Create GoogleCalEvent.
-Either serialize these events for the API, or export to ics. If we use the API, initialise the authentication flow. 
-(suncal/capi-quickstart serves as an orientation). Create service object for all API calls. Check if the target 
-calendar exits - if not, create it. Send all events to calendar. Done. 
+Loop over all requested dates, then over all requested events. Calculate start and end time using the astral wrapper. 
+Create GoogleCalEvent. Either serialize these events for the API, or export to ics. If we use the API, initialise the 
+authentication flow (suncal/capi-quickstart serves as an orientation). Create service object for all API calls. Check if
+the target calendar exits - if not, create it. Send all events to calendar. Done. 
 
 # Dependencies
 
