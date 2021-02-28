@@ -32,7 +32,7 @@ date for this.
 | from         | "yyyy-mm-dd" from this day ... (default today) |
 | to           | "yyyy-mm-dd" to this day ... (default today + 1 week) |
 | event        | e.g. "sunrise", for the first draft restrict to choices {"sunrise", "sunset", "goldenhour"} |
-| timezone     | e.g. "Europe/Berlin" IANA timezone string (Berlin as default) |
+| timezone     | e.g. "Europe/Berlin" IANA timezone string (default Berlin) |
 | longitude    | e.g. -122.236355 for Redwood City CA (default Berlin) |
 | latitude     | e.g 37.485215 for Redwood City CA (default Berlin) |
 | return       | "api" (create events by api call) or "ics" (export ics calendar file) | 

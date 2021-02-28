@@ -24,10 +24,10 @@ class GoogleCalTime(BaseModel):
             "You have to provide a date for all day events OR a datetime for timed events!"
         return values
 
-    # TODO: The next two TODO items are not required for this particular application, as astral will always return
-    # TODO: datetime objects with timezone offset
-    # TODO: check for valid IANA timezone names
-    # TODO: check that timezone is provided when dateTime does not contain a timezone offset
+    # TODO: The next two TODO items are not required for this particular application, as astral will always return ...
+    # TODO: ... datetime objects with timezone offset:
+    # TODO: 1. check for valid IANA timezone names
+    # TODO: 2. check that timezone is provided when dateTime does not contain a timezone offset
 
 
 class GoogleCalEvent(BaseModel):
