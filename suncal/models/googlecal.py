@@ -1,10 +1,6 @@
 from pydantic import BaseModel, validator, root_validator
 from typing import Optional
-import re
-
-
-class GoogleCalEvent(BaseModel):
-    pass
+import datetime as dt
 
 
 class GoogleCalTime(BaseModel):
@@ -12,13 +8,12 @@ class GoogleCalTime(BaseModel):
     Can fill the "start" or "end" required field of a GoogleCalEvent!
     Has three fields: date, dateTime and timeZone, however, not all of them are required at a time.
 
-    date: "yyyy-mm-dd" for all day events
-    dateTime: isoformat, for timed events --> event needs either date OR dateTime!
+    need date for all day events and dateTime for timed events
     timeZone: IANA timezone db name, NOT required if dateTime contains a time offset
     """
 
-    date: Optional[str] = None
-    dateTime: Optional[str] = None
+    date: Optional[dt.date] = None
+    dateTime: Optional[dt.datetime] = None
     timeZone: Optional[str] = None
 
     # make sure that either date OR dateTime is provided (but not both at the same time)
@@ -29,12 +24,28 @@ class GoogleCalTime(BaseModel):
             "You have to provide a date for all day events OR a datetime for timed events!"
         return values
 
-    # guarantee that date has format "yyyy-mm-dd" (if provided)
-    @validator('date')
-    def check_date_format(cls, val):
-        # only accept dates of the 3rd chiliad :-)
-        assert val is None or re.match(r"^2\d{3}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$", val) is not None, \
-            "Date has to be of format 'yyyy-mm-dd'!"
+    # TODO: The next two TODO items are not required for this particular application, as astral will always return
+    # TODO: datetime objects with timezone offset
+    # TODO: check for valid IANA timezone names
+    # TODO: check that timezone is provided when dateTime does not contain a timezone offset
 
 
+class GoogleCalEvent(BaseModel):
+    """ The only required parameters of a google cal event are start and end. 'summary' is the correct
+      field name of the event title. Can add additional fields later on when needed. """
+    start: GoogleCalTime
+    end: GoogleCalTime
+    summary: str
 
+    def payload(self):
+        """pydantic provides method json() that serializes our model, especially datetime objects are converted
+        to the isoformat sring automatically! For example, if a is an instance of GoogleCalEvent, we get sth like
+
+        a.json() = '{"start": {"date": null, "dateTime": "2011-11-04T00:05:23+04:00", "timeZone": null},
+                     "end": {"date": null, "dateTime": "2011-11-05T00:05:23+04:00", "timeZone": null},
+                     "summary": "Calender event"}'
+
+        This is almost what we want! We only have to create a dict from this json string and maybe we have to remove
+        all fields containing null values (but maybe not!). This should be implemented in the payload method.
+        """
+        pass
