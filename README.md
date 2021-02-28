@@ -50,6 +50,32 @@ date for this.
 #### Golden hour
 📷 golden hour
 
+### TO DO
+Some of the following todos can surely be split into several tasks (and can result in multiple functions/classes).
+
+#### astral wrapper
+Write a function that returns start and end datetime of a given event ("sunrise", "sunset" or "goldenhour"). 
+For sunrise and sunset, start and end are identical (but astral returns just one timestamp).
+
+#### date ranges
+Write a function that creates a list of dates between "from" and "to". E.g. if from="2021-02-01" and to="2021-02-03",
+return list ["2021-02-01", "2021-02-02", "2021-02-03"]. Of course using python date type, not strings!
+
+#### ics support
+Implement mapping from list of GoogleCalEvents to ics file. 
+
+#### authentication flow
+Function for authentication flow. Creates a token if it does not exit yet. The file suncal/capi-quickstart.py in this 
+repo serves as an orientation! The SCOPE has to be changed to 'https://www.googleapis.com/auth/calendar' to obtain read
+and write permissions for calendars and 'https://www.googleapis.com/auth/calendar.events' for read/write access to 
+calendar events (see [here](https://developers.google.com/calendar/auth)).
+
+#### main function (controlled by CLI)
+Loop over all requested events and dates. Calculate start and end time using the astral wrapper. Create GoogleCalEvent.
+Either serialize these events for the API, or export to ics. If we use the API, initialise the authentication flow. 
+(suncal/capi-quickstart serves as an orientation). Create service object for all API calls. Check if the target 
+calendar exits - if not, create it. Send all events to calendar. Done. 
+
 # Dependencies
 
 ## astral
@@ -57,5 +83,5 @@ This package calculates various sun and moon parameters for specified
 locations and dates. It has an inbuilt database that contains longitude,
 latitude and timezones for the big cities in the world.
 
-## To be continued ...
+## google-api-python-client, google-auth-httplib2, google-auth-oauthlib
 
