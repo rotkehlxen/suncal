@@ -70,7 +70,7 @@ Implement mapping from list of GoogleCalEvents to ics file.
 
 #### event styles
 Function that returns the event title string provided a type of event and the datetime object. Using the event styles 
-shown above.
+shown above. (Franzi, DONE!)
 
 #### authentication flow
 Function for authentication flow. Creates a token if it does not exit yet. The file suncal/capi-quickstart.py in this 

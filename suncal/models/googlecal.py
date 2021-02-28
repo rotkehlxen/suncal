@@ -49,3 +49,23 @@ class GoogleCalEvent(BaseModel):
         all fields containing null values (but maybe not!). This should be implemented in the payload method.
         """
         pass
+
+
+def google_cal_summary(event: str, time: Optional[dt.datetime] = None) -> str:
+    """Create event summary. """
+
+    assert event in ["sunrise", "sunset", "goldenhour"]
+    if event != "goldenhour":
+        assert time is not None
+
+    if event == "sunrise":
+        # time in format "06:00 AM"
+        time_str = time.strftime("%I:%M %p")
+        return f"↑🌞 {time_str}"
+
+    elif event == "sunset":
+        time_str = time.strftime("%I:%M %p")
+        return f"↓🌞 {time_str}"
+
+    elif event == "goldenhour":
+        return "📷 golden hour"
