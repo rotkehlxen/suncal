@@ -57,20 +57,8 @@ Some of the following todos can surely be split into several tasks (and can resu
 #### CLI
 Set up the cli using click or some other tool.
 
-#### astral wrapper
-Write a function that returns start and end datetime of a given event ("sunrise", "sunset" or "goldenhour"). 
-For sunrise and sunset, start and end are identical (but astral returns just one timestamp). (Franzi, DONE)
-
-#### date ranges
-Write a function that creates a list of dates between "from" and "to". E.g. if from="2021-02-01" and to="2021-02-03",
-return list ["2021-02-01", "2021-02-02", "2021-02-03"]. Of course using python date type, not strings!
-
 #### ics support
 Implement mapping from list of GoogleCalEvents to ics file. 
-
-#### event styles
-Function that returns the event title string provided a type of event and the datetime object. Using the event styles 
-shown above. (Franzi, DONE!)
 
 #### authentication flow
 Function for authentication flow. Creates a token if it does not exit yet. The file suncal/capi-quickstart.py in this 
