@@ -25,9 +25,9 @@ poetry run mypy .
 
 ### UI
 
-Intended as a simple command line tool. Use e.g. [click](https://click.palletsprojects.com/en/7.x/) to create a 
+Intended as a simple command line tool. Use [typer](https://typer.tiangolo.com/) to create a 
 standalone command line tool and use its functionality to parse command line parameters, check their validity and 
-autogenerate documentation (or another tool if there is sth. even fancier out there.)
+autogenerate documentation.
 
 #### CLI parameters
 
@@ -62,8 +62,8 @@ date for this.
 ### TO DO
 Some of the following todos can surely be split into several tasks (and can result in multiple functions/classes).
 
-#### CLI
-Set up the cli using click or some other tool.
+#### CLI: Thomas
+Set up the CLI using **typer**.
 
 #### ics support
 Implement mapping from list of GoogleCalEvents to ics file. 
@@ -74,7 +74,7 @@ repo serves as an orientation! The SCOPE has to be changed to 'https://www.googl
 and write permissions for calendars and 'https://www.googleapis.com/auth/calendar.events' for read/write access to 
 calendar events (see [here](https://developers.google.com/calendar/auth)).
 
-#### main function (controlled by CLI)
+#### main function (controlled by CLI): Franzi
 Loop over all requested dates, then over all requested events. Calculate start and end time using the astral wrapper. 
 Create GoogleCalEvent. Either serialize these events for the API, or export to ics. If we use the API, initialise the 
 authentication flow (suncal/capi-quickstart serves as an orientation). Create service object for all API calls. Check if
