@@ -109,5 +109,4 @@ event = {
 
 event = service.events().insert(calendarId="primary", body=event).execute()
 print("Event created: %s" % (event.get("htmlLink")))
-
-# TODO: I think we have to close the service when we are done!!! (best use a context manager)
+service.close()

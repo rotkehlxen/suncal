@@ -13,7 +13,9 @@ latitude = 52.32
 return_val = "api"  # api/ics
 
 
-def create_calendar_events(event: str, from_t: str, to_t: str) -> List[GoogleCalEvent]:
+def create_calendar_events(
+    event: str, from_t: str, to_t: str, timezone: str, longitude: float, latitude: float
+) -> List[GoogleCalEvent]:
     pass
 
 
@@ -24,6 +26,10 @@ def create_calendar_if_not_exists(calendar_id: str, creds: Any) -> None:
 
 def get_credentials():
     # TODO: what is the type of these credentials? add annotation!
+    pass
+
+
+def export_events_to_calendar(calendar_id: str, events: List[GoogleCalEvent]) -> None:
     pass
 
 
@@ -39,7 +45,9 @@ def suncal(
     return_val: str,
 ) -> None:
 
-    events: List[GoogleCalEvent] = create_calendar_events(event, from_t, to_t)
+    events: List[GoogleCalEvent] = create_calendar_events(
+        event, from_t, to_t, timezone, longitude, latitude
+    )
 
     if return_val == "api":
 
@@ -49,3 +57,9 @@ def suncal(
         # check if calendar with provided id exists, if not create it
         # (make sure the calendar exists, if not, stop right here)
         create_calendar_if_not_exists(calendar_id, creds)
+
+        export_events_to_calendar(calendar_id, events)
+
+    else:
+        # export events to ics file with specified path
+        pass
