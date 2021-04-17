@@ -11,7 +11,15 @@ imported using the google calendar web interface.
 
 # Rules for collaborators
 If you add a function/class, you also add a corresponding test. If you want to work on one of the items in the todo
-list, write your name next to it, so we don't do things several times.
+list, write your name next to it, so we don't do things several times. This repo uses type annotation. Before you 
+commit your code, sort the imports with **isort**, reformat the code with **black** and check that typing is correct using 
+**mypy**. cd to the project folder and run:
+
+```bash
+poetry run isort .
+poetry run black .
+poetry run mypy .
+```
 
 ## Specifications
 
