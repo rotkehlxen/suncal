@@ -1,6 +1,7 @@
-from pydantic import BaseModel, validator, root_validator
+from pydantic import BaseModel, root_validator
 from typing import Optional
 import datetime as dt
+import json
 
 
 class GoogleCalTime(BaseModel):
@@ -44,11 +45,10 @@ class GoogleCalEvent(BaseModel):
         a.json() = '{"start": {"date": null, "dateTime": "2011-11-04T00:05:23+04:00", "timeZone": null},
                      "end": {"date": null, "dateTime": "2011-11-05T00:05:23+04:00", "timeZone": null},
                      "summary": "Calender event"}'
-
-        This is almost what we want! We only have to create a dict from this json string and maybe we have to remove
-        all fields containing null values (but maybe not!). This should be implemented in the payload method.
+        We convert this json string back to a dictionary. This creates None type objects in places where we had string
+        'null" before - however, this is accepted by the api client (tested).
         """
-        pass
+        return json.loads(self.json())
 
 
 def google_cal_summary(event: str, time: Optional[dt.datetime] = None) -> str:
