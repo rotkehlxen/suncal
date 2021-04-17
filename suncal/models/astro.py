@@ -1,7 +1,8 @@
 import datetime as dt
-from pydantic import BaseModel
+
 from astral import LocationInfo
 from astral.location import Location
+from pydantic import BaseModel
 
 
 class Celestial(BaseModel):
@@ -13,11 +14,13 @@ class Celestial(BaseModel):
     @property
     def info(self):
         # name and region are of no consequence to any of the calculations
-        return LocationInfo(timezone=self.timezone,
-                            latitude=self.latitude,
-                            longitude=self.longitude,
-                            name='undefined_name',
-                            region='undefined_region')
+        return LocationInfo(
+            timezone=self.timezone,
+            latitude=self.latitude,
+            longitude=self.longitude,
+            name="undefined_name",
+            region="undefined_region",
+        )
 
     @property
     def location(self):
@@ -30,7 +33,7 @@ class Celestial(BaseModel):
         goldenhour_start, goldenhour_end = self.location.golden_hour(date=self.date)
 
         return {
-            'sunrise': {'start': sunrise, 'end': sunrise},
-            'sunset':  {'start': sunset, 'end': sunset},
-            'goldenhour': {'start': goldenhour_start, 'end': goldenhour_end},
+            "sunrise": {"start": sunrise, "end": sunrise},
+            "sunset": {"start": sunset, "end": sunset},
+            "goldenhour": {"start": goldenhour_start, "end": goldenhour_end},
         }

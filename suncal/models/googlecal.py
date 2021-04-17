@@ -1,7 +1,8 @@
-from pydantic import BaseModel, root_validator
-from typing import Optional
 import datetime as dt
 import json
+from typing import Optional
+
+from pydantic import BaseModel, root_validator
 
 
 class GoogleCalTime(BaseModel):
@@ -20,9 +21,10 @@ class GoogleCalTime(BaseModel):
     # make sure that either date OR dateTime is provided (but not both at the same time)
     @root_validator(pre=True)
     def date_or_dateTime_provided(cls, values):
-        date, datetime = values.get('date'), values.get('dateTime')
-        assert (date is None and datetime is not None) or (date is not None and datetime is None), \
-            "You have to provide a date for all day events OR a datetime for timed events!"
+        date, datetime = values.get("date"), values.get("dateTime")
+        assert (date is None and datetime is not None) or (
+            date is not None and datetime is None
+        ), "You have to provide a date for all day events OR a datetime for timed events!"
         return values
 
     # TODO: The next two TODO items are not required for this particular application, as astral will always return ...
@@ -32,8 +34,9 @@ class GoogleCalTime(BaseModel):
 
 
 class GoogleCalEvent(BaseModel):
-    """ The only required parameters of a google cal event are start and end. 'summary' is the correct
-      field name of the event title. Can add additional fields later on when needed. """
+    """The only required parameters of a google cal event are start and end. 'summary' is the correct
+    field name of the event title. Can add additional fields later on when needed."""
+
     start: GoogleCalTime
     end: GoogleCalTime
     summary: str
@@ -54,18 +57,24 @@ class GoogleCalEvent(BaseModel):
 def google_cal_summary(event: str, time: Optional[dt.datetime] = None) -> str:
     """Create event summary. """
 
-    assert event in ["sunrise", "sunset", "goldenhour"], "We only support events 'sunrise', 'sunset' and 'goldenhour'!"
+    assert event in [
+        "sunrise",
+        "sunset",
+        "goldenhour",
+    ], "We only support events 'sunrise', 'sunset' and 'goldenhour'!"
     if event != "goldenhour":
-        assert time is not None, "Provide argument 'time' (datetime object) for calender summary!"
+        assert (
+            time is not None
+        ), "Provide argument 'time' (datetime object) for calender summary!"
 
-    if event == "sunrise":
+    if event == "sunrise" and time is not None:
         # time in format "06:00 AM"
         time_str = time.strftime("%I:%M %p")
         return f"↑🌞 {time_str}"
 
-    elif event == "sunset":
+    elif event == "sunset" and time is not None:
         time_str = time.strftime("%I:%M %p")
         return f"↓🌞 {time_str}"
 
-    elif event == "goldenhour":
+    else:
         return "📷 golden hour"
