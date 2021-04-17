@@ -88,4 +88,11 @@ locations and dates. It has an inbuilt database that contains longitude,
 latitude and timezones for the big cities in the world.
 
 ## google-api-python-client, google-auth-httplib2, google-auth-oauthlib
+Tools for communication with google api and authentication flow.
 
+## pydantic
+Data validation and settings management using python type annotations.
+Pydantic enforces type hints at runtime. Ideal for exchanging data with APIs.
+
+## Dev dependencies
+For a comprehensive list check the pyproject.toml.
