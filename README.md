@@ -82,8 +82,7 @@ Implement mapping from list of GoogleCalEvents to ics file.
 #### main function (controlled by CLI): Franzi
 Loop over all requested dates, then over all requested events. Calculate start and end time using the astral wrapper. 
 Create GoogleCalEvent. Either serialize these events for the API, or export to ics. If we use the API, initialise the 
-authentication flow (suncal/capi-quickstart serves as an orientation). Create service object for all API calls. Check if
-the target calendar exits - if not, create it. Send all events to calendar. Done. 
+authentication flow. Check if the target calendar exits - if not, create it. Send all events to calendar. Done. 
 
 # Dependencies
 
