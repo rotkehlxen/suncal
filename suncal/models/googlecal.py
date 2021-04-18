@@ -1,7 +1,9 @@
 import datetime as dt
 import json
-from typing import Optional
+from typing import List, Optional
 
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
 from pydantic import BaseModel, root_validator
 
 
@@ -78,3 +80,34 @@ def google_cal_summary(event: str, time: Optional[dt.datetime] = None) -> str:
 
     else:
         return "📷 golden hour"
+
+
+def create_calendar_if_not_exists(calendar_id: str, creds: Credentials) -> None:
+
+    if not sun_calendar_exists(calendar_id, creds):
+        create_sun_calendar(calendar_id, creds)
+
+
+def sun_calendar_exists(calendar_id: str, creds: Credentials) -> bool:
+
+    # TODO: what do we do in case we get no response?
+    with build("calendar", "v3", credentials=creds) as service:
+
+        calendars: List = []
+        # response can have several pages (i.e. there is a max number of entries per page)
+        page_token = None
+        while True:
+            calendar_list = service.calendarList().list(pageToken=page_token).execute()
+            calendars = calendars + [
+                calendar_list_entry["summary"]
+                for calendar_list_entry in calendar_list["items"]
+            ]
+            page_token = calendar_list.get("nextPageToken")
+            if not page_token:
+                break
+
+    return True if calendar_id in calendars else False
+
+
+def create_sun_calendar(calendar_id: str, creds: Credentials) -> None:
+    pass
