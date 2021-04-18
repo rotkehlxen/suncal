@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from google.oauth2.credentials import Credentials
 
@@ -56,7 +56,9 @@ def suncal(
 
         # check if calendar with provided id exists, if not create it
         # (make sure the calendar exists, if not, stop right here)
-        create_calendar_if_not_exists(calendar_id, creds)
+        gcal_id: Optional[str] = create_calendar_if_not_exists(
+            calendar_id, timezone, creds
+        )
 
         export_events_to_calendar(calendar_id, events, creds)
 

@@ -82,10 +82,15 @@ def google_cal_summary(event: str, time: Optional[dt.datetime] = None) -> str:
         return "📷 golden hour"
 
 
-def create_calendar_if_not_exists(calendar_id: str, creds: Credentials) -> None:
-
+def create_calendar_if_not_exists(
+    calendar_id: str, timezone: str, creds: Credentials
+) -> Optional[str]:
+    # TODO: I do not know if we have to return this google calendar id
     if not sun_calendar_exists(calendar_id, creds):
-        create_sun_calendar(calendar_id, creds)
+        gcal_id = create_sun_calendar(calendar_id, timezone, creds)
+        return gcal_id
+    else:
+        return None
 
 
 def sun_calendar_exists(calendar_id: str, creds: Credentials) -> bool:
@@ -109,5 +114,12 @@ def sun_calendar_exists(calendar_id: str, creds: Credentials) -> bool:
     return True if calendar_id in calendars else False
 
 
-def create_sun_calendar(calendar_id: str, creds: Credentials) -> None:
-    pass
+def create_sun_calendar(calendar_id: str, timezone: str, creds: Credentials) -> str:
+
+    # TODO: I do not know whether we will need the returned id!
+    with build("calendar", "v3", credentials=creds) as service:
+        calendar = {"summary": calendar_id, "timeZone": timezone}
+
+        created_calendar = service.calendars().insert(body=calendar).execute()
+
+    return created_calendar["id"]
