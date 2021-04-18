@@ -1,6 +1,14 @@
-from typing import Any, List
+from typing import List
 
+from google.oauth2.credentials import Credentials
+
+from suncal.auth import get_credentials
 from suncal.models.googlecal import GoogleCalEvent
+
+SCOPES = [
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/calendar.events",
+]
 
 # TODO: turn the following parameters into command line *options*
 calendar_id = "sun"
@@ -19,17 +27,13 @@ def create_calendar_events(
     pass
 
 
-def create_calendar_if_not_exists(calendar_id: str, creds: Any) -> None:
-    # TODO: correct type annotation of credentials
+def create_calendar_if_not_exists(calendar_id: str, creds: Credentials) -> None:
     pass
 
 
-def get_credentials():
-    # TODO: what is the type of these credentials? add annotation!
-    pass
-
-
-def export_events_to_calendar(calendar_id: str, events: List[GoogleCalEvent]) -> None:
+def export_events_to_calendar(
+    calendar_id: str, events: List[GoogleCalEvent], creds: Credentials
+) -> None:
     pass
 
 
@@ -52,13 +56,13 @@ def suncal(
     if return_val == "api":
 
         # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
-        creds = get_credentials()
+        creds = get_credentials(SCOPES)
 
         # check if calendar with provided id exists, if not create it
         # (make sure the calendar exists, if not, stop right here)
         create_calendar_if_not_exists(calendar_id, creds)
 
-        export_events_to_calendar(calendar_id, events)
+        export_events_to_calendar(calendar_id, events, creds)
 
     else:
         # export events to ics file with specified path
