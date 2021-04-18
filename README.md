@@ -79,12 +79,6 @@ Set up the CLI using **typer**.
 #### ics support
 Implement mapping from list of GoogleCalEvents to ics file. 
 
-#### authentication flow
-Function for authentication flow. Creates a token if it does not exit yet. The file suncal/capi-quickstart.py in this 
-repo serves as an orientation! The SCOPE has to be changed to 'https://www.googleapis.com/auth/calendar' to obtain read
-and write permissions for calendars and 'https://www.googleapis.com/auth/calendar.events' for read/write access to 
-calendar events (see [here](https://developers.google.com/calendar/auth)).
-
 #### main function (controlled by CLI): Franzi
 Loop over all requested dates, then over all requested events. Calculate start and end time using the astral wrapper. 
 Create GoogleCalEvent. Either serialize these events for the API, or export to ics. If we use the API, initialise the 
