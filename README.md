@@ -21,6 +21,17 @@ poetry run black .
 poetry run mypy .
 ```
 
+The script suncal/capi-quickstart.py illustrates how to create an event in your primary calendar, how to create a new 
+calendar and how to list the summary (i.e. the names) of all the calendars that are associated with your account (
+comment out specific sections as needed). After registering capi-quickstart.py in google cloud, you can run the script
+with:
+
+```bash
+poetry run python path/to/capi-quickstart.py
+```
+Credentials will be created and saved (as pickle) if they do not exist. (Do not forget to install the suncal package
+beforehand.)
+
 ## Specifications
 
 ### UI
