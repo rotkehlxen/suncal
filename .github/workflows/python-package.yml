@@ -28,11 +28,12 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install poetry
         poetry install
-    - name: Check format typing and sort of imports
+    - name: Check format, typing, sort of imports, and lint
       run: |
         poetry run black --diff --check .
         poetry run isort --check .
         poetry run mypy .
+        poetry run pylint -E suncal tests
     - name: Test with pytest
       run: |
         poetry run pytest

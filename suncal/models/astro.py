@@ -2,7 +2,7 @@ import datetime as dt
 
 from astral import LocationInfo
 from astral.location import Location
-from pydantic import BaseModel
+from pydantic import BaseModel # pylint: disable=E0611
 
 
 class Celestial(BaseModel):
