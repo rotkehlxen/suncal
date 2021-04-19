@@ -30,10 +30,7 @@ jobs:
         poetry install
     - name: Check format, typing, sort of imports, and lint
       run: |
-        poetry run black --diff --check .
-        poetry run isort --check .
-        poetry run mypy .
-        poetry run pylint -E suncal tests
+        qa/pychecks.sh
     - name: Test with pytest
       run: |
         poetry run pytest
