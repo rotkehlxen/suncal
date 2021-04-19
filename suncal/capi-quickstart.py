@@ -50,7 +50,9 @@ with build("calendar", "v3", credentials=creds) as service:
     calendars: List = []
     page_token = None
     while True:
-        calendar_list = service.calendarList().list(pageToken=page_token).execute()
+        calendar_list = (
+            service.calendarList().list(pageToken=page_token).execute()
+        )
         calendars = calendars + [
             calendar_list_entry["summary"]
             for calendar_list_entry in calendar_list["items"]

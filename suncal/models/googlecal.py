@@ -1,10 +1,12 @@
 import datetime as dt
 import json
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from pydantic import BaseModel, root_validator
+from pydantic import BaseModel
+from pydantic import root_validator
 
 
 class GoogleCalTime(BaseModel):
@@ -102,7 +104,9 @@ def sun_calendar_exists(calendar_id: str, creds: Credentials) -> bool:
         # response can have several pages (i.e. there is a max number of entries per page)
         page_token = None
         while True:
-            calendar_list = service.calendarList().list(pageToken=page_token).execute()
+            calendar_list = (
+                service.calendarList().list(pageToken=page_token).execute()
+            )
             calendars = calendars + [
                 calendar_list_entry["summary"]
                 for calendar_list_entry in calendar_list["items"]
@@ -114,7 +118,9 @@ def sun_calendar_exists(calendar_id: str, creds: Credentials) -> bool:
     return True if calendar_id in calendars else False
 
 
-def create_sun_calendar(calendar_id: str, timezone: str, creds: Credentials) -> str:
+def create_sun_calendar(
+    calendar_id: str, timezone: str, creds: Credentials
+) -> str:
 
     # TODO: I do not know whether we will need the returned id!
     with build("calendar", "v3", credentials=creds) as service:
