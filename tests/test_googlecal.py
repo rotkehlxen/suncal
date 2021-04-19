@@ -3,7 +3,9 @@ import datetime as dt
 import pytest
 from pydantic import ValidationError
 
-from suncal.models.googlecal import GoogleCalEvent, GoogleCalTime, google_cal_summary
+from suncal.models.googlecal import GoogleCalEvent
+from suncal.models.googlecal import GoogleCalTime
+from suncal.models.googlecal import google_cal_summary
 from suncal.utils import create_timezone_aware_datetime
 
 

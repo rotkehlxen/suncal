@@ -21,7 +21,9 @@ def get_credentials(scopes: List[str]) -> Credentials:
             creds.refresh(Request())
         else:
             print("define flow")
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", scopes)
+            flow = InstalledAppFlow.from_client_secrets_file(
+                "credentials.json", scopes
+            )
             print("run local server")
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run

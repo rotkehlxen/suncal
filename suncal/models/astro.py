@@ -30,7 +30,9 @@ class Celestial(BaseModel):
     def event(self):
         sunrise = self.location.sunrise(date=self.date)
         sunset = self.location.sunset(date=self.date)
-        goldenhour_start, goldenhour_end = self.location.golden_hour(date=self.date)
+        goldenhour_start, goldenhour_end = self.location.golden_hour(
+            date=self.date
+        )
 
         return {
             "sunrise": {"start": sunrise, "end": sunrise},

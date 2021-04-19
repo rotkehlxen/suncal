@@ -1,9 +1,11 @@
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 from google.oauth2.credentials import Credentials
 
 from suncal.auth import get_credentials
-from suncal.models.googlecal import GoogleCalEvent, create_calendar_if_not_exists
+from suncal.models.googlecal import GoogleCalEvent
+from suncal.models.googlecal import create_calendar_if_not_exists
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -11,7 +13,9 @@ SCOPES = [
 ]
 
 # TODO: turn the following parameters into command line *options*
-calendar_id = "sun"  # for personal use it may be better to use sth like 'sun berlin'
+calendar_id = (
+    "sun"  # for personal use it may be better to use sth like 'sun berlin'
+)
 from_t = "2021-05-01"
 to_t = "2021=05-02"
 event = "sunrise"  # sunrise/sunset/goldenhour
@@ -22,7 +26,12 @@ return_val = "api"  # api/ics
 
 
 def create_calendar_events(
-    event: str, from_t: str, to_t: str, timezone: str, longitude: float, latitude: float
+    event: str,
+    from_t: str,
+    to_t: str,
+    timezone: str,
+    longitude: float,
+    latitude: float,
 ) -> List[GoogleCalEvent]:
     pass
 

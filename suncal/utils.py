@@ -10,12 +10,19 @@ def date_range(date_from: dt.date, date_to: dt.date) -> List[dt.date]:
     from and to dates.
     """
     return [
-        date_from + dt.timedelta(days=i) for i in range((date_to - date_from).days + 1)
+        date_from + dt.timedelta(days=i)
+        for i in range((date_to - date_from).days + 1)
     ]
 
 
 def create_timezone_aware_datetime(
-    year: int, month: int, day: int, hour: int, minute: int, second: int, timezone: str
+    year: int,
+    month: int,
+    day: int,
+    hour: int,
+    minute: int,
+    second: int,
+    timezone: str,
 ) -> dt.datetime:
     """Create timezone aware datetime object using the IANA timezone string, e.g.  'Europe/Berlin'."""
 

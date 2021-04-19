@@ -4,6 +4,16 @@ version = "0.1.0"
 description = ""
 authors = ["Franziska Witzel <franziska.witzel@gmail.com>"]
 
+[tool.black]
+line-length = 80
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+force_single_line = true
+line_length = 80
+
 [tool.poetry.dependencies]
 python = "^3.7"
 astral = "^2.2"

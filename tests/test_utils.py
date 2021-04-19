@@ -1,6 +1,7 @@
 import datetime as dt
 
-from suncal.utils import create_timezone_aware_datetime, date_range
+from suncal.utils import create_timezone_aware_datetime
+from suncal.utils import date_range
 
 
 def test_date_range():
