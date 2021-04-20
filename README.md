@@ -11,15 +11,13 @@ imported using the google calendar web interface.
 
 # Rules for collaborators
 If you add a function/class, you also add a corresponding test. If you want to work on one of the items in the todo
-list, write your name next to it, so we don't do things several times. This repo uses type annotation. Before you 
-commit your code, sort the imports with **isort**, reformat the code with **black** and check that typing is correct using 
-**mypy**. cd to the project folder and run:
+list, write your name next to it, so we don't do things several times. This repo uses type annotation. To add code, 
+create a new branch and make sure to run all checks before setting up your PR: cd to the repo, then run:
 
 ```bash
-poetry run isort .
-poetry run black .
-poetry run mypy .
+./qa/pychecks.sh
 ```
+If any of the checks fail, the PR will not be accepted.
 
 The script suncal/capi-quickstart.py illustrates how to create an event in your primary calendar, how to create a new 
 calendar and how to list the summary (i.e. the names) of all the calendars that are associated with your account (
@@ -29,6 +27,7 @@ with:
 ```bash
 poetry run python path/to/capi-quickstart.py
 ```
+
 Credentials will be created and saved (as pickle) if they do not exist. (Do not forget to install the suncal package
 beforehand.)
 
