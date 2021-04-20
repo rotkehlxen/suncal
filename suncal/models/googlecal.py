@@ -5,7 +5,7 @@ from typing import Optional
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from pydantic import BaseModel
+from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import root_validator
 
 
@@ -24,7 +24,7 @@ class GoogleCalTime(BaseModel):
 
     # make sure that either date OR dateTime is provided (but not both at the same time)
     @root_validator(pre=True)
-    def date_or_dateTime_provided(cls, values):
+    def date_or_dateTime_provided(cls, values):  # pylint: disable=E0213
         date, datetime = values.get("date"), values.get("dateTime")
         assert (date is None and datetime is not None) or (
             date is not None and datetime is None
