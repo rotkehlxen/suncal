@@ -4,8 +4,10 @@ from typing import Optional
 from google.oauth2.credentials import Credentials
 
 from suncal.auth import get_credentials
-from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import create_calendar_if_not_exists
+from suncal.utils import date_range
+from suncal.models.astro import Celestial
+from suncal.models.googlecal import GoogleCalEvent, GoogleCalTime, google_cal_summary
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -16,8 +18,8 @@ SCOPES = [
 calendar_id = (
     "sun"  # for personal use it may be better to use sth like 'sun berlin'
 )
-from_t = "2021-05-01"
-to_t = "2021=05-02"
+from_date = "2021-05-01"
+to_date = "2021=05-02"
 event = "sunrise"  # sunrise/sunset/goldenhour
 timezone = "Europe/Berlin"
 longitude = 13.23
@@ -27,13 +29,27 @@ return_val = "api"  # api/ics
 
 def create_calendar_events(
     event: str,
-    from_t: str,
-    to_t: str,
+    from_date: str,
+    to_date: str,
     timezone: str,
     longitude: float,
     latitude: float,
 ) -> List[GoogleCalEvent]:
-    pass
+
+    calendar_events: List = []
+    dates = date_range(from_date, to_date)
+    for date in dates:
+        # calculate times of sun event for this date and location
+        sun_event = Celestial(timezone=timezone, date=date, longitude=longitude, latitude=latitude).event()
+        # get calendar event summary
+        summary = google_cal_summary(event, sun_event['start'])
+        # create calendar event and append payload to list
+        gcal_event = GoogleCalEvent(start=GoogleCalTime(dateTime=sun_event['start']),
+                                    end=GoogleCalTime(dateTime=sun_event['end']),
+                                    summary=summary)
+        calendar_events.append(gcal_event)
+
+    return calendar_events
 
 
 def export_events_to_calendar(
@@ -45,8 +61,8 @@ def export_events_to_calendar(
 # main
 def suncal(
     calendar_id: str,
-    from_t: str,
-    to_t: str,
+    from_date: str,
+    to_date: str,
     event: str,
     timezone: str,
     longitude: float,
@@ -55,7 +71,7 @@ def suncal(
 ) -> None:
 
     events: List[GoogleCalEvent] = create_calendar_events(
-        event, from_t, to_t, timezone, longitude, latitude
+        event, from_date, to_date, timezone, longitude, latitude
     )
 
     if return_val == "api":
