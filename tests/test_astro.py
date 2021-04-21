@@ -20,6 +20,12 @@ def test_celestial():
     # start of sunrise can be obtained like this
     assert isinstance(celestial.event["sunrise"]["start"], dt.datetime)
 
+    # test the gcal summary
+    assert "↑🌞" in celestial.event['sunrise']['gcal_summary']
+    assert "AM" in celestial.event['sunrise']['gcal_summary']
+    assert "↓🌞" in celestial.event['sunset']['gcal_summary']
+    assert celestial.event['goldenhour']['gcal_summary'] == "📷 golden hour"
+
     # end of goldenhour
     end_golden_hour = celestial.event["goldenhour"]["end"]
     assert isinstance(end_golden_hour, dt.datetime)
