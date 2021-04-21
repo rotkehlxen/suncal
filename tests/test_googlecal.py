@@ -3,6 +3,7 @@ import datetime as dt
 import pytest
 from pydantic import ValidationError
 
+from suncal.main import create_calendar_events
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.utils import create_timezone_aware_datetime
@@ -50,3 +51,25 @@ def test_google_cal_event_payload():
     assert payload["end"]["dateTime"] == "2021-02-28T17:30:00+01:00"
     assert payload["summary"] == "test event"
 
+
+def test_create_calendar_events():
+
+    from_date = dt.date(2021, 5, 1)
+    to_date = dt.date(2021, 5, 3)
+    timezone = "Europe/Berlin"
+    longitude = 13.23
+    latitude = 52.32
+
+    gcal_event_list = create_calendar_events(
+        event="sunrise",
+        from_date=from_date,
+        to_date=to_date,
+        timezone=timezone,
+        longitude=longitude,
+        latitude=latitude,
+    )
+
+    assert len(gcal_event_list) == 3
+    assert all(
+        isinstance(cal_event, GoogleCalEvent) for cal_event in gcal_event_list
+    )

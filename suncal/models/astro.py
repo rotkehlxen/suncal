@@ -43,7 +43,7 @@ class Celestial(BaseModel):
             "sunset": {
                 "start": sunset,
                 "end": sunset,
-                "gcal_summary": f"↑🌞 {sunset.strftime('%I:%M %p')}",
+                "gcal_summary": f"↓🌞 {sunset.strftime('%I:%M %p')}",
             },
             "goldenhour": {
                 "start": golden_hour_start,

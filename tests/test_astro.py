@@ -24,7 +24,7 @@ def test_celestial():
     assert "↑🌞" in celestial.event['sunrise']['gcal_summary']
     assert "AM" in celestial.event['sunrise']['gcal_summary']
     assert "↓🌞" in celestial.event['sunset']['gcal_summary']
-    assert celestial.event['goldenhour']['gcal_summary'] == "📷 golden hour"
+    assert celestial.event['goldenhour']['gcal_summary'] == "📷 Golden Hour"
 
     # end of goldenhour
     end_golden_hour = celestial.event["goldenhour"]["end"]

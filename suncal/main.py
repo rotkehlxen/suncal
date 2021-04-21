@@ -44,7 +44,7 @@ def create_calendar_events(
         # calculate times of sun event for this date and location
         sun_parameters = Celestial(
             timezone=timezone, date=date, longitude=longitude, latitude=latitude
-        ).event()
+        ).event
         # create calendar event and append payload to list
         gcal_event = GoogleCalEvent(
             start=GoogleCalTime(dateTime=sun_parameters[event]['start']),
