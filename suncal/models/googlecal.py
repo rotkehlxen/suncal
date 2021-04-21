@@ -58,32 +58,6 @@ class GoogleCalEvent(BaseModel):
         return json.loads(self.json())
 
 
-def google_cal_summary(event: str, time: Optional[dt.datetime] = None) -> str:
-    """Create event summary. """
-
-    assert event in [
-        "sunrise",
-        "sunset",
-        "goldenhour",
-    ], "We only support events 'sunrise', 'sunset' and 'goldenhour'!"
-    if event != "goldenhour":
-        assert (
-            time is not None
-        ), "Provide argument 'time' (datetime object) for calender summary!"
-
-    if event == "sunrise" and time is not None:
-        # time in format "06:00 AM"
-        time_str = time.strftime("%I:%M %p")
-        return f"↑🌞 {time_str}"
-
-    elif event == "sunset" and time is not None:
-        time_str = time.strftime("%I:%M %p")
-        return f"↓🌞 {time_str}"
-
-    else:
-        return "📷 golden hour"
-
-
 def create_calendar_if_not_exists(
     calendar_id: str, timezone: str, creds: Credentials
 ) -> Optional[str]:
