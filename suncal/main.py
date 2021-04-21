@@ -1,13 +1,15 @@
+import datetime as dt
 from typing import List
 from typing import Optional
 
 from google.oauth2.credentials import Credentials
 
 from suncal.auth import get_credentials
+from suncal.models.astro import Celestial
+from suncal.models.googlecal import GoogleCalEvent
+from suncal.models.googlecal import GoogleCalTime
 from suncal.models.googlecal import create_calendar_if_not_exists
 from suncal.utils import date_range
-from suncal.models.astro import Celestial
-from suncal.models.googlecal import GoogleCalEvent, GoogleCalTime, google_cal_summary
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -18,8 +20,8 @@ SCOPES = [
 calendar_id = (
     "sun"  # for personal use it may be better to use sth like 'sun berlin'
 )
-from_date = "2021-05-01"
-to_date = "2021=05-02"
+from_date = dt.date(2021, 5, 1)  # would be string "2021-05-01" in cli
+to_date = dt.date(2021, 5, 2)  # would be string "2021=05-02" in cli
 event = "sunrise"  # sunrise/sunset/goldenhour
 timezone = "Europe/Berlin"
 longitude = 13.23
@@ -29,8 +31,8 @@ return_val = "api"  # api/ics
 
 def create_calendar_events(
     event: str,
-    from_date: str,
-    to_date: str,
+    from_date: dt.date,
+    to_date: dt.date,
     timezone: str,
     longitude: float,
     latitude: float,
@@ -40,13 +42,15 @@ def create_calendar_events(
     dates = date_range(from_date, to_date)
     for date in dates:
         # calculate times of sun event for this date and location
-        sun_event = Celestial(timezone=timezone, date=date, longitude=longitude, latitude=latitude).event()
-        # get calendar event summary
-        summary = google_cal_summary(event, sun_event['start'])
+        sun_parameters = Celestial(
+            timezone=timezone, date=date, longitude=longitude, latitude=latitude
+        ).event()
         # create calendar event and append payload to list
-        gcal_event = GoogleCalEvent(start=GoogleCalTime(dateTime=sun_event['start']),
-                                    end=GoogleCalTime(dateTime=sun_event['end']),
-                                    summary=summary)
+        gcal_event = GoogleCalEvent(
+            start=GoogleCalTime(dateTime=sun_parameters[event]['start']),
+            end=GoogleCalTime(dateTime=sun_parameters[event]['end']),
+            summary=sun_parameters[event]['gcal_summary'],
+        )
         calendar_events.append(gcal_event)
 
     return calendar_events
@@ -61,8 +65,8 @@ def export_events_to_calendar(
 # main
 def suncal(
     calendar_id: str,
-    from_date: str,
-    to_date: str,
+    from_date: dt.date,
+    to_date: dt.date,
     event: str,
     timezone: str,
     longitude: float,
