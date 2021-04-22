@@ -3,9 +3,9 @@ import datetime as dt
 import pytest
 from pydantic import ValidationError
 
+from suncal.main import create_calendar_events
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
-from suncal.models.googlecal import google_cal_summary
 from suncal.utils import create_timezone_aware_datetime
 
 
@@ -52,20 +52,24 @@ def test_google_cal_event_payload():
     assert payload["summary"] == "test event"
 
 
-def test_calendar_summary():
-    summary = google_cal_summary("sunrise", dt.datetime(2012, 2, 1, 15, 30, 0))
-    assert summary == "↑🌞 03:30 PM"
+def test_create_calendar_events():
 
-    summary = google_cal_summary("sunset", dt.datetime(2012, 2, 1, 15, 30, 0))
-    assert summary == "↓🌞 03:30 PM"
+    from_date = dt.date(2021, 5, 1)
+    to_date = dt.date(2021, 5, 3)
+    timezone = "Europe/Berlin"
+    longitude = 13.23
+    latitude = 52.32
 
-    summary = google_cal_summary("goldenhour")
-    assert summary == "📷 golden hour"
+    gcal_event_list = create_calendar_events(
+        event="sunrise",
+        from_date=from_date,
+        to_date=to_date,
+        timezone=timezone,
+        longitude=longitude,
+        latitude=latitude,
+    )
 
-    with pytest.raises(AssertionError):
-        # non-existing event
-        summary = google_cal_summary("mond")
-
-    with pytest.raises(AssertionError):
-        # no time provided
-        summary = google_cal_summary("sunrise")
+    assert len(gcal_event_list) == 3
+    assert all(
+        isinstance(cal_event, GoogleCalEvent) for cal_event in gcal_event_list
+    )
