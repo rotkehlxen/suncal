@@ -47,8 +47,12 @@ def create_calendar_events(
         ).event
         # create calendar event and append to list
         gcal_event = GoogleCalEvent(
-            start=GoogleCalTime(dateTime=sun_parameters[event]['start'], timeZone=timezone),
-            end=GoogleCalTime(dateTime=sun_parameters[event]['end'], timeZone=timezone),
+            start=GoogleCalTime(
+                dateTime=sun_parameters[event]['start'], timeZone=timezone
+            ),
+            end=GoogleCalTime(
+                dateTime=sun_parameters[event]['end'], timeZone=timezone
+            ),
             summary=sun_parameters[event]['gcal_summary'],
         )
         calendar_events.append(gcal_event)

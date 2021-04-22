@@ -1,6 +1,6 @@
 import datetime as dt
 import json
-from typing import List
+from typing import Dict
 from typing import Optional
 
 from google.oauth2.credentials import Credentials
@@ -69,27 +69,45 @@ def create_calendar_if_not_exists(
         return None
 
 
-def sun_calendar_exists(calendar_id: str, creds: Credentials) -> bool:
+def sun_calendar_exists(calendar_id: str, creds: Credentials) -> Optional[str]:
 
     # TODO: what do we do in case we get no response?
     with build("calendar", "v3", credentials=creds) as service:
 
-        calendars: List = []
+        # use calendar id as key and calendar summary as value in this dict (summary would be more handy as key,
+        # but unfortunately calendar titles don"t have to be unique (verified!)
+        calendars: Dict[str, str] = {}
         # response can have several pages (i.e. there is a max number of entries per page)
         page_token = None
         while True:
             calendar_list = (
                 service.calendarList().list(pageToken=page_token).execute()
             )
-            calendars = calendars + [
-                calendar_list_entry["summary"]
-                for calendar_list_entry in calendar_list["items"]
-            ]
-            page_token = calendar_list.get("nextPageToken")
+            for calendar_list_entry in calendar_list['items']:
+                calendars[calendar_list_entry['id']] = calendar_list_entry[
+                    'summary'
+                ]
+
+            page_token = calendar_list.get('nextPageToken')
             if not page_token:
                 break
 
-    return True if calendar_id in calendars else False
+        # get sub dict where the value matches our [calendar_id]
+        sun_calendars = {
+            gcal_id: gcal_summary
+            for (gcal_id, gcal_summary) in calendars.items()
+            if gcal_summary == calendar_id
+        }
+        if len(sun_calendars) > 1:
+            print(f"You have more than one calendar with title {calendar_id}!")
+            print(
+                f"Will use the first calendar that was detected to insert events!"
+            )
+
+        if len(sun_calendars) == 0:
+            return None
+        else:
+            return sorted(list(sun_calendars.keys()))[0]
 
 
 def create_sun_calendar(
