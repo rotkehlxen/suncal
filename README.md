@@ -47,7 +47,7 @@ date for this.
 
 |   parameter  | specs |
 |--------------|-------|
-| calendar id  | id of target google calendar. Create if it does not exist. |
+| calendar title  | title (aka summary) of target google calendar. Create calendar with that title if it doesn't exist. |
 | from_date    | "yyyy-mm-dd" from this day ... (default today) |
 | to_date      | "yyyy-mm-dd" to this day ... (default today + 1 week) |
 | event        | e.g. "sunrise", for the first draft restrict to choices {"sunrise", "sunset", "goldenhour"} |

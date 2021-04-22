@@ -1,6 +1,6 @@
 import datetime as dt
 import json
-from typing import List
+from typing import Dict
 from typing import Optional
 
 from google.oauth2.credentials import Credentials
@@ -58,47 +58,64 @@ class GoogleCalEvent(BaseModel):
         return json.loads(self.json())
 
 
-def create_calendar_if_not_exists(
-    calendar_id: str, timezone: str, creds: Credentials
-) -> Optional[str]:
-    # TODO: I do not know if we have to return this google calendar id
-    if not sun_calendar_exists(calendar_id, creds):
-        gcal_id = create_sun_calendar(calendar_id, timezone, creds)
-        return gcal_id
+def get_sun_calendar_id(
+    calendar_title: str, timezone: str, creds: Credentials
+) -> str:
+
+    all_calendars = request_calendars(creds=creds)
+    # dict of calendars with matching title
+    sun_calendars = {
+        gcal_id: gcal_summary
+        for (gcal_id, gcal_summary) in all_calendars.items()
+        if gcal_summary == calendar_title
+    }
+
+    if len(sun_calendars) == 0:
+        google_calendar_id = create_sun_calendar(
+            calendar_title=calendar_title, timezone=timezone, creds=creds
+        )
     else:
-        return None
+        google_calendar_id = sorted(list(sun_calendars.keys()))[0]
+
+    if len(sun_calendars) > 1:
+        print(f"You have more than one calendar with title {calendar_title}!")
+        print(
+            f"Will insert events into calendar {calendar_title} with id {google_calendar_id}."
+        )
+
+    return google_calendar_id
 
 
-def sun_calendar_exists(calendar_id: str, creds: Credentials) -> bool:
+def request_calendars(creds: Credentials) -> Dict[str, str]:
 
     # TODO: what do we do in case we get no response?
     with build("calendar", "v3", credentials=creds) as service:
 
-        calendars: List = []
+        # use calendar id as key and calendar summary as value in this dict (summary would be more handy as key,
+        # but unfortunately calendar titles don"t have to be unique (verified!)
+        calendars: Dict[str, str] = {}
         # response can have several pages (i.e. there is a max number of entries per page)
         page_token = None
         while True:
             calendar_list = (
                 service.calendarList().list(pageToken=page_token).execute()
             )
-            calendars = calendars + [
-                calendar_list_entry["summary"]
-                for calendar_list_entry in calendar_list["items"]
-            ]
-            page_token = calendar_list.get("nextPageToken")
+            for entry in calendar_list['items']:
+                calendars[entry['id']] = entry['summary']
+
+            page_token = calendar_list.get('nextPageToken')
             if not page_token:
                 break
 
-    return True if calendar_id in calendars else False
+    return calendars
 
 
 def create_sun_calendar(
-    calendar_id: str, timezone: str, creds: Credentials
+    calendar_title: str, timezone: str, creds: Credentials
 ) -> str:
 
-    # TODO: I do not know whether we will need the returned id!
     with build("calendar", "v3", credentials=creds) as service:
-        calendar = {"summary": calendar_id, "timeZone": timezone}
+        calendar = {"summary": calendar_title, "timeZone": timezone}
 
         created_calendar = service.calendars().insert(body=calendar).execute()
 
