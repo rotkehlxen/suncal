@@ -24,15 +24,22 @@ def test_celestial():
     assert "↑🌞" in celestial.event['sunrise']['gcal_summary']
     assert "AM" in celestial.event['sunrise']['gcal_summary']
     assert "↓🌞" in celestial.event['sunset']['gcal_summary']
-    assert celestial.event['goldenhour']['gcal_summary'] == "📷 Golden Hour"
+    assert (
+        celestial.event['golden-hour-morning']['gcal_summary']
+        == "📷 Golden Hour"
+    )
+    assert (
+        celestial.event['golden-hour-evening']['gcal_summary']
+        == "📷 Golden Hour"
+    )
 
     # end of goldenhour
-    end_golden_hour = celestial.event["goldenhour"]["end"]
+    end_golden_hour = celestial.event["golden-hour-morning"]["end"]
     assert isinstance(end_golden_hour, dt.datetime)
     assert end_golden_hour.date() == celestial.date
 
     # reset the date: calculations are updated as well!
     celestial.date = date + dt.timedelta(days=3)
-    new_end_golden_hour = celestial.event["goldenhour"]["end"]
+    new_end_golden_hour = celestial.event["golden-hour-morning"]["end"]
     assert new_end_golden_hour.date() == date + dt.timedelta(days=3)
     assert end_golden_hour != new_end_golden_hour
