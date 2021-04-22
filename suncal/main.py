@@ -88,7 +88,6 @@ def suncal(
         credentials = get_credentials(SCOPES)
 
         # check if calendar with provided id exists, if not create it
-        # (make sure the calendar exists, if not, stop right here)
         google_calendar_id = get_sun_calendar_id(
             calendar_title, timezone, credentials
         )
