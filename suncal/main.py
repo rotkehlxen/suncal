@@ -45,10 +45,10 @@ def create_calendar_events(
         sun_parameters = Celestial(
             timezone=timezone, date=date, longitude=longitude, latitude=latitude
         ).event
-        # create calendar event and append payload to list
+        # create calendar event and append to list
         gcal_event = GoogleCalEvent(
-            start=GoogleCalTime(dateTime=sun_parameters[event]['start']),
-            end=GoogleCalTime(dateTime=sun_parameters[event]['end']),
+            start=GoogleCalTime(dateTime=sun_parameters[event]['start'], timeZone=timezone),
+            end=GoogleCalTime(dateTime=sun_parameters[event]['end'], timeZone=timezone),
             summary=sun_parameters[event]['gcal_summary'],
         )
         calendar_events.append(gcal_event)
