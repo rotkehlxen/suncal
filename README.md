@@ -50,7 +50,8 @@ date for this.
 | calendar title  | title (aka summary) of target google calendar. Create calendar with that title if it doesn't exist. |
 | from_date    | "yyyy-mm-dd" from this day ... (default today) |
 | to_date      | "yyyy-mm-dd" to this day ... (default today + 1 week) |
-| event        | e.g. "sunrise", for the first draft restrict to choices {"sunrise", "sunset", "goldenhour"} |
+| event        | e.g. "sunrise", for the first draft restrict to choices: | 
+|              | {"sunrise", "sunset", "golden-hour-morning", "golden-hour-evening"} |
 | timezone     | e.g. "Europe/Berlin" IANA timezone string (default Berlin) |
 | longitude    | e.g. -122.236355 for Redwood City CA (default Berlin) |
 | latitude     | e.g 37.485215 for Redwood City CA (default Berlin) |
@@ -89,10 +90,6 @@ Validate that user provided a valid IANA timezone string.
 #### Batch requests
 I tried to send 365 sequential requests (creating events for one year) and got the following error: HttpError 403
 "Rate Limit Exceeded". I guess we have to pack these requests in batches.
-
-#### Golden Hour Sun direction
-There is a golden hour in the morning AND in the evening! Currently we calculate the morning Golden Hour, but I can
-imagine that most people are rather interested in the evening ... Definitely implement this! 
 
 # Dependencies
 

@@ -1,6 +1,7 @@
 import datetime as dt
 
 from astral import LocationInfo
+from astral import SunDirection
 from astral.location import Location
 from pydantic import BaseModel  # pylint: disable=E0611
 
@@ -30,8 +31,17 @@ class Celestial(BaseModel):
     def event(self):
         sunrise = self.location.sunrise(date=self.date)
         sunset = self.location.sunset(date=self.date)
-        golden_hour_start, golden_hour_end = self.location.golden_hour(
-            date=self.date
+        (
+            golden_hour_morning_start,
+            golden_hour_morning_end,
+        ) = self.location.golden_hour(
+            date=self.date, direction=SunDirection.RISING
+        )
+        (
+            golden_hour_evening_start,
+            golden_hour_evening_end,
+        ) = self.location.golden_hour(
+            date=self.date, direction=SunDirection.SETTING
         )
 
         return {
@@ -45,9 +55,14 @@ class Celestial(BaseModel):
                 "end": sunset,
                 "gcal_summary": f"↓🌞 {sunset.strftime('%I:%M %p')}",
             },
-            "goldenhour": {
-                "start": golden_hour_start,
-                "end": golden_hour_end,
+            "golden-hour-morning": {
+                "start": golden_hour_morning_start,
+                "end": golden_hour_morning_end,
+                "gcal_summary": "📷 Golden Hour",
+            },
+            "golden-hour-evening": {
+                "start": golden_hour_evening_start,
+                "end": golden_hour_evening_end,
                 "gcal_summary": "📷 Golden Hour",
             },
         }
