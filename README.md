@@ -83,6 +83,17 @@ Loop over all requested dates, then over all requested events. Calculate start a
 Create GoogleCalEvent. Either serialize these events for the API, or export to ics. If we use the API, initialise the 
 authentication flow. Check if the target calendar exits - if not, create it. Send all events to calendar. Done. 
 
+#### checks for IANA timezone strings
+Validate that user provided a valid IANA timezone string. 
+
+#### Batch requests
+I tried to send 365 sequential requests (creating events for one year) and got the following error: HttpError 403
+"Rate Limit Exceeded". I guess we have to pack these requests in batches.
+
+#### Golden Hour Sun direction
+There is a golden hour in the morning AND in the evening! Currently we calculate the morning Golden Hour, but I can
+imagine that most people are rather interested in the evening ... Definitely implement this! 
+
 # Dependencies
 
 ## astral

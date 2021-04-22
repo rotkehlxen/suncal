@@ -1,8 +1,8 @@
 import datetime as dt
 from typing import List
-from typing import Optional
 
 from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
 
 from suncal.auth import get_credentials
 from suncal.models.astro import Celestial
@@ -61,9 +61,18 @@ def create_calendar_events(
 
 
 def export_events_to_calendar(
-    gcal_id: str, events: List[GoogleCalEvent], creds: Credentials
+    google_calendar_id: str,
+    events: List[GoogleCalEvent],
+    credentials: Credentials,
 ) -> None:
-    pass
+
+    print("Creating calendar events ...")
+    with build("calendar", "v3", credentials=credentials) as service:
+        for google_cal_event in events:
+            service.events().insert(
+                calendarId=google_calendar_id, body=google_cal_event.payload()
+            ).execute()
+    print("... DONE.")
 
 
 # main
@@ -87,7 +96,7 @@ def suncal(
         # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
         credentials = get_credentials(SCOPES)
 
-        # check if calendar with provided id exists, if not create it
+        # check if calendar with provided title exists, if not create it and always return the id of the calendar
         google_calendar_id = get_sun_calendar_id(
             calendar_title, timezone, credentials
         )
