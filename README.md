@@ -91,10 +91,6 @@ Validate that user provided a valid IANA timezone string.
 I tried to send 365 sequential requests (creating events for one year) and got the following error: HttpError 403
 "Rate Limit Exceeded". I guess we have to pack these requests in batches.
 
-#### Golden Hour Sun direction
-There is a golden hour in the morning AND in the evening! Currently we calculate the morning Golden Hour, but I can
-imagine that most people are rather interested in the evening ... Definitely implement this! 
-
 # Dependencies
 
 ## astral
