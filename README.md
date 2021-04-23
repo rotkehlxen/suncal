@@ -85,10 +85,6 @@ Loop over all requested dates. Calculate start and end time using the astral wra
 Create GoogleCalEvent. Either serialize these events for the API, or export to ics. If we use the API, initialise the 
 authentication flow. Check if the target calendar exits - if not, create it. Send all events to calendar. Done. 
 
-#### set transparency of calendar events: Franzi
-Sun calendar items need to have time transparency status "transparent", as they do not block time on the calendar!
-However, the default is "opaque". Set transparency explicitly!
-
 #### checks for IANA timezone strings
 Validate that user provided a valid IANA timezone string. 
 
