@@ -76,11 +76,12 @@ Some of the following todos can surely be split into several tasks (and can resu
 #### CLI: Thomas
 Set up the CLI using **typer**.
 
-#### ics support
+#### ics support: Franzi
 Implement mapping from list of GoogleCalEvents to ics file. 
+The full specification is [here](https://tools.ietf.org/html/rfc5545).
 
 #### main function (controlled by CLI): Franzi
-Loop over all requested dates, then over all requested events. Calculate start and end time using the astral wrapper. 
+Loop over all requested dates. Calculate start and end time using the astral wrapper. 
 Create GoogleCalEvent. Either serialize these events for the API, or export to ics. If we use the API, initialise the 
 authentication flow. Check if the target calendar exits - if not, create it. Send all events to calendar. Done. 
 

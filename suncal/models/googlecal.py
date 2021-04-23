@@ -7,6 +7,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import root_validator
+from pydantic import validator
 
 
 class GoogleCalTime(BaseModel):
@@ -24,7 +25,7 @@ class GoogleCalTime(BaseModel):
 
     # make sure that either date OR dateTime is provided (but not both at the same time)
     @root_validator(pre=True)
-    def date_or_dateTime_provided(cls, values):  # pylint: disable=E0213
+    def date_or_datetime_provided(cls, values):  # pylint: disable=E0213
         date, datetime = values.get("date"), values.get("dateTime")
         assert (date is None and datetime is not None) or (
             date is not None and datetime is None
@@ -39,11 +40,23 @@ class GoogleCalTime(BaseModel):
 
 class GoogleCalEvent(BaseModel):
     """The only required parameters of a google cal event are start and end. 'summary' is the correct
-    field name of the event title. Can add additional fields later on when needed."""
+    field name of the event title. The default for time transparency of gcal events is 'opaque', however, sun cal
+    events are definitely no time blockers and thus transparency should be set to 'transparent".
+
+    Can add additional fields later on when needed."""
 
     start: GoogleCalTime
     end: GoogleCalTime
     summary: str
+    transparency: str = 'transparent'
+
+    @validator('transparency')
+    def transparency_valid(cls, v):  # pylint: disable=E0213
+        if v not in ['transparent', 'opaque']:
+            raise ValueError(
+                'Transparency of google calendar event can only be "transparent" or "opaque".'
+            )
+        return v.title()
 
     def payload(self):
         """pydantic provides method json() that serializes our model, especially datetime objects are converted

@@ -19,6 +19,26 @@ def test_date_or_datetime_check():
         GoogleCalTime(date=None, dateTime=None)
 
 
+def test_transparency_validation():
+    with pytest.raises(ValidationError):
+        GoogleCalEvent(
+            start=GoogleCalTime(date=dt.date.today()),
+            end=GoogleCalTime(date=dt.date.today()),
+            summary='summary',
+            transparency="non-opaque",
+        )
+
+
+def test_transparency_default():
+    event = GoogleCalEvent(
+        start=GoogleCalTime(date=dt.date.today()),
+        end=GoogleCalTime(date=dt.date.today()),
+        summary='summary',
+    )
+
+    assert event.transparency == 'transparent'
+
+
 def test_google_cal_event_payload():
     start = GoogleCalTime(
         dateTime=create_timezone_aware_datetime(
