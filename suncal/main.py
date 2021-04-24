@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import List
+from typing import List, Optional
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -75,6 +75,10 @@ def export_events_to_calendar(
     print("... DONE.")
 
 
+def export_events_to_ics(events: List[GoogleCalEvent], filename: str) -> None:
+    pass
+
+
 # main
 def suncal(
     calendar_title: str,
@@ -85,6 +89,7 @@ def suncal(
     longitude: float,
     latitude: float,
     return_val: str,
+    filename: Optional[str],  # only needed when return val is "ics"
 ) -> None:
 
     events: List[GoogleCalEvent] = create_calendar_events(
@@ -105,4 +110,4 @@ def suncal(
 
     else:
         # export events to ics file with specified path
-        pass
+        export_events_to_ics(events, filename)
