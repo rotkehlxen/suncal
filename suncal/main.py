@@ -1,15 +1,16 @@
 import datetime as dt
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
 from suncal.auth import get_credentials
+from suncal.date_utils import date_range
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.models.googlecal import get_sun_calendar_id
-from suncal.utils import date_range
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -75,7 +76,9 @@ def export_events_to_calendar(
     print("... DONE.")
 
 
-def export_events_to_ics(events: List[GoogleCalEvent], filename: str) -> None:
+def export_events_to_ics(
+    events: List[GoogleCalEvent], filename: Optional[str]
+) -> None:
     pass
 
 
@@ -89,7 +92,7 @@ def suncal(
     longitude: float,
     latitude: float,
     return_val: str,
-    filename: Optional[str],  # only needed when return val is "ics"
+    filename: Optional[str] = None,  # only needed when return val is "ics"
 ) -> None:
 
     events: List[GoogleCalEvent] = create_calendar_events(
