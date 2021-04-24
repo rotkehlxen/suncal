@@ -1,6 +1,7 @@
 import datetime as dt
 from suncal.models.googlecal import GoogleCalEvent
 from pydantic import BaseModel
+from __future__ import annotations
 
 
 class Vevent(BaseModel):
@@ -10,10 +11,12 @@ class Vevent(BaseModel):
 
     @staticmethod
     def fromGoogleCalEvent(e: GoogleCalEvent) -> Vevent:
-        Vevent(
+        ical_event = Vevent(
             dtstart=e.start.dateTime,
             dtend=e.end.dateTime,
+            dtstamp=dt.datetime.now(),
         )
+        return ical_event
 
 
     # vev = Vevent.fromGoogleCalEvent(ge)
