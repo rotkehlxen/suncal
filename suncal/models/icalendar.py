@@ -8,6 +8,9 @@ class Vevent(BaseModel):
     dtend: dt.datetime
     dtstart: dt.datetime
     dtstamp: dt.datetime
+    uid: str
+    summary: str
+    transp: str
 
     @staticmethod
     def fromGoogleCalEvent(e: GoogleCalEvent) -> Vevent:
