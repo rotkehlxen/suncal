@@ -1,19 +1,22 @@
 import datetime as dt
-class VEvent:
+from suncal.models.googlecal import GoogleCalEvent
+from pydantic import BaseModel
+
+
+class Vevent(BaseModel):
     dtend: dt.datetime
     dtstart: dt.datetime
+    dtstamp: dt.datetime
 
     @staticmethod
-    def fromGoogleCalEvent(e: GoogleCalEvent) -> VEvent:
-        VEvent(
-            dtstart = e.start.dateTime,
-            dtend = e.end.dateTime,
+    def fromGoogleCalEvent(e: GoogleCalEvent) -> Vevent:
+        Vevent(
+            dtstart=e.start.dateTime,
+            dtend=e.end.dateTime,
         )
-    def someOtherMethod(self):
-        pass
 
 
-    ge: GoogleCalEvent
+    # vev = Vevent.fromGoogleCalEvent(ge)
 
-    vev = VEvent.fromGoogleCalEvent(ge)
-    x = vev.someOtherMethod()
+class Vcalendar(BaseModel):
+    pass
