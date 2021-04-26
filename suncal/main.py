@@ -16,18 +16,6 @@ SCOPES = [
     "https://www.googleapis.com/auth/calendar.events",
 ]
 
-# TODO: turn the following parameters into command line *options*
-calendar_title = (
-    "sun"  # for personal use it may be better to use sth like 'sun berlin'
-)
-from_date = dt.date(2021, 5, 1)  # would be string "2021-05-01" in cli
-to_date = dt.date(2021, 5, 2)  # would be string "2021=05-02" in cli
-event = "sunrise"  # sunrise/sunset/goldenhour
-timezone = "Europe/Berlin"
-longitude = 13.23
-latitude = 52.32
-return_val = "api"  # api/ics
-
 
 def create_calendar_events(
     event: str,
@@ -75,16 +63,17 @@ def export_events_to_calendar(
     print("... DONE.")
 
 
+# TODO: turn the following function into command line app using Typer
 # main
 def suncal(
-    calendar_title: str,
-    from_date: dt.date,
-    to_date: dt.date,
-    event: str,
-    timezone: str,
-    longitude: float,
-    latitude: float,
-    return_val: str,
+    calendar_title: str,  # name of target calendar
+    from_date: dt.date,  # create events from this date ...
+    to_date: dt.date,  # ... to this date
+    event: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
+    timezone: str,  # e.g. "Europe/Berlin"
+    longitude: float,  # e.g. 13.23
+    latitude: float,  # e.g. 52.32
+    return_val: str,  # api/ics
 ) -> None:
 
     events: List[GoogleCalEvent] = create_calendar_events(
