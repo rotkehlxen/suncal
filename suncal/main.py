@@ -30,20 +30,25 @@ def create_calendar_events(
     dates = date_range(from_date, to_date)
     for date in dates:
         # calculate times of sun event for this date and location
-        sun_parameters = Celestial(
+        event_parameters = Celestial(
             timezone=timezone, date=date, longitude=longitude, latitude=latitude
-        ).event
+        ).events[event]
         # create calendar event and append to list
-        gcal_event = GoogleCalEvent(
-            start=GoogleCalTime(
-                dateTime=sun_parameters[event]['start'], timeZone=timezone
-            ),
-            end=GoogleCalTime(
-                dateTime=sun_parameters[event]['end'], timeZone=timezone
-            ),
-            summary=sun_parameters[event]['gcal_summary'],
-        )
-        calendar_events.append(gcal_event)
+        if event_parameters['start'] & event_parameters['end']:
+            gcal_event = GoogleCalEvent(
+                start=GoogleCalTime(
+                    dateTime=event_parameters['start'], timeZone=timezone
+                ),
+                end=GoogleCalTime(
+                    dateTime=event_parameters['end'], timeZone=timezone
+                ),
+                summary=event_parameters['gcal_summary'],
+            )
+            calendar_events.append(gcal_event)
+        else:
+            print(
+                f"{event} could not be calculated for {date} at longitude {longitude} and latitude {latitude}."
+            )
 
     return calendar_events
 
