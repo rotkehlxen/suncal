@@ -11,6 +11,9 @@ from suncal.models.googlecal import GoogleCalEvent
 
 
 class VEvent(BaseModel):
+    """Object representation of icalendar VEVENT.
+    IMPORTANT: all VEvents of an icalendar have to be initialised with the same [dtstamp],
+    using e.g. dt.datetime.now(dt.timezone.utc) defined previously. """
     dtend: dt.datetime  # start datetime (timezone aware)
     dtstart: dt.datetime  # end datetime (timezone aware)
     dtstamp: dt.datetime  # datetime of ics file creation (timezone aware)
@@ -25,21 +28,19 @@ class VEvent(BaseModel):
         ), "All datetimes must be timezone-aware!"
 
     @staticmethod
-    def fromGoogleCalEvent(e: GoogleCalEvent) -> VEvent:
+    def fromGoogleCalEvent(e: GoogleCalEvent, dtstamp) -> VEvent:
         # TODO: these are more or less incorrect placeholders for now:
         ical_event = VEvent(
             dtstart=e.start.dateTime,
             dtend=e.end.dateTime,
-            dtstamp=dt.datetime.now(
-                dt.timezone.utc
-            ),  # TODO: not sure if all events in calendar need same dtstamp
+            dtstamp=dtstamp,
             uid="",
-            summary="sth",
+            summary=e.summary,
             transp=e.transparency,
         )
         return ical_event
 
-    # vev = Vevent.fromGoogleCalEvent(ge)
+    # vev = VEvent.fromGoogleCalEvent(ge, dtstamp)
 
     def to_ics(self) -> List[str]:
         """Create lines in ics file from VEvent class object."""
