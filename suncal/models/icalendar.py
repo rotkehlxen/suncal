@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 from typing import List
+from uuid import uuid4
 
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import validator
@@ -29,12 +30,11 @@ class VEvent(BaseModel):
 
     @staticmethod
     def fromGoogleCalEvent(e: GoogleCalEvent, dtstamp) -> VEvent:
-        # TODO: these are more or less incorrect placeholders for now:
         ical_event = VEvent(
             dtstart=e.start.dateTime,
             dtend=e.end.dateTime,
             dtstamp=dtstamp,
-            uid="",
+            uid=f"{uuid4()}@itsalwaysbeen.photography",
             summary=e.summary,
             transp=e.transparency,
         )
