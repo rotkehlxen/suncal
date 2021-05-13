@@ -22,6 +22,7 @@ def test_vcalendar():
     assert VCalendar.footer() == ["END:VCALENDAR"]
     assert vcal.footer() == ["END:VCALENDAR"]
     assert "METHOD:PUBLISH" in vcal.header()
+    assert vcal.header()[2] == "VERSION:2.0"
 
 
 def test_vevent():
