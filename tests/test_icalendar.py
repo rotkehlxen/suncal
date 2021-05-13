@@ -1,8 +1,8 @@
-from suncal.models.icalendar import Vcalendar
+from suncal.models.icalendar import VCalendar
 
 
 def test_vcalendar():
-    vcal = Vcalendar(x_wr_calname="Sonne", x_wr_timezone="Europe/Berlin")
+    vcal = VCalendar(x_wr_calname="Sonne", x_wr_timezone="Europe/Berlin")
 
     assert vcal.x_wr_timezone == "Europe/Berlin"
     assert vcal.method == "PUBLISH"
@@ -10,5 +10,5 @@ def test_vcalendar():
     assert vcal.x_wr_calname == "Sonne"
     assert vcal.cascale == "GREGORIAN"
 
-    assert Vcalendar.footer() == "END:VCALENDAR"
+    assert VCalendar.footer() == "END:VCALENDAR"
     assert "METHOD:PUBLISH" in vcal.header()
