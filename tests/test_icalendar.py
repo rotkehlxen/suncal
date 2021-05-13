@@ -10,5 +10,5 @@ def test_vcalendar():
     assert vcal.x_wr_calname == "Sonne"
     assert vcal.cascale == "GREGORIAN"
 
-    assert VCalendar.footer() == "END:VCALENDAR"
+    assert VCalendar.footer() == ["END:VCALENDAR"]
     assert "METHOD:PUBLISH" in vcal.header()
