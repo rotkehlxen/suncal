@@ -6,6 +6,7 @@ from typing import List
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import validator
 
+from suncal.date_utils import aware_datetime_to_ical_date_with_utc_time
 from suncal.models.googlecal import GoogleCalEvent
 
 
@@ -39,6 +40,20 @@ class VEvent(BaseModel):
         return ical_event
 
     # vev = Vevent.fromGoogleCalEvent(ge)
+
+    def to_ics(self) -> List[str]:
+        """Create lines in ics file from VEvent class object."""
+        ics_entry = [
+            'BEGIN:VEVENT',
+            f'DTSTART:{aware_datetime_to_ical_date_with_utc_time(self.dtstart)}',
+            f'DTEND:{aware_datetime_to_ical_date_with_utc_time(self.dtend)}',
+            f'DTSTAMP:{aware_datetime_to_ical_date_with_utc_time(self.dtstamp)}',
+            f'UID:{self.uid}',
+            f'SUMMARY:{self.summary}',
+            f'TRANSP:{self.transp.upper()}',
+            'END:VEVENT',
+        ]
+        return ics_entry
 
 
 class VCalendar(BaseModel):
