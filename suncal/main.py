@@ -7,10 +7,13 @@ from googleapiclient.discovery import build
 
 from suncal.auth import get_credentials
 from suncal.date_utils import date_range
+from suncal.fileio import ics_filename
+from suncal.fileio import list_to_file
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.models.googlecal import get_sun_calendar_id
+from suncal.models.icalendar import create_ics_content
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -70,9 +73,19 @@ def export_events_to_calendar(
 
 
 def export_events_to_ics(
-    events: List[GoogleCalEvent], filename: Optional[str]
+    events: List[GoogleCalEvent],
+    calendar_title: str,
+    timezone: str,
+    filename: Optional[str],
 ) -> None:
-    pass
+    filename = filename or ics_filename(
+        calendar_title=calendar_title,
+        timezone=timezone,
+        local_time_now=dt.datetime.now(),
+    )
+    # TODO: check that filename provided by user has .ics ending, if not, append it
+    ics_content = create_ics_content(calendar_title, timezone, events)
+    list_to_file(ics_content, filename)
 
 
 # TODO: turn the following function into command line app using Typer
@@ -112,7 +125,7 @@ def suncal(
 
         else:
             # export events to ics file with specified path
-            export_events_to_ics(events, filename)
+            export_events_to_ics(events, calendar_title, timezone, filename)
 
     else:
         print(
