@@ -31,20 +31,25 @@ def create_calendar_events(
     dates = date_range(from_date, to_date)
     for date in dates:
         # calculate times of sun event for this date and location
-        sun_parameters = Celestial(
+        event_parameters = Celestial(
             timezone=timezone, date=date, longitude=longitude, latitude=latitude
-        ).event
-        # create calendar event and append to list
-        gcal_event = GoogleCalEvent(
-            start=GoogleCalTime(
-                dateTime=sun_parameters[event]['start'], timeZone=timezone
-            ),
-            end=GoogleCalTime(
-                dateTime=sun_parameters[event]['end'], timeZone=timezone
-            ),
-            summary=sun_parameters[event]['gcal_summary'],
-        )
-        calendar_events.append(gcal_event)
+        ).events[event]
+        # create calendar event and append to list, only if astral could calculate valid datetimes
+        if event_parameters['start'] and event_parameters['end']:
+            gcal_event = GoogleCalEvent(
+                start=GoogleCalTime(
+                    dateTime=event_parameters['start'], timeZone=timezone
+                ),
+                end=GoogleCalTime(
+                    dateTime=event_parameters['end'], timeZone=timezone
+                ),
+                summary=event_parameters['gcal_summary'],
+            )
+            calendar_events.append(gcal_event)
+        else:
+            print(
+                f"{event.title()} could not be calculated for {date} at longitude {longitude} and latitude {latitude}."
+            )
 
     return calendar_events
 
@@ -71,6 +76,9 @@ def export_events_to_ics(
 
 
 # TODO: turn the following function into command line app using Typer
+# TODO: longitude  in [-180, 180], latitude in [-90, 90]. Catch values outside of these intervals during processing
+# TODO: of command line parameters and exit
+
 # main
 def suncal(
     calendar_title: str,  # name of target calendar
@@ -88,18 +96,26 @@ def suncal(
         event, from_date, to_date, timezone, longitude, latitude
     )
 
-    if return_val == "api":
+    if events:
 
-        # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
-        credentials = get_credentials(SCOPES)
+        if return_val == "api":
 
-        # check if calendar with provided title exists, if not create it and always return the id of the calendar
-        google_calendar_id = get_sun_calendar_id(
-            calendar_title, timezone, credentials
-        )
+            # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
+            credentials = get_credentials(SCOPES)
 
-        export_events_to_calendar(google_calendar_id, events, credentials)
+            # check if calendar with provided title exists, if not create it and always return the id of the calendar
+            google_calendar_id = get_sun_calendar_id(
+                calendar_title, timezone, credentials
+            )
+
+            export_events_to_calendar(google_calendar_id, events, credentials)
+
+        else:
+            # export events to ics file with specified path
+            export_events_to_ics(events, filename)
 
     else:
-        # export events to ics file with specified path
-        export_events_to_ics(events, filename)
+        print(
+            f"*** {event.title()} could not be calculated for the specified location. "
+            f"No calendar events created. ***"
+        )

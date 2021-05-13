@@ -93,3 +93,18 @@ def test_create_calendar_events():
     assert all(
         isinstance(cal_event, GoogleCalEvent) for cal_event in gcal_event_list
     )
+
+    # use the north pole as example for coordinates in which we expect an exception from astral
+    latitude = 90
+    longitude = 0
+
+    gcal_event_list = create_calendar_events(
+        event="sunrise",
+        from_date=from_date,
+        to_date=to_date,
+        timezone=timezone,
+        longitude=longitude,
+        latitude=latitude,
+    )
+
+    assert len(gcal_event_list) == 0
