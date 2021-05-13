@@ -32,3 +32,25 @@ def create_timezone_aware_datetime(
     timezone_obj = pytz.timezone(timezone)
     aware_datetime = timezone_obj.localize(naive_datetime)
     return aware_datetime
+
+
+def aware_datetime_to_ical_date_with_utc_time(
+    aware_datetime: dt.datetime,
+) -> str:
+    """
+    Convert time-zone aware datetime to DATE-TIME of icalendar in Form #2. This
+    is a quote from the specs in https://tools.ietf.org/html/rfc5545:
+
+    FORM #2: DATE WITH UTC TIME
+
+    The date with UTC time, or absolute time, is identified by a LATIN
+    CAPITAL LETTER Z suffix character, the UTC designator, appended to
+    the time value.  For example, the following represents January 19,
+    1998, at 0700 UTC:
+
+    19980119T070000Z"""
+
+    utc_timezone = pytz.timezone('UTC')
+    utc_datetime = aware_datetime.astimezone(utc_timezone)
+
+    return utc_datetime.strftime("%Y%m%dT%H%M%SZ")

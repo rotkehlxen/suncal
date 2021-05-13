@@ -1,15 +1,19 @@
 import datetime as dt
 from typing import List
+from typing import Optional
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
 from suncal.auth import get_credentials
+from suncal.date_utils import date_range
+from suncal.fileio import ics_filename
+from suncal.fileio import list_to_file
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.models.googlecal import get_sun_calendar_id
-from suncal.utils import date_range
+from suncal.models.icalendar import create_ics_content
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -68,6 +72,24 @@ def export_events_to_calendar(
     print("... DONE.")
 
 
+def export_events_to_ics(
+    events: List[GoogleCalEvent],
+    calendar_title: str,
+    timezone: str,
+    filename: Optional[str],
+) -> None:
+    filename = filename or ics_filename(
+        calendar_title=calendar_title,
+        timezone=timezone,
+        local_time_now=dt.datetime.now(),
+    )
+    # TODO: check that filename provided by user has .ics ending, if not, append it
+    ics_content = create_ics_content(calendar_title, timezone, events)
+    print(f"Exporting events to {filename} ...")
+    list_to_file(ics_content, filename)
+    print("... Done.")
+
+
 # TODO: turn the following function into command line app using Typer
 # TODO: longitude  in [-180, 180], latitude in [-90, 90]. Catch values outside of these intervals during processing
 # TODO: of command line parameters and exit
@@ -82,6 +104,7 @@ def suncal(
     longitude: float,  # e.g. 13.23
     latitude: float,  # e.g. 52.32
     return_val: str,  # api/ics
+    filename: Optional[str] = None,  # only needed when return val is "ics"
 ) -> None:
 
     events: List[GoogleCalEvent] = create_calendar_events(
@@ -103,7 +126,8 @@ def suncal(
             export_events_to_calendar(google_calendar_id, events, credentials)
 
         else:
-            pass
+            # export events to ics file with specified name
+            export_events_to_ics(events, calendar_title, timezone, filename)
 
     else:
         print(
