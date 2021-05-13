@@ -8,6 +8,31 @@ from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.models.icalendar import VCalendar
 from suncal.models.icalendar import VEvent
+from suncal.models.icalendar import create_ics_content
+
+start_datetime = create_timezone_aware_datetime(
+    year=2021,
+    month=2,
+    day=28,
+    hour=16,
+    minute=30,
+    second=0,
+    timezone="Europe/Berlin",
+)
+
+end_datetime = create_timezone_aware_datetime(
+    year=2021,
+    month=2,
+    day=28,
+    hour=17,
+    minute=30,
+    second=0,
+    timezone="Europe/Berlin",
+)
+
+start_time = GoogleCalTime(dateTime=start_datetime)
+end_time = GoogleCalTime(dateTime=end_datetime)
+now = dt.datetime.now(dt.timezone.utc)
 
 
 def test_vcalendar():
@@ -28,33 +53,11 @@ def test_vcalendar():
 def test_vevent():
 
     # test creation of VEvent from GoogleCalTime
-    start_datetime = create_timezone_aware_datetime(
-        year=2021,
-        month=2,
-        day=28,
-        hour=16,
-        minute=30,
-        second=0,
-        timezone="Europe/Berlin",
-    )
-
-    end_datetime = create_timezone_aware_datetime(
-        year=2021,
-        month=2,
-        day=28,
-        hour=17,
-        minute=30,
-        second=0,
-        timezone="Europe/Berlin",
-    )
-    start_time = GoogleCalTime(dateTime=start_datetime)
-    end_time = GoogleCalTime(dateTime=end_datetime)
 
     gcal_event = GoogleCalEvent(
         start=start_time, end=end_time, summary="event_summary"
     )
 
-    now = dt.datetime.now(dt.timezone.utc)
     vevent = VEvent.fromGoogleCalEvent(ge=gcal_event, dtstamp=now)
 
     assert vevent.dtend == gcal_event.end.dateTime
@@ -85,3 +88,31 @@ def test_vevent():
             uid="bla",
             transp="transparent",
         )
+
+
+def test_ics_content():
+    calendar_name = "Sonne"
+    timezone = "Europe/Berlin"
+    gcal_event1 = GoogleCalEvent(
+        start=start_time, end=end_time, summary="event1"
+    )
+    gcal_event2 = GoogleCalEvent(
+        start=start_time, end=end_time, summary="event2"
+    )
+    events = [gcal_event1, gcal_event2]
+
+    ics_content = create_ics_content(
+        calendar_name=calendar_name, timezone=timezone, gcal_events=events
+    )
+
+    assert isinstance(ics_content, list)
+    # test number of lines: header 7 lines, footer 1 line, per event 8 --> 24 lines in total
+    assert len(ics_content) == 24
+    assert ics_content[0] == "BEGIN:VCALENDAR"
+    assert ics_content[-1] == "END:VCALENDAR"
+    assert "VERSION:2.0" in ics_content
+
+    # assert that both events have the same DTSTAMP
+    dtstamps = [line for line in ics_content if "DTSTAMP" in line]
+    assert len(dtstamps) == 2
+    assert dtstamps[0] == dtstamps[1]

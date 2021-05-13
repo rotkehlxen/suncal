@@ -88,3 +88,22 @@ class VCalendar(BaseModel):
     def footer(cls) -> List[str]:
         """ Create icalender footer. """
         return ['END:VCALENDAR']
+
+
+def create_ics_content(
+    calendar_name: str, timezone: str, gcal_events: List[GoogleCalEvent]
+) -> List[str]:
+    """Create all lines of ics file as list of strings."""
+    dtstamp = dt.datetime.now(dt.timezone.utc)
+    vcalendar = VCalendar(x_wr_calname=calendar_name, x_wr_timezone=timezone)
+
+    # header
+    ics_content = vcalendar.header()
+    # add google calendar events one by one
+    for gcal_event in gcal_events:
+        vevent = VEvent.fromGoogleCalEvent(ge=gcal_event, dtstamp=dtstamp)
+        ics_content += vevent.to_ics()
+    # end with footer
+    ics_content += vcalendar.footer()
+
+    return ics_content
