@@ -14,7 +14,8 @@ from suncal.models.googlecal import GoogleCalEvent
 class VEvent(BaseModel):
     """Object representation of icalendar VEVENT.
     IMPORTANT: all VEvents of an icalendar have to be initialised with the same [dtstamp],
-    using e.g. dt.datetime.now(dt.timezone.utc) defined previously. """
+    using e.g. dt.datetime.now(dt.timezone.utc) defined previously."""
+
     dtend: dt.datetime  # start datetime (timezone aware)
     dtstart: dt.datetime  # end datetime (timezone aware)
     dtstamp: dt.datetime  # datetime of ics file creation (timezone aware)
@@ -27,16 +28,17 @@ class VEvent(BaseModel):
         assert (
             date_time.tzinfo is not None and date_time.utcoffset() is not None
         ), "All datetimes must be timezone-aware!"
+        return date_time
 
     @staticmethod
-    def fromGoogleCalEvent(e: GoogleCalEvent, dtstamp) -> VEvent:
+    def fromGoogleCalEvent(ge: GoogleCalEvent, dtstamp: dt.datetime) -> VEvent:
         ical_event = VEvent(
-            dtstart=e.start.dateTime,
-            dtend=e.end.dateTime,
+            dtstart=ge.start.dateTime,
+            dtend=ge.end.dateTime,
             dtstamp=dtstamp,
             uid=f"{uuid4()}@itsalwaysbeen.photography",
-            summary=e.summary,
-            transp=e.transparency,
+            summary=ge.summary,
+            transp=ge.transparency,
         )
         return ical_event
 
