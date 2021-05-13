@@ -85,7 +85,9 @@ def export_events_to_ics(
     )
     # TODO: check that filename provided by user has .ics ending, if not, append it
     ics_content = create_ics_content(calendar_title, timezone, events)
+    print(f"Exporting events to {filename} ...")
     list_to_file(ics_content, filename)
+    print("... Done.")
 
 
 # TODO: turn the following function into command line app using Typer
@@ -124,7 +126,7 @@ def suncal(
             export_events_to_calendar(google_calendar_id, events, credentials)
 
         else:
-            # export events to ics file with specified path
+            # export events to ics file with specified name
             export_events_to_ics(events, calendar_title, timezone, filename)
 
     else:
