@@ -83,9 +83,13 @@ def export_events_to_ics(
         timezone=timezone,
         local_time_now=dt.datetime.now(),
     )
-    # TODO: check that filename provided by user has .ics ending, if not, append it
+    # check that filename provided by user has .ics ending, if not, add it
+    if not filename.endswith('.ics'):
+        filename += '.ics'
+    # create ics content as list of strings
     ics_content = create_ics_content(calendar_title, timezone, events)
     print(f"Exporting events to {filename} ...")
+    # write to file
     list_to_file(ics_content, filename)
     print("... Done.")
 
