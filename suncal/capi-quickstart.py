@@ -12,4 +12,5 @@ suncal(
     longitude=13.23,
     latitude=52.32,
     return_val="ics",
+    filename="blub",
 )
