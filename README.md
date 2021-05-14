@@ -10,8 +10,7 @@ To avoid all the above mentioned issues, the script should be able to create a .
 imported using the google calendar web interface. 
 
 # Rules for collaborators
-If you add a function/class, you also add a corresponding test. If you want to work on one of the items in the todo
-list, write your name next to it, so we don't do things several times. This repo uses type annotation. To add code, 
+If you add a function/class, you also add a corresponding test. This repo uses type annotation. To add code, 
 create a new branch and make sure to run all checks before setting up your PR: cd to the repo, then run:
 
 ```bash
@@ -19,78 +18,10 @@ create a new branch and make sure to run all checks before setting up your PR: c
 ```
 If any of the checks fail, the PR will not be accepted.
 
-The script suncal/capi-quickstart.py illustrates how to create an event in your primary calendar, how to create a new 
-calendar and how to list the summary (i.e. the names) of all the calendars that are associated with your account (
-comment out specific sections as needed). After registering capi-quickstart.py in google cloud, you can run the script
-with:
-
+To run the application execute this line in terminal:
 ```bash
 poetry run python path/to/capi-quickstart.py
 ```
-
-Credentials will be created and saved (as pickle) if they do not exist. (Do not forget to install the suncal package
-beforehand.)
-
-## Specifications
-
-### UI
-
-Intended as a simple command line tool. Use [typer](https://typer.tiangolo.com/) to create a 
-standalone command line tool and use its functionality to parse command line parameters, check their validity and 
-autogenerate documentation.
-
-#### CLI parameters
-
-The following parameters are useful for the dev phase and can be changed for productive runs. For example, 
-I might want to create this calendar for a year or two and it would be cumbersome to supply a "from" and "to"
-date for this. 
-
-|   parameter  | specs |
-|--------------|-------|
-| calendar title  | title (aka summary) of target google calendar. Create calendar with that title if it doesn't exist. |
-| from_date    | "yyyy-mm-dd" from this day ... (default today) |
-| to_date      | "yyyy-mm-dd" to this day ... (default today + 1 week) |
-| event        | e.g. "sunrise", for the first draft restrict to choices: | 
-|              | {"sunrise", "sunset", "golden-hour-morning", "golden-hour-evening"} |
-| timezone     | e.g. "Europe/Berlin" IANA timezone string (default Berlin) |
-| longitude    | e.g. -122.236355 for Redwood City CA (default Berlin) |
-| latitude     | e.g 37.485215 for Redwood City CA (default Berlin) |
-| return_val   | "api" (create events by api call) or "ics" (export ics calendar file) | 
-
-### Calendar event style
-
-#### Sunrise
-
-↑🌞 6:05 am
-
-#### Sunset
-
-↓🌞 7:10 pm
-
-#### Golden hour
-📷 golden hour
-
-### TO DO
-Some of the following todos can surely be split into several tasks (and can result in multiple functions/classes).
-
-#### CLI: Thomas
-Set up the CLI using **typer**.
-
-#### ics support: Franzi
-Implement mapping from list of GoogleCalEvents to ics file. 
-The full specification is [here](https://tools.ietf.org/html/rfc5545).
-
-#### main function (controlled by CLI): Franzi
-Loop over all requested dates. Calculate start and end time using the astral wrapper. 
-Create GoogleCalEvent. Either serialize these events for the API, or export to ics. If we use the API, initialise the 
-authentication flow. Check if the target calendar exits - if not, create it. Send all events to calendar. Done. 
-
-#### checks for IANA timezone strings
-Validate that user provided a valid IANA timezone string. 
-
-#### Batch requests
-I tried to send 365 sequential requests (creating events for one year) and got the following error: HttpError 403
-"Rate Limit Exceeded". I guess we have to pack these requests in batches.
 
 # Dependencies
 
