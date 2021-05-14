@@ -40,14 +40,16 @@ def test_vcalendar():
 
     assert vcal.x_wr_timezone == "Europe/Berlin"
     assert vcal.method == "PUBLISH"
-    assert vcal.prodid == "PLACEHOLDER"
+    assert vcal.prodid == "//rotkehlxen//suncal//EN"
     assert vcal.x_wr_calname == "Sonne"
     assert vcal.cascale == "GREGORIAN"
 
+    header = vcal.header()
     assert VCalendar.footer() == ["END:VCALENDAR"]
     assert vcal.footer() == ["END:VCALENDAR"]
-    assert "METHOD:PUBLISH" in vcal.header()
-    assert vcal.header()[2] == "VERSION:2.0"
+    assert "METHOD:PUBLISH" in header
+    assert header[1] == "PRODID:-//rotkehlxen//suncal//EN"
+    assert header[2] == "VERSION:2.0"
 
 
 def test_vevent():

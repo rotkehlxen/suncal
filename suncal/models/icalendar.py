@@ -69,13 +69,13 @@ class VCalendar(BaseModel):
     version: str = "2.0"  # icalendar version
     x_wr_calname: str  # name of the calendar, specific to google calendar, ignored by other apps
     x_wr_timezone: str  # e.g. "Europe/Berlin", specific to google calendar, ignored by other apps
-    prodid: str = "PLACEHOLDER"  # identifier of product that created this file: TODO: change this!
+    prodid: str = "//rotkehlxen//suncal//EN"  # identifier of product that created this file
 
     def header(self) -> List[str]:
         """Create icalender header. Items in returned list correspond to lines in ics file. """
         icalendar_header = [
             'BEGIN:VCALENDAR',
-            f'PRODID:{self.prodid}',
+            f'PRODID:-{self.prodid}',
             f'VERSION:{self.version}',
             f'CALSCALE:{self.cascale}',
             f'METHOD:{self.method}',
