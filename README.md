@@ -5,13 +5,13 @@ golden-hour-evening - which should be of particular interest for photographers �
 Parameters like geographic location (longitude & latitude), timezone and the range of dates for which these events 
 should be created can be specified ad libitum. If you register this application in google cloud and grant read and write
 access to your personal google calendar, the events can be inserted directly into your google calendar using api calls.
-You only specify the name of your calendar and if it does not exist, it will be created for you.
+You specify the name of your target calendar and if it does not exist, it will be created for you.
 
 Alternatively you can use this application to create an ics file and import it to any calendar you like. In that case,
 registration/authentication are unnecessary.  
 
 While the api functionality is only of interest for users of google calendar, the generated calendar ics file is 
-universal (and conforms to this [standard](https://datatracker.ietf.org/doc/html/rfc5545#page-102)) and so can be 
+universal (conforms to this [standard](https://datatracker.ietf.org/doc/html/rfc5545#page-102)) and so it can be 
 imported to every calendar application. (it contains two (optional) fields that are only understood by google 
 calendars but these are simply ignored by other calendar apps.) 
  
@@ -19,26 +19,29 @@ calendars but these are simply ignored by other calendar apps.)
 
 The application was built with [poetry](https://python-poetry.org/) and depends on python 3.7, so make sure you have 
 poetry and any minor version of python 3.7 installed on your system (to manage several installations of python we recommend 
-using [pyenv](https://github.com/pyenv/pyenv)). To set up a virtual environment and install all dependencies clone this
-repository, cd to the repository and run
+using [pyenv](https://github.com/pyenv/pyenv)). 
+
+Clone this repository, cd to the repository and run
 
 ```bash
 poetry install
 ```
- 
+This will set up a virtual environment and install the application (including all dev and non-dev dependencies).
+
 ## Use google calendar api to create calendar events
 
 To allow insertion of events into your google calendar, the app has to be registered in google cloud and access to the
 api enabled. The google cloud console is also the place where you can create credentials (a file named "credentials.json").
 When you run the application for the first time, the authentication flow will lead to the creation of access tokens (the
 credentials are required in this process!). All details of the process are outlined 
-[here](https://developers.google.com/calendar/quickstart/python). Currently the suncal app is still called capi-quickstart.py,
-so you can literally follow the description in the link above 😅 (just don't copy the content of the capi-quickstart file
-but use the capi-quickstart.py of this repository.) To change parameters like location and timezone modify the arguments
-of the suncal function in capi-quickstart.py. To use the google api (instead of exporting events to an ics file) be sure
-to set parameter "return_val" to "api".
+[here](https://developers.google.com/calendar/quickstart/python). 
 
-To run the application, make sure that your access tokens and capi-quickstart.py are in the same directory, cd to the 
+Currently the suncal app is called capi-quickstart.py,
+so you can literally follow the description in the link above 😅 (just don't copy the content of the capi-quickstart file
+but use the capi-quickstart.py of this repository.) Change parameters like location and timezone by modifying the 
+arguments to the `suncal` function in module capi-quickstart.py. Set parameter `return_val` to `"api"`.
+
+Make sure that your access tokens and module capi-quickstart.py are in the same directory, cd to the 
 directory and run 
 
 ```bash
@@ -47,7 +50,8 @@ poetry run python capi-quickstart.py
 ## Export events to ics file
 
 If you want to export the sun calendar to an ics file, registration of this app in google cloud is unnecessary. Just
-set all parameters in function suncal in module as you like but be sure to set parameter "return-val" to "ics".
+set all parameters in function `suncal` in module capi-quickstart.py as you like but be sure to set parameter 
+`return-val` to `"ics"`.
 You can provide a name for the ics file, but if you don't, the name will be created automatically. Then simply run
 
 ```bash
