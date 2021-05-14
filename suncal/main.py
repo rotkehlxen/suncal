@@ -97,6 +97,7 @@ def export_events_to_ics(
 # TODO: turn the following function into command line app using Typer
 # TODO: longitude  in [-180, 180], latitude in [-90, 90]. Catch values outside of these intervals during processing
 # TODO: of command line parameters and exit
+# TODO: check that provided timezone is valid (compare with pytz.all_timezones)
 
 # main
 def suncal(

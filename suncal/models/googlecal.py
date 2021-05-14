@@ -12,43 +12,50 @@ from pydantic import validator
 
 class GoogleCalTime(BaseModel):
     """
-    Can fill the "start" or "end" required field of a GoogleCalEvent!
-    Has three fields: date, dateTime and timeZone, however, not all of them are required at a time.
-
-    need date for all day events and dateTime for timed events
-    timeZone: IANA timezone db name, NOT required if dateTime contains a time offset
+    Model for a google calendar time. Used to specify start and end of a google calendar event.
     """
 
-    date: Optional[dt.date] = None
-    dateTime: Optional[dt.datetime] = None
-    timeZone: Optional[str] = None
+    date: Optional[dt.date] = None  # for all-day events
+    dateTime: Optional[dt.datetime] = None  # for timed events
+    timeZone: Optional[
+        str
+    ] = None  # required only if provided dateTime is not aware
 
-    # make sure that either date OR dateTime is provided (but not both at the same time)
     @root_validator(pre=True)
-    def date_or_datetime_provided(cls, values):  # pylint: disable=E0213
+    # make sure that either date OR dateTime is provided (but not both at the same time)  # pylint: disable=E0213
+    def date_or_datetime_provided(cls, values):
         date, datetime = values.get("date"), values.get("dateTime")
         assert (date is None and datetime is not None) or (
             date is not None and datetime is None
         ), "You have to provide a date for all day events OR a datetime for timed events!"
         return values
 
-    # TODO: The next two TODO items are not required for this particular application, as astral will always return ...
-    # TODO: ... datetime objects with timezone offset:
-    # TODO: 1. check for valid IANA timezone names
-    # TODO: 2. check that timezone is provided when dateTime does not contain a timezone offset
+    # if the root validator above fails, the following root validator is NOT executed
+    @root_validator(pre=True)
+    def timezone_provided_if_non_aware_datetime(
+        cls, values
+    ):  # pylint: disable=E0213
+        datetime, timezone = values.get("dateTime"), values.get("timeZone")
+        if datetime and (
+            datetime.tzinfo is None or datetime.utcoffset() is None
+        ):
+            assert (
+                timezone is not None
+            ), "If the dateTime is unaware you have to provide a timeZone."
+        return values
 
 
 class GoogleCalEvent(BaseModel):
-    """The only required parameters of a google cal event are start and end. 'summary' is the correct
-    field name of the event title. The default for time transparency of gcal events is 'opaque', however, sun cal
-    events are definitely no time blockers and thus transparency should be set to 'transparent".
+    """Model for google calendar event.
 
-    Can add additional fields later on when needed."""
+    The only required fields are 'start' and 'end'. More fields can be added when necessary."""
 
-    start: GoogleCalTime
-    end: GoogleCalTime
-    summary: str
-    transparency: str = 'transparent'
+    start: GoogleCalTime  # required field
+    end: GoogleCalTime  # required field
+    summary: str  # title of event, optional
+    transparency: str = (
+        'transparent'  # sun calendar events are definitely no time blockers
+    )
 
     @validator('transparency')
     def transparency_valid(cls, v):  # pylint: disable=E0213

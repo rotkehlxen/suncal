@@ -8,22 +8,35 @@ from suncal.main import create_calendar_events
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 
+now = dt.datetime.now()
+today = dt.datetime.today()
+time_zone = "Europe/Berlin"
+
 
 def test_date_or_datetime_check():
     with pytest.raises(ValidationError):
         # supply only either date or datetime
-        GoogleCalTime(date=dt.date.today(), dateTime=dt.datetime.now())
+        GoogleCalTime(date=dt.date.today(), dateTime=now, timeZone=time_zone)
 
     with pytest.raises(ValidationError):
         # at least one date type has to be provided
-        GoogleCalTime(date=None, dateTime=None)
+        GoogleCalTime(date=None, dateTime=None, timeZone=time_zone)
+
+
+def test_timezone_added_if_datetime_non_aware():
+    with pytest.raises(ValidationError):
+        GoogleCalTime(dateTime=now)
+
+    gcaltime = GoogleCalTime(dateTime=now, timeZone=time_zone)
+    assert gcaltime.dateTime == now
+    assert gcaltime.timeZone == time_zone
 
 
 def test_transparency_validation():
     with pytest.raises(ValidationError):
         GoogleCalEvent(
-            start=GoogleCalTime(date=dt.date.today()),
-            end=GoogleCalTime(date=dt.date.today()),
+            start=GoogleCalTime(date=today),
+            end=GoogleCalTime(date=today),
             summary='summary',
             transparency="non-opaque",
         )
@@ -31,8 +44,8 @@ def test_transparency_validation():
 
 def test_transparency_default():
     event = GoogleCalEvent(
-        start=GoogleCalTime(date=dt.date.today()),
-        end=GoogleCalTime(date=dt.date.today()),
+        start=GoogleCalTime(date=today),
+        end=GoogleCalTime(date=today),
         summary='summary',
     )
 
@@ -48,7 +61,7 @@ def test_google_cal_event_payload():
             hour=16,
             minute=30,
             second=0,
-            timezone="Europe/Berlin",
+            timezone=time_zone,
         )
     )
     end = GoogleCalTime(
@@ -59,7 +72,7 @@ def test_google_cal_event_payload():
             hour=17,
             minute=30,
             second=0,
-            timezone="Europe/Berlin",
+            timezone=time_zone,
         )
     )
     event = GoogleCalEvent(start=start, end=end, summary="test event")
@@ -76,7 +89,6 @@ def test_create_calendar_events():
 
     from_date = dt.date(2021, 5, 1)
     to_date = dt.date(2021, 5, 3)
-    timezone = "Europe/Berlin"
     longitude = 13.23
     latitude = 52.32
 
@@ -84,7 +96,7 @@ def test_create_calendar_events():
         event="sunrise",
         from_date=from_date,
         to_date=to_date,
-        timezone=timezone,
+        timezone=time_zone,
         longitude=longitude,
         latitude=latitude,
     )
@@ -102,7 +114,7 @@ def test_create_calendar_events():
         event="sunrise",
         from_date=from_date,
         to_date=to_date,
-        timezone=timezone,
+        timezone=time_zone,
         longitude=longitude,
         latitude=latitude,
     )
