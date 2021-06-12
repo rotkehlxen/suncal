@@ -55,7 +55,7 @@ poetry run suncal --cal Sonne --from-date 2021-6-10 --to-date 2021-6-10 --event 
 
 If you want to export the sun calendar to an ics file, registration of this app in google cloud is unnecessary. Just
 be sure to set `--return-val ics`.
-You can provide a name for the ics file, but if you don't, the name will be created automatically. Then simply run
+You can provide a name for the ics file, but if you don't, the name will be created automatically. 
 Example:
 
 ```bash
