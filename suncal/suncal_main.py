@@ -152,7 +152,7 @@ if __name__ == "__main__":
             timezone="Europe/Berlin",
             longitude=13.23,
             latitude=52.32,
-            return_val="api",
-            #filename="blub",
+            return_val="ics",
+            filename="blub",
         )
 
