@@ -21,6 +21,7 @@ SCOPES = [
 ]
 
 
+
 def create_calendar_events(
     event: str,
     from_date: dt.date,
@@ -140,9 +141,10 @@ def suncal(
             f"No calendar events created. ***"
         )
 
-    if __name__ == "__main__":
 
-        suncal(
+if __name__ == "__main__":
+
+    suncal(
             calendar_title="Sonne",
             from_date=dt.date(2021, 5, 10),
             to_date=dt.date(2021, 5, 11),
