@@ -1,6 +1,7 @@
 import datetime as dt
 from typing import List
 from typing import Optional
+# import click
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -93,15 +94,24 @@ def export_events_to_ics(
     list_to_file(ics_content, filename)
     print("... Done.")
 
-
-# TODO: turn the following function into command line app using Typer
-# TODO: longitude  in [-180, 180], latitude in [-90, 90]. Catch values outside of these intervals during processing
-# TODO: of command line parameters and exit
 # TODO: check that provided timezone is valid (compare with pytz.all_timezones)
 
 # main
+# @click.command()
+# @click.option("--cal", type=click.STRING, help="google calendar name")
+# @click.option("--from-date", type=click.DateTime(), help="First date for which to create events. Use format '%Y-%m-%d'.")
+# @click.option("--to-date", type=click.DateTime(), help="Last date for which to create events. Use format '%Y-%m-%d'.")
+# @click.option("--event", type=click.Choice(['sunrise', 'sunset', 'golden-hour-morning', 'golden-hour-evening'],
+#                                            case_sensitive=False),
+#               help="Chosen event. Either sunrise/sunset/golden-hour-morning/golden-hour-evening.")
+# @click.option("--timezone", type=click.STRING, help="IANA timezone string.")
+# @click.option("--long", type=click.FloatRange(min=-180.0, max=180.0), help="Longitude as float. Between -180 and 180.")
+# @click.option("--lat",  type=click.FloatRange(min=-90.0, max=90.0), help="Latitude as float. Between -90 and 90.")
+# @click.option("--return-val", type=click.Choice(['api', 'ics'], case_sensitive=False),
+#               help="Write events to google calendar using 'api', write to ics file using 'ics'.")
+# @click.option("--filename", type=click.STRING, required=False, help="Name of ics file. Optional.")
 def suncal(
-    calendar_title: str,  # name of target calendar
+    calendar_title: str,  # name of google target calendar
     from_date: dt.date,  # create events from this date ...
     to_date: dt.date,  # ... to this date
     event: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
