@@ -32,7 +32,7 @@ jupyter = "^1.0.0"
 pylint = "^2.7.4"
 
 [tool.poetry.scripts]
-suncal = "suncal.suncal_main:suncal"
+suncal = "suncal.suncal:suncal"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
