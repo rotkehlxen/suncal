@@ -146,13 +146,13 @@ if __name__ == "__main__":
 
     suncal(
             calendar_title="Sonne",
-            from_date=dt.date(2021, 5, 10),
-            to_date=dt.date(2021, 5, 11),
-            event="sunrise",
+            from_date=dt.date(2021, 6, 12),
+            to_date=dt.date(2021, 6, 13),
+            event="golden-hour-morning",
             timezone="Europe/Berlin",
             longitude=13.23,
             latitude=52.32,
-            return_val="ics",
-            filename="blub",
+            return_val="api",
+            #filename="blub",
         )
 
