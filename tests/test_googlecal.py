@@ -4,9 +4,9 @@ import pytest
 from pydantic import ValidationError
 
 from suncal.date_utils import create_timezone_aware_datetime
-from suncal.main import create_calendar_events
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
+from suncal.suncal import create_calendar_events
 
 now = dt.datetime.now()
 today = dt.datetime.today()

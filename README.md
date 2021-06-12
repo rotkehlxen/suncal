@@ -36,26 +36,31 @@ When you run the application for the first time, the authentication flow will le
 credentials are required in this process!). All details of the process are outlined 
 [here](https://developers.google.com/calendar/quickstart/python). 
 
-Currently the suncal app is called capi-quickstart.py,
-so you can literally follow the description in the link above 😅 (just don't copy the content of the capi-quickstart file
-but use the capi-quickstart.py of this repository.) Change parameters like location and timezone by modifying the 
-arguments to the `suncal` function in module capi-quickstart.py. Set parameter `return_val` to `"api"`.
-
-Make sure that your access tokens and module capi-quickstart.py are in the same directory, cd to the 
-directory and run 
+Navigate into the project folder (top level) (credentials and access tokens must be stored in this directory as well),
+then run
 
 ```bash
-poetry run python capi-quickstart.py
+poetry run suncal --help
 ```
+
+to see a description of all command line arguments. To insert events into your google calendar make sure to use
+`--return-val api`. Example:
+
+```bash
+poetry run suncal --cal Sonne --from-date 2021-6-10 --to-date 2021-6-10 --event sunrise --timezone 'Europe/Berlin' 
+--long 14 --lat 52 --return-val api
+```
+
 ## Export events to ics file
 
 If you want to export the sun calendar to an ics file, registration of this app in google cloud is unnecessary. Just
-set all parameters in function `suncal` in module capi-quickstart.py as you like but be sure to set parameter 
-`return-val` to `"ics"`.
-You can provide a name for the ics file, but if you don't, the name will be created automatically. Then simply run
+be sure to set `--return-val ics`.
+You can provide a name for the ics file, but if you don't, the name will be created automatically. 
+Example:
 
 ```bash
-poetry run path/to/python capi-quickstart.py
+poetry run suncal --cal Sonne --from-date 2021-6-10 --to-date 2021-6-10 --event sunrise --timezone 'Europe/Berlin' 
+--long 14 --lat 52 --return-val ics --filename myIcsFile.ics
 ```
 
 # Rules for collaborators

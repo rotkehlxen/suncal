@@ -21,6 +21,7 @@ google-api-python-client = "^1.12.8"
 google-auth-httplib2 = "^0.0.4"
 google-auth-oauthlib = "^0.4.2"
 pydantic = "^1.7.3"
+click = "^8.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -31,6 +32,10 @@ ipykernel = "^5.5.0"
 jupyter = "^1.0.0"
 pylint = "^2.7.4"
 
+[tool.poetry.scripts]
+suncal = "suncal.suncal:suncal"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
