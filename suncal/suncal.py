@@ -155,6 +155,16 @@ def suncal(
     return_val: str,  # api/ics
     filename: Optional[str] = None,  # only needed when return val is "ics"
 ) -> None:
+    """Calculate sunrise/sunset/golden-hour-morning/golden-hour-evening for provided range of dates
+    and export calendar events directly to google calendar or export them to ics file.
+
+    Usage:
+
+    cd suncal (package folder)
+    poetry run suncal --cal myCalendarName --from-date 2021-2-1 --to-date 2021-2-3 --event sunrise
+            --timezone 'Europe/Berlin' --long 14 --lat 52 --filename myIcsFile --return-val ics
+
+    """
 
     events: List[GoogleCalEvent] = create_calendar_events(
         event, from_date, to_date, timezone, longitude, latitude
@@ -183,18 +193,3 @@ def suncal(
             f"*** {event.title()} could not be calculated for the specified location. "
             f"No calendar events created. ***"
         )
-
-
-# if __name__ == "__main__":
-#
-#     suncal(
-#             calendar_title="Sonne",
-#             from_date=dt.date(2021, 6, 12),
-#             to_date=dt.date(2021, 6, 13),
-#             event="golden-hour-morning",
-#             timezone="Europe/Berlin",
-#             longitude=13.23,
-#             latitude=52.32,
-#             return_val="ics",
-#             filename="blub",
-#         )
