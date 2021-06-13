@@ -187,7 +187,6 @@ def suncal(
 
     """
 
-    print(timezone)
     events: List[GoogleCalEvent] = create_calendar_events(
         event, from_date, to_date, timezone, longitude, latitude
     )
