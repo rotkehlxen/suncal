@@ -2,8 +2,8 @@ import datetime as dt
 from typing import List
 from typing import Optional
 
-import pytz
 import click
+import pytz
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
@@ -109,7 +109,10 @@ class IANATimeZoneString(click.ParamType):
             return iana_timezones[idx]
 
         except ValueError:
-            self.fail(f"{value!r} is not a valid IANA time zone string!", param, ctx)
+            self.fail(
+                f"{value!r} is not a valid IANA time zone string!", param, ctx
+            )
+
 
 # main
 @click.command()
@@ -134,7 +137,11 @@ class IANATimeZoneString(click.ParamType):
     ),
     help="Chosen event. Either sunrise/sunset/golden-hour-morning/golden-hour-evening.",
 )
-@click.option("--timezone", type=IANATimeZoneString(), help="IANA timezone string. Case-insensitive matching enabled.")
+@click.option(
+    "--timezone",
+    type=IANATimeZoneString(),
+    help="IANA timezone string. Case-insensitive matching enabled.",
+)
 @click.option(
     "--long",
     "longitude",
