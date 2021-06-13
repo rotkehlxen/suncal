@@ -105,12 +105,12 @@ def suncal_main(
     "--cal", "calendar_title", type=click.STRING, help="google calendar name"
 )
 @click.option(
-    "--from-date",
+    "--from", "from_date",
     type=click.DateTime(),
     help="First date for which to create events.",
 )
 @click.option(
-    "--to-date",
+    "--to", "to_date",
     type=click.DateTime(),
     help="Last date for which to create events.",
 )
@@ -120,7 +120,7 @@ def suncal_main(
         ['sunrise', 'sunset', 'golden-hour-morning', 'golden-hour-evening'],
         case_sensitive=False,
     ),
-    help="Chosen event. Either sunrise/sunset/golden-hour-morning/golden-hour-evening.",
+    help="Calculate start and end time of the selected event.",
 )
 @click.option(
     "--timezone",
@@ -163,13 +163,6 @@ def suncal(
 ) -> None:
     """Calculate sunrise/sunset/golden-hour-morning/golden-hour-evening for provided range of dates
     and export calendar events directly to google calendar or export them to ics file.
-
-    Usage:
-
-    cd suncal (package folder)
-    poetry run suncal --cal myCalendarName --from-date 2021-2-1 --to-date 2021-2-3 --event sunrise
-            --timezone 'Europe/Berlin' --long 14 --lat 52 --filename myIcsFile --return-val ics
-
     """
     suncal_main(
         calendar_title,
