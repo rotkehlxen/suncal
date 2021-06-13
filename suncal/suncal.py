@@ -6,7 +6,7 @@ import click
 
 from suncal.auth import get_credentials
 from suncal.cli import IANATimeZoneString
-from suncal.date_utils import date_range
+from suncal.utils import date_range
 from suncal.fileio import export_events_to_ics
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent

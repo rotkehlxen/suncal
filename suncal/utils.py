@@ -54,3 +54,11 @@ def aware_datetime_to_ical_date_with_utc_time(
     utc_datetime = aware_datetime.astimezone(utc_timezone)
 
     return utc_datetime.strftime("%Y%m%dT%H%M%SZ")
+
+
+def create_batches(list_: List, batch_size: int = 500) -> List[List]:
+    """Divide [list_] into batches (sub-lists) of max length [batch_size]."""
+    batches = []
+    for idx in range(0, len(list_), batch_size):
+        batches += [list_[idx : idx + batch_size]]
+    return batches
