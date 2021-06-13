@@ -10,6 +10,8 @@ from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import root_validator
 from pydantic import validator
 
+from suncal.utils import create_batches
+
 
 class GoogleCalTime(BaseModel):
     """
@@ -149,10 +151,15 @@ def export_events_to_google_calendar(
     credentials: Credentials,
 ) -> None:
 
+    # create batches of events list of max size 1000 (current max of google api)
+    event_batches = create_batches(list_=events, batch_size=1000)
     print("Creating calendar events ...")
     with build("calendar", "v3", credentials=credentials) as service:
-        for google_cal_event in events:
-            service.events().insert(
-                calendarId=google_calendar_id, body=google_cal_event.payload()
-            ).execute()
+
+        for event_batch in event_batches:
+            batch_request = service.new_batch_http_request()
+            for google_cal_event in event_batch:
+                batch_request.add(service.events().insert(calendarId=google_calendar_id,
+                                                          body=google_cal_event.payload()))
+            batch_request.execute()
     print("... DONE.")
