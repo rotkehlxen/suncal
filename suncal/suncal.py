@@ -6,13 +6,13 @@ import click
 
 from suncal.auth import get_credentials
 from suncal.cli import IANATimeZoneString
-from suncal.utils import date_range
 from suncal.fileio import export_events_to_ics
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.models.googlecal import export_events_to_google_calendar
 from suncal.models.googlecal import get_sun_calendar_id
+from suncal.utils import date_range
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",

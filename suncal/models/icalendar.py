@@ -7,8 +7,8 @@ from uuid import uuid4
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import validator
 
-from suncal.utils import aware_datetime_to_ical_date_with_utc_time
 from suncal.models.googlecal import GoogleCalEvent
+from suncal.utils import aware_datetime_to_ical_date_with_utc_time
 
 
 class VEvent(BaseModel):
