@@ -159,7 +159,11 @@ def export_events_to_google_calendar(
         for event_batch in event_batches:
             batch_request = service.new_batch_http_request()
             for google_cal_event in event_batch:
-                batch_request.add(service.events().insert(calendarId=google_calendar_id,
-                                                          body=google_cal_event.payload()))
+                batch_request.add(
+                    service.events().insert(
+                        calendarId=google_calendar_id,
+                        body=google_cal_event.payload(),
+                    )
+                )
             batch_request.execute()
     print("... DONE.")
