@@ -16,7 +16,8 @@ def get_credentials(scopes: List[str]) -> Credentials:
             "File 'credentials.json' is missing! Make sure the file is located in the suncal project folder (in the "
             "same folder as README.md). If you have no credentials file, you have to register this application "
             "in google cloud console, grant this application access to the google calendar api and create "
-            "credentials for your google account."
+            "credentials for your google account. For more information check out "
+            "https://developers.google.com/workspace/guides/create-credentials"
         )
 
     creds = None
