@@ -4,18 +4,15 @@ from typing import Optional
 
 import click
 import pytz
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
 
 from suncal.auth import get_credentials
 from suncal.date_utils import date_range
-from suncal.fileio import ics_filename
-from suncal.fileio import list_to_file
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
+from suncal.models.googlecal import export_events_to_google_calendar
 from suncal.models.googlecal import get_sun_calendar_id
-from suncal.models.icalendar import create_ics_content
+
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -57,43 +54,6 @@ def create_calendar_events(
             )
 
     return calendar_events
-
-
-def export_events_to_calendar(
-    google_calendar_id: str,
-    events: List[GoogleCalEvent],
-    credentials: Credentials,
-) -> None:
-
-    print("Creating calendar events ...")
-    with build("calendar", "v3", credentials=credentials) as service:
-        for google_cal_event in events:
-            service.events().insert(
-                calendarId=google_calendar_id, body=google_cal_event.payload()
-            ).execute()
-    print("... DONE.")
-
-
-def export_events_to_ics(
-    events: List[GoogleCalEvent],
-    calendar_title: str,
-    timezone: str,
-    filename: Optional[str],
-) -> None:
-    filename = filename or ics_filename(
-        calendar_title=calendar_title,
-        timezone=timezone,
-        local_time_now=dt.datetime.now(),
-    )
-    # check that filename provided by user has .ics ending, if not, add it
-    if not filename.endswith('.ics'):
-        filename += '.ics'
-    # create ics content as list of strings
-    ics_content = create_ics_content(calendar_title, timezone, events)
-    print(f"Exporting events to {filename} ...")
-    # write to file
-    list_to_file(ics_content, filename)
-    print("... Done.")
 
 
 class IANATimeZoneString(click.ParamType):
@@ -203,7 +163,7 @@ def suncal(
                 calendar_title, timezone, credentials
             )
 
-            export_events_to_calendar(google_calendar_id, events, credentials)
+            export_events_to_google_calendar(google_calendar_id, events, credentials)
 
         else:
             # export events to ics file with specified name

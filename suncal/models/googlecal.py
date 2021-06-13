@@ -1,7 +1,6 @@
 import datetime as dt
 import json
-from typing import Dict
-from typing import Optional
+from typing import Dict, Optional, List
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -140,3 +139,18 @@ def create_sun_calendar(
         created_calendar = service.calendars().insert(body=calendar).execute()
 
     return created_calendar["id"]
+
+
+def export_events_to_google_calendar(
+    google_calendar_id: str,
+    events: List[GoogleCalEvent],
+    credentials: Credentials,
+) -> None:
+
+    print("Creating calendar events ...")
+    with build("calendar", "v3", credentials=credentials) as service:
+        for google_cal_event in events:
+            service.events().insert(
+                calendarId=google_calendar_id, body=google_cal_event.payload()
+            ).execute()
+    print("... DONE.")
