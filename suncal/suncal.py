@@ -99,18 +99,24 @@ def suncal_main(
         )
 
 
+def collect_cli_arguments(**suncal_kwargs) -> None:
+    print(suncal_kwargs)
+
+
 # cli
 @click.command()
 @click.option(
     "--cal", "calendar_title", type=click.STRING, help="google calendar name"
 )
 @click.option(
-    "--from", "from_date",
+    "--from",
+    "from_date",
     type=click.DateTime(),
     help="First date for which to create events.",
 )
 @click.option(
-    "--to", "to_date",
+    "--to",
+    "to_date",
     type=click.DateTime(),
     help="Last date for which to create events.",
 )
@@ -150,7 +156,9 @@ def suncal_main(
     required=False,
     help="Name of ics file. Optional.",
 )
+@click.option('--dev/--no-dev', 'dev_mode', default=False)
 def suncal(
+    dev_mode: bool,  # dev mode
     calendar_title: str,  # name of google target calendar
     from_date: dt.date,  # create events from this date ...
     to_date: dt.date,  # ... to this date
@@ -164,14 +172,29 @@ def suncal(
     """Calculate sunrise/sunset/golden-hour-morning/golden-hour-evening for provided range of dates
     and export calendar events directly to google calendar or export them to ics file.
     """
-    suncal_main(
-        calendar_title,
-        from_date,
-        to_date,
-        event,
-        timezone,
-        longitude,
-        latitude,
-        return_val,
-        filename,
-    )
+    if not dev_mode:
+        suncal_main(
+            calendar_title,
+            from_date,
+            to_date,
+            event,
+            timezone,
+            longitude,
+            latitude,
+            return_val,
+            filename,
+        )
+    else:
+        # print all parsed arguments to the console (as dict)
+        collect_cli_arguments(
+            dev_mode=dev_mode,
+            calendar_title=calendar_title,
+            from_date=from_date,
+            to_date=to_date,
+            event=event,
+            timezone=timezone,
+            longitude=longitude,
+            latitude=latitude,
+            return_val=return_val,
+            filename=filename,
+        )
