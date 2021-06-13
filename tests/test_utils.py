@@ -81,7 +81,7 @@ def test_ical_datetime():
 
 
 def test_create_batches():
-    liste = list(range(0, 8))
-    batches = create_batches(liste, batch_size=3)
+    mylist = list(range(0, 8))
+    batches = create_batches(mylist, batch_size=3)
 
     assert batches == [[0, 1, 2], [3, 4, 5], [6, 7]]
