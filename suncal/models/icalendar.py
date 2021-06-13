@@ -67,8 +67,6 @@ class VCalendar(BaseModel):
         "GREGORIAN"  # optional, included to mirror google calendar ics export
     )
     version: str = "2.0"  # icalendar version
-    x_wr_calname: str  # name of the calendar, specific to google calendar, ignored by other apps
-    x_wr_timezone: str  # e.g. "Europe/Berlin", specific to google calendar, ignored by other apps
     prodid: str = "//rotkehlxen//suncal//EN"  # identifier of product that created this file
 
     def header(self) -> List[str]:
@@ -79,8 +77,6 @@ class VCalendar(BaseModel):
             f'VERSION:{self.version}',
             f'CALSCALE:{self.cascale}',
             f'METHOD:{self.method}',
-            f'X-WR-CALNAME:{self.x_wr_calname}',
-            f'X-WR-TIMEZONE:{self.x_wr_timezone}',
         ]
         return icalendar_header
 
@@ -90,12 +86,10 @@ class VCalendar(BaseModel):
         return ['END:VCALENDAR']
 
 
-def create_ics_content(
-    calendar_name: str, timezone: str, gcal_events: List[GoogleCalEvent]
-) -> List[str]:
+def create_ics_content(gcal_events: List[GoogleCalEvent]) -> List[str]:
     """Create all lines of ics file as list of strings."""
     dtstamp = dt.datetime.now(dt.timezone.utc)
-    vcalendar = VCalendar(x_wr_calname=calendar_name, x_wr_timezone=timezone)
+    vcalendar = VCalendar()
 
     # header
     ics_content = vcalendar.header()
