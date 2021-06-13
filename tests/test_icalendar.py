@@ -3,12 +3,12 @@ import datetime as dt
 import pytest
 from pydantic import ValidationError
 
-from suncal.date_utils import create_timezone_aware_datetime
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.models.icalendar import VCalendar
 from suncal.models.icalendar import VEvent
 from suncal.models.icalendar import create_ics_content
+from suncal.utils import create_timezone_aware_datetime
 
 start_datetime = create_timezone_aware_datetime(
     year=2021,

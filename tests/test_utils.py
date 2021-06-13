@@ -1,8 +1,9 @@
 import datetime as dt
 
-from suncal.date_utils import aware_datetime_to_ical_date_with_utc_time
-from suncal.date_utils import create_timezone_aware_datetime
-from suncal.date_utils import date_range
+from suncal.utils import aware_datetime_to_ical_date_with_utc_time
+from suncal.utils import create_batches
+from suncal.utils import create_timezone_aware_datetime
+from suncal.utils import date_range
 
 
 def test_date_range():
@@ -78,3 +79,10 @@ def test_ical_datetime():
 
     ical_string = aware_datetime_to_ical_date_with_utc_time(datetime_utc)
     assert ical_string == "20210417T163000Z"
+
+
+def test_create_batches():
+    mylist = list(range(0, 8))
+    batches = create_batches(mylist, batch_size=3)
+
+    assert batches == [[0, 1, 2], [3, 4, 5], [6, 7]]
