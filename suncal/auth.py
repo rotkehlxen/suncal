@@ -1,5 +1,6 @@
 import os
 import pickle
+import sys
 from typing import List
 
 from google.auth.transport.requests import Request
@@ -8,6 +9,16 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 
 
 def get_credentials(scopes: List[str]) -> Credentials:
+
+    # check that credentials.json is available
+    if not os.path.exists('credentials.json'):
+        sys.exit(
+            "File 'credentials.json' is missing! Make sure the file is located in the suncal project folder (in the "
+            "same folder as README.md). If you have no credentials file, you have to register this application "
+            "in google cloud console, grant this application access to the google calendar api and create "
+            "credentials for your google account."
+        )
+
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -20,7 +31,7 @@ def get_credentials(scopes: List[str]) -> Credentials:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            print("define flow")
+            print("define authentication flow")
             flow = InstalledAppFlow.from_client_secrets_file(
                 "credentials.json", scopes
             )

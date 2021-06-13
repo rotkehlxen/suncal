@@ -76,7 +76,7 @@ def suncal_main(
 
         if return_val == "api":
 
-            # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
+            # get access tokes, create them if they do not exist/need to be refreshed (authentication flow)
             credentials = get_credentials(SCOPES)
 
             # check if calendar with provided title exists, if not create it and always return the id of the calendar
