@@ -3,6 +3,7 @@ from typing import List
 from typing import Optional
 
 import click
+import pytz
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
@@ -95,7 +96,23 @@ def export_events_to_ics(
     print("... Done.")
 
 
-# TODO: check that provided timezone is valid (compare with pytz.all_timezones)
+class IANATimeZoneString(click.ParamType):
+    name = "IANATimeZoneString"
+
+    def convert(self, value, param, ctx):
+
+        iana_timezones = pytz.all_timezones
+        iana_timezones_lower = [timezone.lower() for timezone in iana_timezones]
+
+        try:
+            idx = iana_timezones_lower.index(value.lower())
+            return iana_timezones[idx]
+
+        except ValueError:
+            self.fail(
+                f"{value!r} is not a valid IANA time zone string!", param, ctx
+            )
+
 
 # main
 @click.command()
@@ -120,7 +137,11 @@ def export_events_to_ics(
     ),
     help="Chosen event. Either sunrise/sunset/golden-hour-morning/golden-hour-evening.",
 )
-@click.option("--timezone", type=click.STRING, help="IANA timezone string.")
+@click.option(
+    "--timezone",
+    type=IANATimeZoneString(),
+    help="IANA timezone string. Case-insensitive matching enabled.",
+)
 @click.option(
     "--long",
     "longitude",
