@@ -60,7 +60,7 @@ def suncal_main(
     calendar_title: str,  # name of google target calendar
     from_date: dt.date,  # create events from this date ...
     to_date: dt.date,  # ... to this date
-    event: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
+    event_name: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
     timezone: str,  # e.g. "Europe/Berlin"
     longitude: float,  # e.g. 13.23
     latitude: float,  # e.g. 52.32
@@ -69,7 +69,7 @@ def suncal_main(
 ) -> None:
 
     events: List[GoogleCalEvent] = create_calendar_events(
-        event, from_date, to_date, timezone, longitude, latitude
+        event_name, from_date, to_date, timezone, longitude, latitude
     )
 
     if events:
@@ -90,11 +90,11 @@ def suncal_main(
 
         else:
             # export events to ics file with specified name
-            export_events_to_ics(events, calendar_title, timezone, filename)
+            export_events_to_ics(events, event_name, filename)
 
     else:
         print(
-            f"*** {event.title()} could not be calculated for the specified location. "
+            f"*** {event_name.title()} could not be calculated for the specified location. "
             f"No calendar events created. ***"
         )
 
@@ -122,6 +122,7 @@ def collect_cli_arguments(**suncal_kwargs) -> None:
 )
 @click.option(
     "--event",
+    "event_name",
     type=click.Choice(
         ['sunrise', 'sunset', 'golden-hour-morning', 'golden-hour-evening'],
         case_sensitive=False,
@@ -162,7 +163,7 @@ def suncal(
     calendar_title: str,  # name of google target calendar
     from_date: dt.date,  # create events from this date ...
     to_date: dt.date,  # ... to this date
-    event: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
+    event_name: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
     timezone: str,  # e.g. "Europe/Berlin"
     longitude: float,  # e.g. 13.23
     latitude: float,  # e.g. 52.32
@@ -177,7 +178,7 @@ def suncal(
             calendar_title,
             from_date,
             to_date,
-            event,
+            event_name,
             timezone,
             longitude,
             latitude,
@@ -191,7 +192,7 @@ def suncal(
             calendar_title=calendar_title,
             from_date=from_date,
             to_date=to_date,
-            event=event,
+            event=event_name,
             timezone=timezone,
             longitude=longitude,
             latitude=latitude,
