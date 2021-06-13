@@ -186,7 +186,6 @@ def suncal(
         )
     else:
         # print all parsed arguments to the console (as dict)
-        print("I am in the dev section")
         collect_cli_arguments(
             dev_mode=dev_mode,
             calendar_title=calendar_title,
