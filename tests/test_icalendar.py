@@ -36,12 +36,10 @@ now = dt.datetime.now(dt.timezone.utc)
 
 
 def test_vcalendar():
-    vcal = VCalendar(x_wr_calname="Sonne", x_wr_timezone="Europe/Berlin")
+    vcal = VCalendar()
 
-    assert vcal.x_wr_timezone == "Europe/Berlin"
     assert vcal.method == "PUBLISH"
     assert vcal.prodid == "//rotkehlxen//suncal//EN"
-    assert vcal.x_wr_calname == "Sonne"
     assert vcal.cascale == "GREGORIAN"
 
     header = vcal.header()
@@ -103,13 +101,11 @@ def test_ics_content():
     )
     events = [gcal_event1, gcal_event2]
 
-    ics_content = create_ics_content(
-        calendar_name=calendar_name, timezone=timezone, gcal_events=events
-    )
+    ics_content = create_ics_content(gcal_events=events)
 
     assert isinstance(ics_content, list)
-    # test number of lines: header 7 lines, footer 1 line, per event 8 --> 24 lines in total
-    assert len(ics_content) == 24
+    # test number of lines: header 5 lines, footer 1 line, per event 8 --> 22 lines in total
+    assert len(ics_content) == 22
     assert ics_content[0] == "BEGIN:VCALENDAR"
     assert ics_content[-1] == "END:VCALENDAR"
     assert "VERSION:2.0" in ics_content
