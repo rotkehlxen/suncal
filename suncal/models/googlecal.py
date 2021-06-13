@@ -1,6 +1,8 @@
 import datetime as dt
 import json
-from typing import Dict, Optional, List
+from typing import Dict
+from typing import List
+from typing import Optional
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build

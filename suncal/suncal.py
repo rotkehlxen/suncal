@@ -3,16 +3,16 @@ from typing import List
 from typing import Optional
 
 import click
-import pytz
 
 from suncal.auth import get_credentials
+from suncal.cli import IANATimeZoneString
 from suncal.date_utils import date_range
+from suncal.fileio import export_events_to_ics
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.models.googlecal import export_events_to_google_calendar
 from suncal.models.googlecal import get_sun_calendar_id
-
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -56,25 +56,50 @@ def create_calendar_events(
     return calendar_events
 
 
-class IANATimeZoneString(click.ParamType):
-    name = "IANATimeZoneString"
+def suncal_main(
+    calendar_title: str,  # name of google target calendar
+    from_date: dt.date,  # create events from this date ...
+    to_date: dt.date,  # ... to this date
+    event: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
+    timezone: str,  # e.g. "Europe/Berlin"
+    longitude: float,  # e.g. 13.23
+    latitude: float,  # e.g. 52.32
+    return_val: str,  # api/ics
+    filename: Optional[str] = None,  # only needed when return val is "ics"
+) -> None:
 
-    def convert(self, value, param, ctx):
+    events: List[GoogleCalEvent] = create_calendar_events(
+        event, from_date, to_date, timezone, longitude, latitude
+    )
 
-        iana_timezones = pytz.all_timezones
-        iana_timezones_lower = [timezone.lower() for timezone in iana_timezones]
+    if events:
 
-        try:
-            idx = iana_timezones_lower.index(value.lower())
-            return iana_timezones[idx]
+        if return_val == "api":
 
-        except ValueError:
-            self.fail(
-                f"{value!r} is not a valid IANA time zone string!", param, ctx
+            # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
+            credentials = get_credentials(SCOPES)
+
+            # check if calendar with provided title exists, if not create it and always return the id of the calendar
+            google_calendar_id = get_sun_calendar_id(
+                calendar_title, timezone, credentials
             )
 
+            export_events_to_google_calendar(
+                google_calendar_id, events, credentials
+            )
 
-# main
+        else:
+            # export events to ics file with specified name
+            export_events_to_ics(events, calendar_title, timezone, filename)
+
+    else:
+        print(
+            f"*** {event.title()} could not be calculated for the specified location. "
+            f"No calendar events created. ***"
+        )
+
+
+# cli
 @click.command()
 @click.option(
     "--cal", "calendar_title", type=click.STRING, help="google calendar name"
@@ -146,31 +171,14 @@ def suncal(
             --timezone 'Europe/Berlin' --long 14 --lat 52 --filename myIcsFile --return-val ics
 
     """
-
-    events: List[GoogleCalEvent] = create_calendar_events(
-        event, from_date, to_date, timezone, longitude, latitude
+    suncal_main(
+        calendar_title,
+        from_date,
+        to_date,
+        event,
+        timezone,
+        longitude,
+        latitude,
+        return_val,
+        filename,
     )
-
-    if events:
-
-        if return_val == "api":
-
-            # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
-            credentials = get_credentials(SCOPES)
-
-            # check if calendar with provided title exists, if not create it and always return the id of the calendar
-            google_calendar_id = get_sun_calendar_id(
-                calendar_title, timezone, credentials
-            )
-
-            export_events_to_google_calendar(google_calendar_id, events, credentials)
-
-        else:
-            # export events to ics file with specified name
-            export_events_to_ics(events, calendar_title, timezone, filename)
-
-    else:
-        print(
-            f"*** {event.title()} could not be calculated for the specified location. "
-            f"No calendar events created. ***"
-        )

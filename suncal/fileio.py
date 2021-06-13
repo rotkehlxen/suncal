@@ -1,8 +1,9 @@
 import datetime as dt
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
-from suncal.models.icalendar import create_ics_content
 from suncal.models.googlecal import GoogleCalEvent
+from suncal.models.icalendar import create_ics_content
 
 
 def list_to_file(lines: List[str], filename: str) -> None:
