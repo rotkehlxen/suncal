@@ -3,19 +3,16 @@ from typing import List
 from typing import Optional
 
 import click
-import pytz
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
 
 from suncal.auth import get_credentials
+from suncal.cli import IANATimeZoneString
 from suncal.date_utils import date_range
-from suncal.fileio import ics_filename
-from suncal.fileio import list_to_file
+from suncal.fileio import export_events_to_ics
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
+from suncal.models.googlecal import export_events_to_google_calendar
 from suncal.models.googlecal import get_sun_calendar_id
-from suncal.models.icalendar import create_ics_content
 
 SCOPES = [
     "https://www.googleapis.com/auth/calendar",
@@ -59,73 +56,67 @@ def create_calendar_events(
     return calendar_events
 
 
-def export_events_to_calendar(
-    google_calendar_id: str,
-    events: List[GoogleCalEvent],
-    credentials: Credentials,
+def suncal_main(
+    calendar_title: str,  # name of google target calendar
+    from_date: dt.date,  # create events from this date ...
+    to_date: dt.date,  # ... to this date
+    event: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
+    timezone: str,  # e.g. "Europe/Berlin"
+    longitude: float,  # e.g. 13.23
+    latitude: float,  # e.g. 52.32
+    return_val: str,  # api/ics
+    filename: Optional[str] = None,  # only needed when return val is "ics"
 ) -> None:
 
-    print("Creating calendar events ...")
-    with build("calendar", "v3", credentials=credentials) as service:
-        for google_cal_event in events:
-            service.events().insert(
-                calendarId=google_calendar_id, body=google_cal_event.payload()
-            ).execute()
-    print("... DONE.")
-
-
-def export_events_to_ics(
-    events: List[GoogleCalEvent],
-    calendar_title: str,
-    timezone: str,
-    filename: Optional[str],
-) -> None:
-    filename = filename or ics_filename(
-        calendar_title=calendar_title,
-        timezone=timezone,
-        local_time_now=dt.datetime.now(),
+    events: List[GoogleCalEvent] = create_calendar_events(
+        event, from_date, to_date, timezone, longitude, latitude
     )
-    # check that filename provided by user has .ics ending, if not, add it
-    if not filename.endswith('.ics'):
-        filename += '.ics'
-    # create ics content as list of strings
-    ics_content = create_ics_content(calendar_title, timezone, events)
-    print(f"Exporting events to {filename} ...")
-    # write to file
-    list_to_file(ics_content, filename)
-    print("... Done.")
 
+    if events:
 
-class IANATimeZoneString(click.ParamType):
-    name = "IANATimeZoneString"
+        if return_val == "api":
 
-    def convert(self, value, param, ctx):
+            # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
+            credentials = get_credentials(SCOPES)
 
-        iana_timezones = pytz.all_timezones
-        iana_timezones_lower = [timezone.lower() for timezone in iana_timezones]
-
-        try:
-            idx = iana_timezones_lower.index(value.lower())
-            return iana_timezones[idx]
-
-        except ValueError:
-            self.fail(
-                f"{value!r} is not a valid IANA time zone string!", param, ctx
+            # check if calendar with provided title exists, if not create it and always return the id of the calendar
+            google_calendar_id = get_sun_calendar_id(
+                calendar_title, timezone, credentials
             )
 
+            export_events_to_google_calendar(
+                google_calendar_id, events, credentials
+            )
 
-# main
+        else:
+            # export events to ics file with specified name
+            export_events_to_ics(events, calendar_title, timezone, filename)
+
+    else:
+        print(
+            f"*** {event.title()} could not be calculated for the specified location. "
+            f"No calendar events created. ***"
+        )
+
+
+def collect_cli_arguments(**suncal_kwargs) -> None:
+    click.echo(suncal_kwargs)
+
+
+# cli
 @click.command()
 @click.option(
     "--cal", "calendar_title", type=click.STRING, help="google calendar name"
 )
 @click.option(
-    "--from-date",
+    "--from",
+    "from_date",
     type=click.DateTime(),
     help="First date for which to create events.",
 )
 @click.option(
-    "--to-date",
+    "--to",
+    "to_date",
     type=click.DateTime(),
     help="Last date for which to create events.",
 )
@@ -135,7 +126,7 @@ class IANATimeZoneString(click.ParamType):
         ['sunrise', 'sunset', 'golden-hour-morning', 'golden-hour-evening'],
         case_sensitive=False,
     ),
-    help="Chosen event. Either sunrise/sunset/golden-hour-morning/golden-hour-evening.",
+    help="Calculate start and end time of the selected event.",
 )
 @click.option(
     "--timezone",
@@ -165,7 +156,9 @@ class IANATimeZoneString(click.ParamType):
     required=False,
     help="Name of ics file. Optional.",
 )
+@click.option('--dev/--no-dev', 'dev_mode', default=False)
 def suncal(
+    dev_mode: bool,  # dev mode
     calendar_title: str,  # name of google target calendar
     from_date: dt.date,  # create events from this date ...
     to_date: dt.date,  # ... to this date
@@ -178,39 +171,31 @@ def suncal(
 ) -> None:
     """Calculate sunrise/sunset/golden-hour-morning/golden-hour-evening for provided range of dates
     and export calendar events directly to google calendar or export them to ics file.
-
-    Usage:
-
-    cd suncal (package folder)
-    poetry run suncal --cal myCalendarName --from-date 2021-2-1 --to-date 2021-2-3 --event sunrise
-            --timezone 'Europe/Berlin' --long 14 --lat 52 --filename myIcsFile --return-val ics
-
     """
-
-    events: List[GoogleCalEvent] = create_calendar_events(
-        event, from_date, to_date, timezone, longitude, latitude
-    )
-
-    if events:
-
-        if return_val == "api":
-
-            # get credentials, create them if they do not exist/need to be refreshed (authentication flow)
-            credentials = get_credentials(SCOPES)
-
-            # check if calendar with provided title exists, if not create it and always return the id of the calendar
-            google_calendar_id = get_sun_calendar_id(
-                calendar_title, timezone, credentials
-            )
-
-            export_events_to_calendar(google_calendar_id, events, credentials)
-
-        else:
-            # export events to ics file with specified name
-            export_events_to_ics(events, calendar_title, timezone, filename)
-
+    if not dev_mode:
+        suncal_main(
+            calendar_title,
+            from_date,
+            to_date,
+            event,
+            timezone,
+            longitude,
+            latitude,
+            return_val,
+            filename,
+        )
     else:
-        print(
-            f"*** {event.title()} could not be calculated for the specified location. "
-            f"No calendar events created. ***"
+        # print all parsed arguments to the console (as dict)
+        print("I am in the dev section")
+        collect_cli_arguments(
+            dev_mode=dev_mode,
+            calendar_title=calendar_title,
+            from_date=from_date,
+            to_date=to_date,
+            event=event,
+            timezone=timezone,
+            longitude=longitude,
+            latitude=latitude,
+            return_val=return_val,
+            filename=filename,
         )

@@ -47,8 +47,8 @@ to see a description of all command line arguments. To insert events into your g
 `--return-val api`. Example:
 
 ```bash
-poetry run suncal --cal Sonne --from-date 2021-6-10 --to-date 2021-6-10 --event sunrise --timezone 'Europe/Berlin' 
---long 14 --lat 52 --return-val api
+poetry run suncal --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunrise --timezone 'Europe/Berlin' \ 
+--long 14.32 --lat 52 --return-val api
 ```
 
 ## Export events to ics file
@@ -59,8 +59,8 @@ You can provide a name for the ics file, but if you don't, the name will be crea
 Example:
 
 ```bash
-poetry run suncal --cal Sonne --from-date 2021-6-10 --to-date 2021-6-10 --event sunrise --timezone 'Europe/Berlin' 
---long 14 --lat 52 --return-val ics --filename myIcsFile.ics
+poetry run suncal --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunrise --timezone 'Europe/Berlin' \ 
+--long 14.32 --lat 52 --return-val ics --filename myIcsFile.ics
 ```
 
 # Rules for collaborators
