@@ -12,8 +12,7 @@ registration/authentication are unnecessary.
 
 While the api functionality is only of interest for users of google calendar, the generated calendar ics file is 
 universal (conforms to this [standard](https://datatracker.ietf.org/doc/html/rfc5545#page-102)) and so it can be 
-imported to every calendar application. (it contains two (optional) fields that are only understood by google 
-calendars but these are simply ignored by other calendar apps.) 
+imported to every calendar application. 
  
 # How to run suncal
 
