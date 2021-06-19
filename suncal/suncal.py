@@ -124,7 +124,6 @@ def suncal():
     type=IANATimeZoneString(),
     help="Default timezone of google calendar. IANA timezone string. Case-insensitive matching enabled.",
 )
-@click.option('--dev/--no-dev', 'dev_mode', default=False)
 def api(
     dev_mode: bool,
     calendar_title: str,
