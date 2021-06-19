@@ -70,7 +70,9 @@ def suncal_main(
     timezone: Optional[str] = None,
 ) -> None:
 
+    assert to_date >= from_date, "to_date must be >= from_date."
     timezone = timezone or "UTC"
+
     events: List[GoogleCalEvent] = create_calendar_events(
         event_name, from_date, to_date, timezone, longitude, latitude
     )
@@ -123,6 +125,7 @@ def suncal():
     "--timezone",
     type=IANATimeZoneString(),
     help="Default timezone of google calendar. IANA timezone string. Case-insensitive matching enabled.",
+    required=True,
 )
 def api(
     dev_mode: bool,
