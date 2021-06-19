@@ -47,7 +47,7 @@ to see a description of all command line options.
 Example for a complete set of options:
 
 ```bash
-poetry run suncal api --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunrise --timezone 'Europe/Berlin' \ 
+poetry run suncal api --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunrise --timezone 'Europe/Berlin' \
 --long 14.32 --lat 52
 ```
 
@@ -64,7 +64,7 @@ poetry run suncal ics --help
 Example:
 
 ```bash
-poetry run suncal ics --from 2021-6-10 --to 2021-6-10 --event sunrise \ 
+poetry run suncal ics --from 2021-6-10 --to 2021-6-10 --event sunrise \
 --long 14.32 --lat 52 --filename myIcsFile.ics
 ```
 
