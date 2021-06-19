@@ -12,8 +12,7 @@ registration/authentication are unnecessary.
 
 While the api functionality is only of interest for users of google calendar, the generated calendar ics file is 
 universal (conforms to this [standard](https://datatracker.ietf.org/doc/html/rfc5545#page-102)) and so it can be 
-imported to every calendar application. (it contains two (optional) fields that are only understood by google 
-calendars but these are simply ignored by other calendar apps.) 
+imported to every calendar application. 
  
 # How to run suncal
 
@@ -40,27 +39,32 @@ Navigate into the project folder (top level) (credentials and access tokens must
 then run
 
 ```bash
-poetry run suncal --help
+poetry run suncal api --help
 ```
 
-to see a description of all command line arguments. To insert events into your google calendar make sure to use
-`--return-val api`. Example:
+to see a description of all command line options.
+Example for a complete set of options:
 
 ```bash
-poetry run suncal --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunrise --timezone 'Europe/Berlin' \ 
---long 14.32 --lat 52 --return-val api
+poetry run suncal api --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunrise --timezone 'Europe/Berlin' \
+--long 14.32 --lat 52
 ```
 
 ## Export events to ics file
 
-If you want to export the sun calendar to an ics file, registration of this app in google cloud is unnecessary. Just
-be sure to set `--return-val ics`.
-You can provide a name for the ics file, but if you don't, the name will be created automatically. 
+If you want to export the sun calendar to an ics file, registration of this app in google cloud is unnecessary.
+You can provide a name for the ics file, but if you don't, the name will be created automatically. You can see a
+description of all command line options with:
+
+```bash
+poetry run suncal ics --help
+```
+
 Example:
 
 ```bash
-poetry run suncal --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunrise --timezone 'Europe/Berlin' \ 
---long 14.32 --lat 52 --return-val ics --filename myIcsFile.ics
+poetry run suncal ics --from 2021-6-10 --to 2021-6-10 --event sunrise \
+--long 14.32 --lat 52 --filename myIcsFile.ics
 ```
 
 # Rules for collaborators
