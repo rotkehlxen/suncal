@@ -1,6 +1,7 @@
 import datetime as dt
 from typing import List
 
+import click
 import pytz
 
 
@@ -62,3 +63,7 @@ def create_batches(list_: List, batch_size: int = 500) -> List[List]:
     for idx in range(0, len(list_), batch_size):
         batches += [list_[idx : idx + batch_size]]
     return batches
+
+
+def collect_cli_arguments(**suncal_kwargs) -> None:
+    click.echo(suncal_kwargs)

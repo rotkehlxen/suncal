@@ -6,12 +6,14 @@ import click
 
 from suncal.auth import get_credentials
 from suncal.cli import IANATimeZoneString
+from suncal.cli import common_suncal_options
 from suncal.fileio import export_events_to_ics
 from suncal.models.astro import Celestial
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.models.googlecal import export_events_to_google_calendar
 from suncal.models.googlecal import get_sun_calendar_id
+from suncal.utils import collect_cli_arguments
 from suncal.utils import date_range
 
 SCOPES = [
@@ -57,17 +59,18 @@ def create_calendar_events(
 
 
 def suncal_main(
-    calendar_title: str,  # name of google target calendar
-    from_date: dt.date,  # create events from this date ...
-    to_date: dt.date,  # ... to this date
-    event_name: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
-    timezone: str,  # e.g. "Europe/Berlin"
-    longitude: float,  # e.g. 13.23
-    latitude: float,  # e.g. 52.32
-    return_val: str,  # api/ics
-    filename: Optional[str] = None,  # only needed when return val is "ics"
+    from_date: dt.date,
+    to_date: dt.date,
+    event_name: str,
+    longitude: float,
+    latitude: float,
+    return_val: str,
+    filename: Optional[str] = None,
+    calendar_title: Optional[str] = None,
+    timezone: Optional[str] = None,
 ) -> None:
 
+    timezone = timezone or "UTC"
     events: List[GoogleCalEvent] = create_calendar_events(
         event_name, from_date, to_date, timezone, longitude, latitude
     )
@@ -75,6 +78,7 @@ def suncal_main(
     if events:
 
         if return_val == "api":
+            assert calendar_title is not None
 
             # refresh access tokens or create them if they do not exist (authentication flow)
             credentials = get_credentials(SCOPES)
@@ -93,97 +97,57 @@ def suncal_main(
             export_events_to_ics(events, event_name, filename)
 
     else:
-        print(
+        click.echo(
             f"*** {event_name.title()} could not be calculated for the specified location. "
             f"No calendar events created. ***"
         )
 
 
-def collect_cli_arguments(**suncal_kwargs) -> None:
-    click.echo(suncal_kwargs)
+# root command "suncal"  -----------------------------------------------------------------------------------------------
+@click.group()
+def suncal():
+    pass
 
 
-# cli
-@click.command()
+# sub-command "api" ----------------------------------------------------------------------------------------------------
+@suncal.command()
+@common_suncal_options
 @click.option(
-    "--cal", "calendar_title", type=click.STRING, help="google calendar name"
-)
-@click.option(
-    "--from",
-    "from_date",
-    type=click.DateTime(),
-    help="First date for which to create events.",
-)
-@click.option(
-    "--to",
-    "to_date",
-    type=click.DateTime(),
-    help="Last date for which to create events.",
-)
-@click.option(
-    "--event",
-    "event_name",
-    type=click.Choice(
-        ['sunrise', 'sunset', 'golden-hour-morning', 'golden-hour-evening'],
-        case_sensitive=False,
-    ),
-    help="Calculate start and end time of the selected event.",
+    "--cal",
+    "calendar_title",
+    type=click.STRING,
+    required=True,
+    help="Google calendar name.",
 )
 @click.option(
     "--timezone",
     type=IANATimeZoneString(),
-    help="IANA timezone string. Case-insensitive matching enabled.",
-)
-@click.option(
-    "--long",
-    "longitude",
-    type=click.FloatRange(min=-180.0, max=180.0),
-    help="Longitude as float.",
-)
-@click.option(
-    "--lat",
-    "latitude",
-    type=click.FloatRange(min=-90.0, max=90.0),
-    help="Latitude as float.",
-)
-@click.option(
-    "--return-val",
-    type=click.Choice(['api', 'ics'], case_sensitive=False),
-    help="Write events to google calendar using 'api', write to ics file using 'ics'.",
-)
-@click.option(
-    "--filename",
-    type=click.STRING,
-    required=False,
-    help="Name of ics file. Optional.",
+    help="Default timezone of google calendar. IANA timezone string. Case-insensitive matching enabled.",
 )
 @click.option('--dev/--no-dev', 'dev_mode', default=False)
-def suncal(
-    dev_mode: bool,  # dev mode
-    calendar_title: str,  # name of google target calendar
-    from_date: dt.date,  # create events from this date ...
-    to_date: dt.date,  # ... to this date
-    event_name: str,  # sunrise/sunset/golden-hour-morning/golden-hour-evening
-    timezone: str,  # e.g. "Europe/Berlin"
-    longitude: float,  # e.g. 13.23
-    latitude: float,  # e.g. 52.32
-    return_val: str,  # api/ics
-    filename: Optional[str] = None,  # only needed when return val is "ics"
+def api(
+    dev_mode: bool,
+    calendar_title: str,
+    from_date: dt.date,
+    to_date: dt.date,
+    event_name: str,
+    timezone: str,
+    longitude: float,
+    latitude: float,
 ) -> None:
     """Calculate sunrise/sunset/golden-hour-morning/golden-hour-evening for provided range of dates
-    and export calendar events directly to google calendar or export them to ics file.
+    and export calendar events directly to google calendar.
     """
     if not dev_mode:
         suncal_main(
-            calendar_title,
-            from_date,
-            to_date,
-            event_name,
-            timezone,
-            longitude,
-            latitude,
-            return_val,
-            filename,
+            calendar_title=calendar_title,
+            from_date=from_date,
+            to_date=to_date,
+            event_name=event_name,
+            timezone=timezone,
+            longitude=longitude,
+            latitude=latitude,
+            return_val="api",
         )
     else:
         # print all parsed arguments to the console (as dict)
@@ -196,6 +160,48 @@ def suncal(
             timezone=timezone,
             longitude=longitude,
             latitude=latitude,
-            return_val=return_val,
+        )
+
+
+# sub-command "ics" ----------------------------------------------------------------------------------------------------
+@suncal.command()
+@common_suncal_options
+@click.option(
+    "--filename",
+    type=click.STRING,
+    required=False,
+    help="Name of ics file. Optional.",
+)
+def ics(
+    dev_mode: bool,
+    from_date: dt.date,
+    to_date: dt.date,
+    event_name: str,
+    longitude: float,
+    latitude: float,
+    filename: Optional[str] = None,
+) -> None:
+    """Calculate sunrise/sunset/golden-hour-morning/golden-hour-evening for provided range of dates
+    and export them to ics file.
+    """
+    if not dev_mode:
+        suncal_main(
+            from_date=from_date,
+            to_date=to_date,
+            event_name=event_name,
+            longitude=longitude,
+            latitude=latitude,
+            return_val="ics",
+            filename=filename,
+        )
+    else:
+        # print all parsed arguments to the console (as dict)
+        collect_cli_arguments(
+            dev_mode=dev_mode,
+            from_date=from_date,
+            to_date=to_date,
+            event=event_name,
+            longitude=longitude,
+            latitude=latitude,
             filename=filename,
         )
