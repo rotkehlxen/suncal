@@ -70,7 +70,7 @@ class VCalendar(BaseModel):
     prodid: str = "//rotkehlxen//suncal//EN"  # identifier of product that created this file
 
     def header(self) -> List[str]:
-        """Create icalender header. Items in returned list correspond to lines in ics file. """
+        """Create icalender header. Items in returned list correspond to lines in ics file."""
         icalendar_header = [
             'BEGIN:VCALENDAR',
             f'PRODID:-{self.prodid}',
@@ -82,7 +82,7 @@ class VCalendar(BaseModel):
 
     @classmethod
     def footer(cls) -> List[str]:
-        """ Create icalender footer. """
+        """Create icalender footer."""
         return ['END:VCALENDAR']
 
 
