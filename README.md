@@ -50,6 +50,13 @@ poetry run suncal api --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunris
 --long 14.32 --lat 52
 ```
 
+or for Redwood City:
+
+```bash
+poetry run suncal api --cal Sonnenaufgang --from 2023-1-01 --to 2023-12-31 --event sunrise --timezone 'US/Pacific' \
+--long -122.2281 --lat 37.4848
+```
+
 ## Export events to ics file
 
 If you want to export the sun calendar to an ics file, registration of this app in google cloud is unnecessary.
