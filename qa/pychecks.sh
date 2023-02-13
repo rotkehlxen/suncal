@@ -7,6 +7,8 @@ echo "***** Check formating with black *****"
 poetry run black --diff --check .
 echo "***** Sort module imports with isort *****"
 poetry run isort --check .
+echo "***** Install mypy type packages, if missing ****"
+poetry run mypy --install-types
 echo "***** Check typing with mypy *****"
 poetry run mypy .
 echo "***** Lint the codebase *****"
