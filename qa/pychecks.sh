@@ -8,6 +8,7 @@ poetry run black --diff --check .
 echo "***** Sort module imports with isort *****"
 poetry run isort --check .
 echo "***** Check typing with mypy *****"
-poetry run mypy .
+python -m pip install types-pytz
+poetry run mypy ...
 echo "***** Lint the codebase *****"
 poetry run pylint -E suncal tests
