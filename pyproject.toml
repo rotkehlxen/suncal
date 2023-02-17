@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "suncal"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["Franziska Witzel <franziska.witzel@gmail.com>"]
 
@@ -33,6 +33,9 @@ ipykernel = "^5.5.0"
 jupyter = "^1.0.0"
 pylint = "^2.7.4"
 types-pytz = "^2022.7.1.0"
+types-setuptools = "^67.3.0.1"
+wrapt = "^1.14.1"
+dill = "^0.3.6"
 
 [tool.poetry.scripts]
 suncal = "suncal.suncal:suncal"
