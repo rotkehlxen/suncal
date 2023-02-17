@@ -86,11 +86,7 @@ python-versions = ">=3.7.2"
 
 [package.dependencies]
 lazy-object-proxy = ">=1.4.0"
-typing-extensions = {version = ">=4.0.0", markers = "python_version < \"3.11\""}
-wrapt = [
-    {version = ">=1.11,<2", markers = "python_version < \"3.11\""},
-    {version = ">=1.14,<2", markers = "python_version >= \"3.11\""},
-]
+wrapt = {version = ">=1.14,<2", markers = "python_version >= \"3.11\""}
 
 [[package]]
 name = "asttokens"
@@ -105,14 +101,6 @@ six = "*"
 
 [package.extras]
 test = ["astroid", "pytest"]
-
-[[package]]
-name = "atomicwrites"
-version = "1.4.1"
-description = "Atomic file writes."
-category = "dev"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "attrs"
@@ -166,7 +154,6 @@ click = ">=8.0.0"
 mypy-extensions = ">=0.4.3"
 pathspec = ">=0.9.0"
 platformdirs = ">=2"
-tomli = {version = ">=1.1.0", markers = "python_full_version < \"3.11.0a7\""}
 
 [package.extras]
 colorama = ["colorama (>=0.4.3)"]
@@ -416,6 +403,14 @@ description = "Internationalized Domain Names in Applications (IDNA)"
 category = "main"
 optional = false
 python-versions = ">=3.5"
+
+[[package]]
+name = "iniconfig"
+version = "2.0.0"
+description = "brain-dead simple config-ini parsing"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
 
 [[package]]
 name = "ipykernel"
@@ -783,14 +778,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "more-itertools"
-version = "9.0.0"
-description = "More routines for operating on iterables, beyond itertools"
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[[package]]
 name = "mypy"
 version = "1.0.1"
 description = "Optional static typing for Python"
@@ -800,7 +787,6 @@ python-versions = ">=3.7"
 
 [package.dependencies]
 mypy-extensions = ">=0.4.3"
-tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 typing-extensions = ">=3.10"
 
 [package.extras]
@@ -1058,14 +1044,15 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.2.2)", "pytest-cov (>=4)", "pytes
 
 [[package]]
 name = "pluggy"
-version = "0.13.1"
+version = "1.0.0"
 description = "plugin and hook calling mechanisms for python"
 category = "dev"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = ">=3.6"
 
 [package.extras]
 dev = ["pre-commit", "tox"]
+testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "prometheus-client"
@@ -1115,14 +1102,6 @@ python-versions = "*"
 
 [package.extras]
 tests = ["pytest"]
-
-[[package]]
-name = "py"
-version = "1.11.0"
-description = "library with cross-python path, ini-parsing, io, code, log facilities"
-category = "dev"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pyasn1"
@@ -1188,14 +1167,10 @@ python-versions = ">=3.7.2"
 [package.dependencies]
 astroid = ">=2.14.2,<=2.16.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
-dill = [
-    {version = ">=0.2", markers = "python_version < \"3.11\""},
-    {version = ">=0.3.6", markers = "python_version >= \"3.11\""},
-]
+dill = {version = ">=0.3.6", markers = "python_version >= \"3.11\""}
 isort = ">=4.2.5,<6"
 mccabe = ">=0.6,<0.8"
 platformdirs = ">=2.2.0"
-tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 tomlkit = ">=0.10.1"
 
 [package.extras]
@@ -1223,25 +1198,21 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "pytest"
-version = "5.4.3"
+version = "7.2.1"
 description = "pytest: simple powerful testing with Python"
 category = "dev"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.7"
 
 [package.dependencies]
-atomicwrites = {version = ">=1.0", markers = "sys_platform == \"win32\""}
-attrs = ">=17.4.0"
+attrs = ">=19.2.0"
 colorama = {version = "*", markers = "sys_platform == \"win32\""}
-more-itertools = ">=4.0.0"
+iniconfig = "*"
 packaging = "*"
-pluggy = ">=0.12,<1.0"
-py = ">=1.5.0"
-wcwidth = "*"
+pluggy = ">=0.12,<2.0"
 
 [package.extras]
-checkqa-mypy = ["mypy (==v0.761)"]
-testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
+testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
 
 [[package]]
 name = "python-dateutil"
@@ -1490,14 +1461,6 @@ doc = ["sphinx", "sphinx-rtd-theme"]
 test = ["pytest", "isort", "flake8"]
 
 [[package]]
-name = "tomli"
-version = "2.0.1"
-description = "A lil' TOML parser"
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[[package]]
 name = "tomlkit"
 version = "0.11.6"
 description = "Style preserving TOML library"
@@ -1628,8 +1591,8 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.10.0"
-content-hash = "fdf50d376ae8b27f0a9700acf586a9b8dc167618b657b5b17d8449c2c30868b3"
+python-versions = "^3.11.2"
+content-hash = "afb7bdaa385bacd4292b637ecbe76adf5318f97fc2551d0c633d5b2fb64bffe4"
 
 [metadata.files]
 anyio = []
@@ -1640,7 +1603,6 @@ arrow = []
 astral = []
 astroid = []
 asttokens = []
-atomicwrites = []
 attrs = []
 backcall = []
 beautifulsoup4 = []
@@ -1666,6 +1628,7 @@ google-auth-oauthlib = []
 googleapis-common-protos = []
 httplib2 = []
 idna = []
+iniconfig = []
 ipykernel = []
 ipython = []
 ipython-genutils = []
@@ -1690,7 +1653,6 @@ markupsafe = []
 matplotlib-inline = []
 mccabe = []
 mistune = []
-more-itertools = []
 mypy = []
 mypy-extensions = []
 nbclassic = []
@@ -1714,7 +1676,6 @@ prompt-toolkit = []
 protobuf = []
 ptyprocess = []
 pure-eval = []
-py = []
 pyasn1 = []
 pyasn1-modules = []
 pycparser = []
@@ -1745,7 +1706,6 @@ soupsieve = []
 stack-data = []
 terminado = []
 tinycss2 = []
-tomli = []
 tomlkit = []
 tornado = []
 traitlets = []
