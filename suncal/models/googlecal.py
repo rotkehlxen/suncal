@@ -121,7 +121,10 @@ def request_calendars(creds: Credentials) -> Dict[str, str]:
         page_token = None
         while True:
             calendar_list = (
-                service.calendarList().list(pageToken=page_token).execute()
+                # pylint: disable=maybe-no-member"
+                service.calendarList()
+                .list(pageToken=page_token)
+                .execute()
             )
             for entry in calendar_list['items']:
                 calendars[entry['id']] = entry['summary']
@@ -139,7 +142,7 @@ def create_sun_calendar(
 
     with build("calendar", "v3", credentials=creds) as service:
         calendar = {"summary": calendar_title, "timeZone": timezone}
-
+        # pylint: disable=maybe-no-member"
         created_calendar = service.calendars().insert(body=calendar).execute()
 
     return created_calendar["id"]
@@ -157,9 +160,11 @@ def export_events_to_google_calendar(
     with build("calendar", "v3", credentials=credentials) as service:
 
         for event_batch in event_batches:
+            # pylint: disable=maybe-no-member"
             batch_request = service.new_batch_http_request()
             for google_cal_event in event_batch:
                 batch_request.add(
+                    # pylint: disable=maybe-no-member"
                     service.events().insert(
                         calendarId=google_calendar_id,
                         body=google_cal_event.payload(),
