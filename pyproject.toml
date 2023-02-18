@@ -3,6 +3,9 @@ name = "suncal"
 version = "0.1.2"
 description = ""
 authors = ["Franziska Witzel <franziska.witzel@gmail.com>"]
+[tool.poetry.group.dev.dependencies]
+deptry = "^0.8.0"
+
 
 [tool.black]
 line-length = 80
@@ -18,10 +21,11 @@ line_length = 80
 python = "^3.11.2"
 astral = "^2.2"
 google-api-python-client = "^1.12.8"
-google-auth-httplib2 = "^0.0.4"
 google-auth-oauthlib = "^0.4.2"
 pydantic = "^1.7.3"
 click = "^8.0.1"
+google = "^3.0.0"
+pytz = "^2022.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.1"
