@@ -16,9 +16,9 @@ imported to every calendar application.
  
 # How to run suncal
 
-The application was built with [poetry](https://python-poetry.org/) and depends on python 3.7, so make sure you have 
-poetry and any minor version of python 3.7 installed on your system (to manage several installations of python we recommend 
-using [pyenv](https://github.com/pyenv/pyenv)). 
+The application was built with [poetry](https://python-poetry.org/) and depends on python 3.11.2, so make sure you have 
+poetry and any minor version of python 3.11 installed on your system (to manage several installations of python we recommend 
+using [pyenv](https://github.com/pyenv/pyenv)). The package will probably work with any python version 3.9 and above, but we are only testing in 3.11. The poetry version we tested with is 1.3.2, and we know that older versions (1.1.3 and 1.1.4) do not correctly install the dev tool dependencies despite resolving them correctly. 
 
 Clone this repository, cd to the repository and run
 

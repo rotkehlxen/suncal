@@ -3,6 +3,11 @@
 # Fail the whole script if any single line fails
 set -e
 
+echo "***** Basic poetry health *****"
+poetry check
+poetry --check lock
+echo "***** Check poetry dependencies *****"
+poetry run deptry .
 echo "***** Check formating with black *****"
 poetry run black --diff --check .
 echo "***** Sort module imports with isort *****"
