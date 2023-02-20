@@ -108,18 +108,18 @@ python-dateutil = ">=2.7.0"
 
 [[package]]
 name = "astral"
-version = "2.2"
+version = "3.2"
 description = "Calculations for the position of the sun and moon."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7,<4.0"
 files = [
-    {file = "astral-2.2-py2.py3-none-any.whl", hash = "sha256:b9ef70faf32e81a8ba174d21e8f29dc0b53b409ef035f27e0749ddc13cb5982a"},
-    {file = "astral-2.2.tar.gz", hash = "sha256:e41d9967d5c48be421346552f0f4dedad43ff39a83574f5ff2ad32b6627b6fbe"},
+    {file = "astral-3.2-py3-none-any.whl", hash = "sha256:cb7b49a3f0d4c64ae666be131276d2a3226134c598db10e672028cf8ff855f83"},
+    {file = "astral-3.2.tar.gz", hash = "sha256:9b7c3b412e9e69d172cfb24be0e6addcc9f1bd01a28db8bebe66d75ccc533d88"},
 ]
 
 [package.dependencies]
-pytz = "*"
+tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 
 [[package]]
 name = "astroid"
@@ -2530,6 +2530,18 @@ files = [
 ]
 
 [[package]]
+name = "tzdata"
+version = "2022.7"
+description = "Provider of IANA time zone data"
+category = "main"
+optional = false
+python-versions = ">=2"
+files = [
+    {file = "tzdata-2022.7-py2.py3-none-any.whl", hash = "sha256:2b88858b0e3120792a3c0635c23daf36a7d7eeeca657c323da299d2094402a0d"},
+    {file = "tzdata-2022.7.tar.gz", hash = "sha256:fe5f866eddd8b96e9fcba978f8e503c909b19ea7efda11e52e39494bad3a7bfa"},
+]
+
+[[package]]
 name = "uri-template"
 version = "1.2.0"
 description = "RFC 6570 URI Template Processor"
@@ -2715,4 +2727,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11.2"
-content-hash = "fa1ddd5d5ad8072952de5669a7f32ed7fcb7e0bda4a56c65da8ab5d52b334463"
+content-hash = "500dda30709a58bb1a53c3757abb10b393839fce4ae9c4e3df7d7093fa4cf5fa"
