@@ -145,7 +145,7 @@ def test_celestial_calculations():
 
         # test moonset
         moonset = tz_aware_dt(
-            dt.datetime.combine(date, city['moonset_tad']), city['timezone'] # type: ignore
+            dt.datetime.combine(date, city['moonset_tad']), city['timezone']  # type: ignore
         )
         assert (
             moonset - prec
