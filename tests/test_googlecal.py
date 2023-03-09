@@ -55,23 +55,17 @@ def test_transparency_default():
 def test_google_cal_event_payload():
     start = GoogleCalTime(
         dateTime=create_timezone_aware_datetime(
-            dt.datetime(year=2021,
-            month=2,
-            day=28,
-            hour=16,
-            minute=30,
-            second=0),
+            dt.datetime(
+                year=2021, month=2, day=28, hour=16, minute=30, second=0
+            ),
             timezone=time_zone,
         )
     )
     end = GoogleCalTime(
         dateTime=create_timezone_aware_datetime(
-            dt.datetime(year=2021,
-            month=2,
-            day=28,
-            hour=17,
-            minute=30,
-            second=0),
+            dt.datetime(
+                year=2021, month=2, day=28, hour=17, minute=30, second=0
+            ),
             timezone=time_zone,
         )
     )

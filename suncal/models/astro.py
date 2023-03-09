@@ -63,19 +63,21 @@ class Celestial(BaseModel):
 
         # period of time to scan for rise and set events
         t_start = create_timezone_aware_datetime(
-                dt.datetime(
-                    year=self.date.year,
-                    month=self.date.month,
-                    day=self.date.day,
-                ),
-                timezone=self.timezone,
-            )
+            dt.datetime(
+                year=self.date.year,
+                month=self.date.month,
+                day=self.date.day,
+            ),
+            timezone=self.timezone,
+        )
 
         t_end = t_start + dt.timedelta(days=1, microseconds=-1)
 
         # calculate sunrise and sunset
         t_sun, y_sun = almanac.find_discrete(
-            ts.from_datetime(t_start), ts.from_datetime(t_end), almanac.sunrise_sunset(eph, location)
+            ts.from_datetime(t_start),
+            ts.from_datetime(t_end),
+            almanac.sunrise_sunset(eph, location),
         )
         sun_events = rise_set_dict(
             skyfield_t=t_sun, skyfield_y=y_sun, timezone=self.timezone
@@ -85,9 +87,11 @@ class Celestial(BaseModel):
         sunset = sun_events['set']
 
         # calculate moonrise and moonset
-        t_moon, y_moon = almanac.find_discrete(ts.from_datetime(t_start),
-                                               ts.from_datetime(t_end),
-                                               almanac.risings_and_settings(eph, eph['moon'], location))
+        t_moon, y_moon = almanac.find_discrete(
+            ts.from_datetime(t_start),
+            ts.from_datetime(t_end),
+            almanac.risings_and_settings(eph, eph['moon'], location),
+        )
 
         moon_events = rise_set_dict(
             skyfield_t=t_moon, skyfield_y=y_moon, timezone=self.timezone

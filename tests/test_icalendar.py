@@ -11,22 +11,12 @@ from suncal.models.icalendar import create_ics_content
 from suncal.utils import create_timezone_aware_datetime
 
 start_datetime = create_timezone_aware_datetime(
-    dt.datetime(year=2021,
-    month=2,
-    day=28,
-    hour=16,
-    minute=30,
-    second=0),
+    dt.datetime(year=2021, month=2, day=28, hour=16, minute=30, second=0),
     timezone="Europe/Berlin",
 )
 
 end_datetime = create_timezone_aware_datetime(
-    dt.datetime(year=2021,
-    month=2,
-    day=28,
-    hour=17,
-    minute=30,
-    second=0),
+    dt.datetime(year=2021, month=2, day=28, hour=17, minute=30, second=0),
     timezone="Europe/Berlin",
 )
 
