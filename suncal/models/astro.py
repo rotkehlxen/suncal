@@ -7,7 +7,7 @@ from skyfield import almanac
 from skyfield import api as skyfield_api
 from skyfield.timelib import Timescale
 
-from suncal.utils import create_timezone_aware_datetime
+from suncal.utils import tz_aware_dt
 
 
 def rise_set_dict(
@@ -62,7 +62,7 @@ class Celestial(BaseModel):
         location = skyfield_api.wgs84.latlon(self.latitude, self.longitude)
 
         # period of time to scan for rise and set events
-        t_start = create_timezone_aware_datetime(
+        t_start = tz_aware_dt(
             dt.datetime(
                 year=self.date.year,
                 month=self.date.month,

@@ -16,7 +16,7 @@ def date_range(date_from: dt.date, date_to: dt.date) -> List[dt.date]:
     ]
 
 
-def create_timezone_aware_datetime(
+def tz_aware_dt(
     naive_datetime: dt.datetime,
     timezone: str,
 ) -> dt.datetime:

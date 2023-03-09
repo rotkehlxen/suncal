@@ -6,7 +6,7 @@ from pydantic import ValidationError
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.suncal import create_calendar_events
-from suncal.utils import create_timezone_aware_datetime
+from suncal.utils import tz_aware_dt
 
 now = dt.datetime.now()
 today = dt.datetime.today()
@@ -54,7 +54,7 @@ def test_transparency_default():
 
 def test_google_cal_event_payload():
     start = GoogleCalTime(
-        dateTime=create_timezone_aware_datetime(
+        dateTime=tz_aware_dt(
             dt.datetime(
                 year=2021, month=2, day=28, hour=16, minute=30, second=0
             ),
@@ -62,7 +62,7 @@ def test_google_cal_event_payload():
         )
     )
     end = GoogleCalTime(
-        dateTime=create_timezone_aware_datetime(
+        dateTime=tz_aware_dt(
             dt.datetime(
                 year=2021, month=2, day=28, hour=17, minute=30, second=0
             ),
