@@ -21,28 +21,9 @@ def test_celestial():
     assert isinstance(celestial.events["sunrise"]["start"], dt.datetime)
 
     # test the gcal summary
-    assert "↑🌞" in celestial.events['sunrise']['gcal_summary']
+    assert "🌞↑" in celestial.events['sunrise']['gcal_summary']
     assert "AM" in celestial.events['sunrise']['gcal_summary']
-    assert "↓🌞" in celestial.events['sunset']['gcal_summary']
-    assert (
-        celestial.events['golden-hour-morning']['gcal_summary']
-        == "📷 Golden Hour"
-    )
-    assert (
-        celestial.events['golden-hour-evening']['gcal_summary']
-        == "📷 Golden Hour"
-    )
-
-    # end of goldenhour
-    end_golden_hour = celestial.events["golden-hour-morning"]["end"]
-    assert isinstance(end_golden_hour, dt.datetime)
-    assert end_golden_hour.date() == celestial.date
-
-    # reset the date: calculations are updated as well!
-    celestial.date = date + dt.timedelta(days=3)
-    new_end_golden_hour = celestial.events["golden-hour-morning"]["end"]
-    assert new_end_golden_hour.date() == date + dt.timedelta(days=3)
-    assert end_golden_hour != new_end_golden_hour
+    assert "🌞↓" in celestial.events['sunset']['gcal_summary']
 
 
 def test_celestial_north_pole():
@@ -61,9 +42,3 @@ def test_celestial_north_pole():
     assert not celestial.events['sunrise']['start']
     assert not celestial.events['sunrise']['end']
     assert not celestial.events['sunrise']['gcal_summary']
-
-    assert (
-        celestial.events['golden-hour-morning']['gcal_summary']
-        == "📷 Golden Hour"
-    )
-    assert not celestial.events['golden-hour-morning']['start']

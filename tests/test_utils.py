@@ -36,12 +36,7 @@ def test_date_range():
 
 def test_create_timezone_aware_datetime():
     my_time = create_timezone_aware_datetime(
-        year=2021,
-        month=4,
-        day=17,
-        hour=16,
-        minute=30,
-        second=0,
+        dt.datetime(year=2021, month=4, day=17, hour=16, minute=30, second=0),
         timezone="Europe/Berlin",
     )
     assert isinstance(my_time, dt.datetime)
@@ -60,12 +55,7 @@ def test_create_timezone_aware_datetime():
 def test_ical_datetime():
     # create datetime in Europe/Berlin and convert to ical format
     datetime_berlin = create_timezone_aware_datetime(
-        year=2021,
-        month=4,
-        day=17,
-        hour=16,
-        minute=30,
-        second=0,
+        dt.datetime(year=2021, month=4, day=17, hour=16, minute=30, second=0),
         timezone="Europe/Berlin",
     )
 
@@ -74,7 +64,8 @@ def test_ical_datetime():
 
     # create datetime in UTC and see check that the time is unaffected (only the format)
     datetime_utc = create_timezone_aware_datetime(
-        year=2021, month=4, day=17, hour=16, minute=30, second=0, timezone="UTC"
+        dt.datetime(year=2021, month=4, day=17, hour=16, minute=30, second=0),
+        timezone="UTC",
     )
 
     ical_string = aware_datetime_to_ical_date_with_utc_time(datetime_utc)
