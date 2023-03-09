@@ -26,6 +26,7 @@ pydantic = "^1.7.3"
 click = "^8.0.1"
 google = "^3.0.0"
 pytz = "^2022.7.1"
+skyfield = "^1.45"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.1"
