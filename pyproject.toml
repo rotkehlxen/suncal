@@ -19,7 +19,6 @@ line_length = 80
 
 [tool.poetry.dependencies]
 python = "^3.11.2"
-astral = "^3.0"
 google-api-python-client = "^1.12.8"
 google-auth-oauthlib = "^0.4.2"
 pydantic = "^1.7.3"
@@ -46,3 +45,8 @@ suncal = "suncal.suncal:suncal"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+# numpy is currently only imported for a type annotation
+[tool.deptry]
+ignore_transitive = [
+        "numpy"
+    ]
