@@ -45,6 +45,25 @@ def rise_set_dict(
     return events
 
 
+def moon_phase_dict(
+    skyfield_t: Time, skyfield_y: np.ndarray, timezone: str
+) -> dict:
+
+    moon_phase = {'date': None, 'summary': None}
+
+    if skyfield_t:
+        event_time = skyfield_t.astimezone(pytz.timezone(timezone)).item()
+        moon_phase['date'] = event_time.date()
+        # value between 0 and 3
+        phase_idx = skyfield_y.item()
+        moon_phase['summary'] = (
+            f"{MOON_PHASE_SYMBOLS[phase_idx]} {almanac.MOON_PHASES[phase_idx]} "  # type: ignore
+            f"at {event_time.strftime('%I:%M %p')}"
+        )
+
+    return moon_phase
+
+
 class Celestial(BaseModel):
     timezone: str
     date: dt.date
@@ -108,10 +127,9 @@ class Celestial(BaseModel):
             ts.from_datetime(t_end),
             almanac.moon_phases(eph),
         )
-        moonphase = (
-            t_phase.astimezone(pytz.timezone(self.timezone))
-            if t_phase
-            else None
+
+        moon_phase = moon_phase_dict(
+            skyfield_t=t_phase, skyfield_y=y_phase, timezone=self.timezone
         )
 
         return {
@@ -144,11 +162,8 @@ class Celestial(BaseModel):
                 else None,
             },
             "moonphase": {
-                "start": moonphase.date() if moonphase else None,
-                "end": moonphase.date() if moonphase else None,
-                "gcal_summary": f"{MOON_PHASE_SYMBOLS[y_phase]} {almanac.MOON_PHASES[y_phase]} "
-                f"at {moonphase.strftime('%I:%M %p')} "
-                if moonphase
-                else None,
+                "start": moon_phase['date'],
+                "end": moon_phase['date'],
+                "gcal_summary": moon_phase['summary'],
             },
         }

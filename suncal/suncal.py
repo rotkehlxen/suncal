@@ -44,10 +44,10 @@ def create_calendar_events(
             if event_parameters['start']:
                 gcal_event = GoogleCalEvent(
                     start=GoogleCalTime(
-                        date=event_parameters['start'], timezone=timezone
+                        date=event_parameters['start'], timeZone=timezone
                     ),
                     end=GoogleCalTime(
-                        date=event_parameters['end'], timezone=timezone
+                        date=event_parameters['end'], timeZone=timezone
                     ),
                     summary=event_parameters['gcal_summary'],
                 )
@@ -64,7 +64,6 @@ def create_calendar_events(
                 print(
                     f"No {event.title()} for {date} at longitude {longitude} and latitude {latitude}."
                 )
-
     return calendar_events
 
 

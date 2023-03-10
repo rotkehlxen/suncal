@@ -9,14 +9,14 @@ from suncal.suncal import create_calendar_events
 from suncal.utils import tz_aware_dt
 
 now = dt.datetime.now()
-today = dt.datetime.today()
+today = dt.date.today()
 time_zone = "Europe/Berlin"
 
 
 def test_date_or_datetime_check():
     with pytest.raises(ValidationError):
         # supply only either date or datetime
-        GoogleCalTime(date=dt.date.today(), dateTime=now, timeZone=time_zone)
+        GoogleCalTime(date=today, dateTime=now, timeZone=time_zone)
 
     with pytest.raises(ValidationError):
         # at least one date type has to be provided

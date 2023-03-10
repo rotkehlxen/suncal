@@ -35,6 +35,20 @@ def test_celestial():
     assert "🌞↓" in celestial.events['sunset']['gcal_summary']
 
 
+def test_moon_phase():
+    timezone = "Europe/Berlin"
+    date = dt.date(2023, 3, 15)
+    lat = 52.520008
+    long = 13.404954
+
+    celestial = Celestial(
+        timezone=timezone, date=date, longitude=long, latitude=lat
+    )
+
+    assert celestial.events['moonphase']['start'] == date
+    assert 'Last Quarter' in celestial.events['moonphase']['gcal_summary']
+
+
 def test_celestial_north_pole():
     """The current version of astral throws a ValueError for locations in which there is no actual sunrise,
     e.g. at the north pole. In that sitation we set start and end values of events to None."""
