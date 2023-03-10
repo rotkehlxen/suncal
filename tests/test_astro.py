@@ -1,12 +1,15 @@
 import datetime as dt
 
-from suncal.models.astro import Celestial, rise_set_dict
-from suncal.utils import tz_aware_dt
-from skyfield import api as skyfield_api
-from skyfield.timelib import Timescale, Time
-from skyfield import almanac
 import numpy as np
 import pytz
+from skyfield import almanac
+from skyfield import api as skyfield_api
+from skyfield.timelib import Time
+from skyfield.timelib import Timescale
+
+from suncal.models.astro import Celestial
+from suncal.models.astro import rise_set_dict
+from suncal.utils import tz_aware_dt
 
 
 def test_celestial():
@@ -172,7 +175,9 @@ def test_rise_set_dict():
     t0_sky = ts.from_datetime(t0)
     t1_sky = ts.from_datetime(t1)
 
-    t, y = almanac.find_discrete(t0_sky, t1_sky, almanac.risings_and_settings(eph, eph['moon'], berlin))
+    t, y = almanac.find_discrete(
+        t0_sky, t1_sky, almanac.risings_and_settings(eph, eph['moon'], berlin)
+    )
 
     assert len(t) == 1
     assert len(y) == 1
@@ -192,7 +197,9 @@ def test_rise_set_dict():
     t0 = ts.utc(2023, 1, 1, 0, 0)
     t1 = ts.utc(2023, 1, 1, 23, 59)
 
-    t, y = almanac.find_discrete(t0, t1, almanac.sunrise_sunset(eph, hammerfest))
+    t, y = almanac.find_discrete(
+        t0, t1, almanac.sunrise_sunset(eph, hammerfest)
+    )
 
     # polar night on the 1st of Jan, so no sunrise and no sunset
     assert len(t) == 0
@@ -201,8 +208,7 @@ def test_rise_set_dict():
     assert isinstance(y, np.ndarray)
     assert isinstance(t, Time)
 
-    events = rise_set_dict(t,y,'utc')
+    events = rise_set_dict(t, y, 'utc')
     assert isinstance(events, dict)
     assert events['set'] is None
     assert events['rise'] is None
-

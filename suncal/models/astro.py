@@ -5,7 +5,8 @@ import pytz
 from pydantic import BaseModel  # pylint: disable=E0611
 from skyfield import almanac
 from skyfield import api as skyfield_api
-from skyfield.timelib import Timescale, Time
+from skyfield.timelib import Time
+from skyfield.timelib import Timescale
 
 from suncal.utils import tz_aware_dt
 
