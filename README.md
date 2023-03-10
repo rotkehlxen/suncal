@@ -1,7 +1,17 @@
-# What does suncal do? 🌞🌞🌞
+# What does suncal do? 🌞❤️🌜
 
-Suncal creates a sun (and moon) calendar. You can choose between the following events: sunrise, sunset, moonrise and 
-moonset.
+Suncal creates a sun (and moon) calendar. You can choose between the following events: sunrise, sunset, moonrise,  
+moonset and moonphase. We currently support these moon phases:
+
+|     phase     | symbol in calendar |
+|:-------------:|:------------------:|
+|   New moon    |         🌚         |
+| First Quarter |         🌓         |
+|   Full Moon   |         🌝         |
+| Last Quarter  |         🌗         |
+
+We are using the standard symbols for those phases, although we are aware that the partially lit moon appears 
+differently across the latitudes.
 
 Parameters like geographic location (longitude & latitude), timezone and the range of dates for which these events 
 should be created can be specified ad libitum. If you register this application in google cloud and grant read and write
@@ -49,9 +59,10 @@ to see a description of all command line options.
 Example for a complete set of options:
 
 ```bash
-poetry run suncal api --cal Sonne --from 2021-6-10 --to 2021-6-10 --event sunrise --timezone 'Europe/Berlin' \
+poetry run suncal api --cal Sonne --from 2023-6-10 --to 2023-6-10 --event sunrise --timezone 'Europe/Berlin' \
 --long 14.32 --lat 52
 ```
+The command above will create only one entry in a google calendar named "Sonne" - for the sunrise on 6.10.2023.
 
 or for Redwood City:
 
@@ -59,6 +70,7 @@ or for Redwood City:
 poetry run suncal api --cal Sonnenaufgang --from 2023-1-01 --to 2023-12-31 --event sunrise --timezone 'US/Pacific' \
 --long -122.2281 --lat 37.4848
 ```
+The command above creates sunrise events for the whole year 2023.
 
 ## Export events to ics file
 
