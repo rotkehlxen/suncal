@@ -1,7 +1,12 @@
 import datetime as dt
 
-from suncal.models.astro import Celestial
+from suncal.models.astro import Celestial, rise_set_dict
 from suncal.utils import tz_aware_dt
+from skyfield import api as skyfield_api
+from skyfield.timelib import Timescale, Time
+from skyfield import almanac
+import numpy as np
+import pytz
 
 
 def test_celestial():
@@ -152,3 +157,52 @@ def test_celestial_calculations():
             <= celestial.events['moonset']['start']
             <= moonset + prec
         )
+
+
+def test_rise_set_dict():
+    ts = skyfield_api.load.timescale()
+    eph = skyfield_api.load('de421.bsp')
+    # 1. missing moon rise event is added
+    # The moon does not rise in Berlin on that day
+    berlin_time = pytz.timezone('Europe/Berlin')
+    berlin = skyfield_api.wgs84.latlon(52, 14.32)
+    t0 = berlin_time.localize(dt.datetime(2023, 3, 12, 0, 0, 0))
+    t1 = berlin_time.localize(dt.datetime(2023, 3, 12, 23, 59, 59, 999))
+
+    t0_sky = ts.from_datetime(t0)
+    t1_sky = ts.from_datetime(t1)
+
+    t, y = almanac.find_discrete(t0_sky, t1_sky, almanac.risings_and_settings(eph, eph['moon'], berlin))
+
+    assert len(t) == 1
+    assert len(y) == 1
+    # the moon only sets on that day
+    assert 0 in y
+
+    events = rise_set_dict(t, y, 'Europe/Berlin')
+    assert isinstance(events, dict)
+    assert events['rise'] is None
+    assert isinstance(events['set'], dt.datetime)
+    assert events['set'].tzinfo is not None
+
+    # 2. missing rise and set is added with None (function can handle empty return objects)
+
+    # Hammerfest in the North of Norway experiences polar nights and midnight suns
+    hammerfest = skyfield_api.wgs84.latlon(70.66336, 23.68209)
+    t0 = ts.utc(2023, 1, 1, 0, 0)
+    t1 = ts.utc(2023, 1, 1, 23, 59)
+
+    t, y = almanac.find_discrete(t0, t1, almanac.sunrise_sunset(eph, hammerfest))
+
+    # polar night on the 1st of Jan, so no sunrise and no sunset
+    assert len(t) == 0
+    assert len(y) == 0
+    # expected return types of the almanac calculation
+    assert isinstance(y, np.ndarray)
+    assert isinstance(t, Time)
+
+    events = rise_set_dict(t,y,'utc')
+    assert isinstance(events, dict)
+    assert events['set'] is None
+    assert events['rise'] is None
+
