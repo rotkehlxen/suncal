@@ -6,9 +6,10 @@ from pydantic import BaseModel  # pylint: disable=E0611
 from skyfield import almanac
 from skyfield import api as skyfield_api
 from skyfield.timelib import Time
-from skyfield.timelib import Timescale
 
 from suncal.utils import tz_aware_dt
+
+MOON_PHASE_SYMBOLS = ['🌚', '🌓', '🌝', '🌗']
 
 
 def rise_set_dict(
@@ -101,6 +102,18 @@ class Celestial(BaseModel):
         moonrise = moon_events['rise']
         moonset = moon_events['set']
 
+        # calculate moon phase
+        t_phase, y_phase = almanac.find_discrete(
+            ts.from_datetime(t_start),
+            ts.from_datetime(t_end),
+            almanac.moon_phases(eph),
+        )
+        moonphase = (
+            t_phase.astimezone(pytz.timezone(self.timezone))
+            if t_phase
+            else None
+        )
+
         return {
             "sunrise": {
                 "start": sunrise,
@@ -128,6 +141,14 @@ class Celestial(BaseModel):
                 "end": moonset,
                 "gcal_summary": f"🌜↓ {moonset.strftime('%I:%M %p')}"
                 if moonset
+                else None,
+            },
+            "moonphase": {
+                "start": moonphase.date() if moonphase else None,
+                "end": moonphase.date() if moonphase else None,
+                "gcal_summary": f"{MOON_PHASE_SYMBOLS[y_phase]} {almanac.MOON_PHASES[y_phase]} "
+                f"at {moonphase.strftime('%I:%M %p')} "
+                if moonphase
                 else None,
             },
         }

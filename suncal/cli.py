@@ -76,7 +76,7 @@ def common_suncal_options(function: Callable) -> Callable:
         "--event",
         "event_name",
         type=click.Choice(
-            ['sunrise', 'sunset', 'moonrise', 'moonset'],
+            ['sunrise', 'sunset', 'moonrise', 'moonset', 'moonphase'],
             case_sensitive=False,
         ),
         required=True,
