@@ -16,20 +16,15 @@ def date_range(date_from: dt.date, date_to: dt.date) -> List[dt.date]:
     ]
 
 
-def create_timezone_aware_datetime(
-    year: int,
-    month: int,
-    day: int,
-    hour: int,
-    minute: int,
-    second: int,
+def tz_aware_dt(
+    naive_datetime: dt.datetime,
     timezone: str,
 ) -> dt.datetime:
     """Create timezone aware datetime object using the IANA timezone string, e.g.  'Europe/Berlin'."""
 
-    naive_datetime = dt.datetime(
-        year=year, month=month, day=day, hour=hour, minute=minute, second=second
-    )
+    assert (
+        naive_datetime.tzinfo is None
+    ), f"The datetime you provided already is timezone-aware ({naive_datetime.tzinfo})"
     timezone_obj = pytz.timezone(timezone)
     aware_datetime = timezone_obj.localize(naive_datetime)
     return aware_datetime

@@ -2,8 +2,8 @@ import datetime as dt
 
 from suncal.utils import aware_datetime_to_ical_date_with_utc_time
 from suncal.utils import create_batches
-from suncal.utils import create_timezone_aware_datetime
 from suncal.utils import date_range
+from suncal.utils import tz_aware_dt
 
 
 def test_date_range():
@@ -35,13 +35,8 @@ def test_date_range():
 
 
 def test_create_timezone_aware_datetime():
-    my_time = create_timezone_aware_datetime(
-        year=2021,
-        month=4,
-        day=17,
-        hour=16,
-        minute=30,
-        second=0,
+    my_time = tz_aware_dt(
+        dt.datetime(year=2021, month=4, day=17, hour=16, minute=30, second=0),
         timezone="Europe/Berlin",
     )
     assert isinstance(my_time, dt.datetime)
@@ -59,13 +54,8 @@ def test_create_timezone_aware_datetime():
 
 def test_ical_datetime():
     # create datetime in Europe/Berlin and convert to ical format
-    datetime_berlin = create_timezone_aware_datetime(
-        year=2021,
-        month=4,
-        day=17,
-        hour=16,
-        minute=30,
-        second=0,
+    datetime_berlin = tz_aware_dt(
+        dt.datetime(year=2021, month=4, day=17, hour=16, minute=30, second=0),
         timezone="Europe/Berlin",
     )
 
@@ -73,8 +63,9 @@ def test_ical_datetime():
     assert ical_string == "20210417T143000Z"
 
     # create datetime in UTC and see check that the time is unaffected (only the format)
-    datetime_utc = create_timezone_aware_datetime(
-        year=2021, month=4, day=17, hour=16, minute=30, second=0, timezone="UTC"
+    datetime_utc = tz_aware_dt(
+        dt.datetime(year=2021, month=4, day=17, hour=16, minute=30, second=0),
+        timezone="UTC",
     )
 
     ical_string = aware_datetime_to_ical_date_with_utc_time(datetime_utc)

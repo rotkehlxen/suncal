@@ -8,25 +8,15 @@ from suncal.models.googlecal import GoogleCalTime
 from suncal.models.icalendar import VCalendar
 from suncal.models.icalendar import VEvent
 from suncal.models.icalendar import create_ics_content
-from suncal.utils import create_timezone_aware_datetime
+from suncal.utils import tz_aware_dt
 
-start_datetime = create_timezone_aware_datetime(
-    year=2021,
-    month=2,
-    day=28,
-    hour=16,
-    minute=30,
-    second=0,
+start_datetime = tz_aware_dt(
+    dt.datetime(year=2021, month=2, day=28, hour=16, minute=30, second=0),
     timezone="Europe/Berlin",
 )
 
-end_datetime = create_timezone_aware_datetime(
-    year=2021,
-    month=2,
-    day=28,
-    hour=17,
-    minute=30,
-    second=0,
+end_datetime = tz_aware_dt(
+    dt.datetime(year=2021, month=2, day=28, hour=17, minute=30, second=0),
     timezone="Europe/Berlin",
 )
 

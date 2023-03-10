@@ -137,7 +137,7 @@ def api(
     longitude: float,
     latitude: float,
 ) -> None:
-    """Calculate sunrise/sunset/golden-hour-morning/golden-hour-evening for provided range of dates
+    """Calculate sunrise/sunset/moonrise/moonset for provided range of dates
     and export calendar events directly to google calendar.
     """
     if not dev_mode:
@@ -183,7 +183,7 @@ def ics(
     latitude: float,
     filename: Optional[str] = None,
 ) -> None:
-    """Calculate sunrise/sunset/golden-hour-morning/golden-hour-evening for provided range of dates
+    """Calculate sunrise/sunset/moonrise/moonset for provided range of dates
     and export them to ics file.
     """
     if not dev_mode:

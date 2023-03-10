@@ -1,7 +1,8 @@
 # What does suncal do? 🌞🌞🌞
 
-Suncal creates a sun calendar. You can choose between the following events: sunrise, sunset, golden-hour-morning and
-golden-hour-evening - which should be of particular interest for photographers 📷.
+Suncal creates a sun (and moon) calendar. You can choose between the following events: sunrise, sunset, moonrise and 
+moonset.
+
 Parameters like geographic location (longitude & latitude), timezone and the range of dates for which these events 
 should be created can be specified ad libitum. If you register this application in google cloud and grant read and write
 access to your personal google calendar, the events can be inserted directly into your google calendar using api calls.
@@ -18,7 +19,9 @@ imported to every calendar application.
 
 The application was built with [poetry](https://python-poetry.org/) and depends on python 3.11.2, so make sure you have 
 poetry and any minor version of python 3.11 installed on your system (to manage several installations of python we recommend 
-using [pyenv](https://github.com/pyenv/pyenv)). The package will probably work with any python version 3.9 and above, but we are only testing in 3.11. The poetry version we tested with is 1.3.2, and we know that older versions (1.1.3 and 1.1.4) do not correctly install the dev tool dependencies despite resolving them correctly. 
+using [pyenv](https://github.com/pyenv/pyenv)). The package will probably work with any python version 3.9 and above, 
+but we are only testing in 3.11. The poetry version we tested with is 1.3.2, and we know that older versions 
+(1.1.3 and 1.1.4) do not correctly install the dev tool dependencies despite resolving them correctly. 
 
 Clone this repository, cd to the repository and run
 
@@ -86,15 +89,13 @@ create a new branch and make sure to run all checks before setting up your PR: c
 If any of the checks fail, the PR will not be accepted. If you add a function/class, 
 you also add a corresponding test.
 
-# Dependencies
+# Main Dependencies
 
-## astral
-This package calculates various sun and moon parameters for specified
-locations and dates. It has an inbuilt database that contains longitude,
-latitude and timezones for the big cities in the world.
+## skyfield
+Our calculations of sun and moon events are based on [skyfield](https://rhodesmill.org/skyfield/).
 
-## google-api-python-client, google-auth-httplib2, google-auth-oauthlib
-Tools for communication with google api and authentication flow.
+## google-api-python-client, google-auth-oauthlib, google
+Tools for communication with the google api and authentication flow.
 
 ## pydantic
 Data validation and settings management using python type annotations.
