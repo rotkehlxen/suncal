@@ -7,7 +7,8 @@ from skyfield import api as skyfield_api
 from skyfield.timelib import Time
 
 from suncal.models.astro import Celestial
-from suncal.models.astro import rise_set_dict, extract_moon_phase
+from suncal.models.astro import extract_moon_phase
+from suncal.models.astro import rise_set_dict
 from suncal.utils import tz_aware_dt
 
 
@@ -33,6 +34,7 @@ def test_celestial():
     assert "AM" in celestial.events['sunrise']['gcal_summary']
     assert "🌞↓" in celestial.events['sunset']['gcal_summary']
 
+
 def test_extract_moon_phase():
     ts = skyfield_api.load.timescale()
     # create a skyfield Time object in a sneaky way
@@ -42,7 +44,9 @@ def test_extract_moon_phase():
     skyfield_y = np.array([0])
     timezone = 'Europe/Berlin'
 
-    phase_name, phase_symbol, phase_time = extract_moon_phase(skyfield_t, skyfield_y, timezone)
+    phase_name, phase_symbol, phase_time = extract_moon_phase(
+        skyfield_t, skyfield_y, timezone
+    )
 
     assert phase_name == "New Moon"
     assert phase_symbol == "🌚"

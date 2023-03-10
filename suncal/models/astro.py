@@ -157,9 +157,9 @@ class Celestial(BaseModel):
         )
 
         if t_phase:
-            phase_name, phase_symbol, phase_time = extract_moon_phase(skyfield_t=t_phase,
-                                                                      skyfield_y=y_phase,
-                                                                      timezone=self.timezone)
+            phase_name, phase_symbol, phase_time = extract_moon_phase(
+                skyfield_t=t_phase, skyfield_y=y_phase, timezone=self.timezone
+            )
             events['moonphase'] = {
                 "start": phase_time.date(),
                 "end": phase_time.date() + dt.timedelta(days=1),
