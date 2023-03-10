@@ -100,7 +100,7 @@ def test_create_calendar_events():
         isinstance(cal_event, GoogleCalEvent) for cal_event in gcal_event_list
     )
 
-    # use the north pole as example for coordinates in which we expect an exception from astral
+    # use the North Pole as example for coordinates in which we don't expect a sunrise in May
     latitude = 90
     longitude = 0
 
