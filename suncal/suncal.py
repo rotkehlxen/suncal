@@ -192,8 +192,7 @@ def ics(
     latitude: float,
     filename: Optional[str] = None,
 ) -> None:
-    """Calculate sunrise/sunset/moonrise/moonset/moonphase for provided range of dates
-    and export them to ics file.
+    """Calculate sunrise/sunset/moonrise/moonset/moonphase for provided range of datesand export them to ics file.
     """
     if not dev_mode:
         suncal_main(

@@ -5,7 +5,6 @@ import pytz
 from skyfield import almanac
 from skyfield import api as skyfield_api
 from skyfield.timelib import Time
-from skyfield.timelib import Timescale
 
 from suncal.models.astro import Celestial
 from suncal.models.astro import rise_set_dict
@@ -51,7 +50,7 @@ def test_moon_phase():
 
 def test_celestial_north_pole():
     """The current version of astral throws a ValueError for locations in which there is no actual sunrise,
-    e.g. at the north pole. In that sitation we set start and end values of events to None."""
+    e.g. at the North Pole. In that situation we set start and end values of events to None."""
 
     timezone = "Europe/Berlin"
     date = dt.date.today()
