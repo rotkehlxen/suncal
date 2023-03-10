@@ -49,8 +49,6 @@ def test_moon_phase():
 
 
 def test_celestial_north_pole():
-    """The current version of astral throws a ValueError for locations in which there is no actual sunrise,
-    e.g. at the North Pole. In that situation we set start and end values of events to None."""
 
     timezone = "Europe/Berlin"
     date = dt.date.today()
@@ -61,9 +59,7 @@ def test_celestial_north_pole():
         timezone=timezone, date=date, longitude=longitude, latitude=latitude
     )
 
-    assert not celestial.events['sunrise']['start']
-    assert not celestial.events['sunrise']['end']
-    assert not celestial.events['sunrise']['gcal_summary']
+    assert 'sunrise' not in celestial.events.keys()
 
 
 def test_celestial_calculations():

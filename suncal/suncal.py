@@ -37,11 +37,11 @@ def create_calendar_events(
         # calculate times of sun event for this date and location
         event_parameters = Celestial(
             timezone=timezone, date=date, longitude=longitude, latitude=latitude
-        ).events[event]
+        ).events.get(event, None)
 
         # create an all-day event for moon phase
         if event == 'moonphase':
-            if event_parameters['start']:
+            if event_parameters:
                 gcal_event = GoogleCalEvent(
                     start=GoogleCalTime(
                         date=event_parameters['start'], timeZone=timezone
@@ -53,7 +53,7 @@ def create_calendar_events(
                 )
                 calendar_events.append(gcal_event)
         else:
-            if event_parameters['start']:
+            if event_parameters:
                 gcal_event = GoogleCalEvent(
                     start=GoogleCalTime(dateTime=event_parameters['start']),
                     end=GoogleCalTime(dateTime=event_parameters['end']),
