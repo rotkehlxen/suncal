@@ -1,4 +1,5 @@
 import datetime as dt
+from typing import Tuple
 
 import numpy as np
 import pytz
@@ -45,24 +46,23 @@ def rise_set_dict(
     return events
 
 
-def moon_phase_dict(
+def extract_moon_phase(
     skyfield_t: Time, skyfield_y: np.ndarray, timezone: str
-) -> dict:
+) -> Tuple[str, str, dt.datetime]:
     """
-    There is only one moon phase per day - so we can safely assume that the skyfield_t Time and the skyfield_y array
+    Using the information in skyfield_y we extract the name and the symbol of the moon phase that was found.
+    The Time provided in skyfield_t is converted to an aware datetime timestamp.
+    There is only one moon phase max per day - so we can safely assume that the skyfield_t and the skyfield_y array
     hold only 1 item, respectively.
     """
-    moon_phase = {}
-    event_time = skyfield_t.astimezone(pytz.timezone(timezone)).item()
-    moon_phase['date'] = event_time.date()
-    # value between 0 and 3
-    phase_idx = skyfield_y.item()
-    moon_phase['summary'] = (
-        f"{MOON_PHASE_SYMBOLS[phase_idx]} {almanac.MOON_PHASES[phase_idx]} "  # type: ignore
-        f"at {event_time.strftime('%I:%M %p')}"
-    )
 
-    return moon_phase
+    event_time = skyfield_t.astimezone(pytz.timezone(timezone)).item()
+
+    phase_idx = skyfield_y.item()
+    phase_symbol = MOON_PHASE_SYMBOLS[phase_idx]
+    phase_name = almanac.MOON_PHASES[phase_idx]
+
+    return phase_name, phase_symbol, event_time
 
 
 class Celestial(BaseModel):
@@ -157,16 +157,13 @@ class Celestial(BaseModel):
         )
 
         if t_phase:
-            moon_phase = moon_phase_dict(
-                skyfield_t=t_phase, skyfield_y=y_phase, timezone=self.timezone
-            )
+            phase_name, phase_symbol, phase_time = extract_moon_phase(skyfield_t=t_phase,
+                                                                      skyfield_y=y_phase,
+                                                                      timezone=self.timezone)
             events['moonphase'] = {
-                "start": moon_phase['date'],
-                "end": moon_phase['date']
-                + dt.timedelta(
-                    days=1
-                ),  # this is necessary for the event to be displayed properly
-                "gcal_summary": moon_phase['summary'],
+                "start": phase_time.date(),
+                "end": phase_time.date() + dt.timedelta(days=1),
+                "gcal_summary": f"{phase_symbol} {phase_name} at {phase_time.strftime('%I:%M %p')}",
             }
 
         return events
