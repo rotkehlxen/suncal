@@ -154,7 +154,7 @@ class Celestial(BaseModel):
                 if moonrise
                 else None,
             },
-            "moonset":{
+            "moonset": {
                 "start": moonset,
                 "end": moonset,
                 "gcal_summary": f"🌜↓ {moonset.strftime('%I:%M %p')}"
