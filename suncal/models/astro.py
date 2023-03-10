@@ -163,7 +163,7 @@ class Celestial(BaseModel):
             },
             "moonphase": {
                 "start": moon_phase['date'],
-                "end": moon_phase['date'],
+                "end": moon_phase['date'] + dt.timedelta(days=1), # this is necessary for the event to be displayed properly
                 "gcal_summary": moon_phase['summary'],
             },
         }
