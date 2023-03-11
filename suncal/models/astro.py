@@ -1,6 +1,6 @@
 import datetime as dt
 from typing import Tuple
-
+from dataclasses import dataclass
 import numpy as np
 import pytz
 from pydantic import BaseModel  # pylint: disable=E0611
@@ -11,6 +11,46 @@ from skyfield.timelib import Time
 from suncal.utils import tz_aware_dt
 
 MOON_PHASE_SYMBOLS = ['🌚', '🌓', '🌝', '🌗']
+
+
+@dataclass
+class Location:
+    timezone: str
+    latitude: float
+    longitude: float
+
+
+@dataclass
+class Sunrise:
+    location: Location
+    event_time: dt.datetime
+    name: str = 'sunrise' # Do I need the name ??
+
+@dataclass
+class Sunset:
+    location: Location
+    event_time: dt.datetime
+    name: str = 'sunset'
+
+@dataclass
+class Moonrise:
+    location: Location
+    event_time: dt.datetime
+    name: str = 'moonrise'
+
+@dataclass
+class Moonset:
+    location: Location
+    event_time: dt.datetime
+    name: str = 'moonset'
+
+
+@dataclass
+class Moonphase:
+    location: Location
+    event_time: dt.datetime
+    phase_idx: int
+    name: str = 'moonphase'
 
 
 def rise_set_dict(
