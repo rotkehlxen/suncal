@@ -60,13 +60,13 @@ class VEvent(BaseModel):
         dtstart_str = (
             ics_date_format(self.dtstart)
             if type(self.dtstart) == dt.date
-            else f":{aware_datetime_to_ical_date_with_utc_time(self.dtstart)}"
-        )  # type: ignore
+            else f":{aware_datetime_to_ical_date_with_utc_time(self.dtstart)}"  # type: ignore
+        )
         dtend_str = (
             ics_date_format(self.dtend)
             if type(self.dtend) == dt.date
-            else f":{aware_datetime_to_ical_date_with_utc_time(self.dtend)}"
-        )  # type: ignore
+            else f":{aware_datetime_to_ical_date_with_utc_time(self.dtend)}"  # type: ignore
+        )
 
         ics_entry = [
             'BEGIN:VEVENT',
