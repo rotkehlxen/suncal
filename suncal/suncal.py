@@ -37,24 +37,33 @@ def create_calendar_events(
         # calculate times of sun event for this date and location
         event_parameters = Celestial(
             timezone=timezone, date=date, longitude=longitude, latitude=latitude
-        ).events[event]
-        # create calendar event and append to list, only if astral could calculate valid datetimes
-        if event_parameters['start'] and event_parameters['end']:
-            gcal_event = GoogleCalEvent(
-                start=GoogleCalTime(
-                    dateTime=event_parameters['start'], timeZone=timezone
-                ),
-                end=GoogleCalTime(
-                    dateTime=event_parameters['end'], timeZone=timezone
-                ),
-                summary=event_parameters['gcal_summary'],
-            )
-            calendar_events.append(gcal_event)
-        else:
-            print(
-                f"{event.title()} could not be calculated for {date} at longitude {longitude} and latitude {latitude}."
-            )
+        ).events.get(event, None)
 
+        # create an all-day event for moon phase
+        if event == 'moonphase':
+            if event_parameters:
+                gcal_event = GoogleCalEvent(
+                    start=GoogleCalTime(
+                        date=event_parameters['start'], timeZone=timezone
+                    ),
+                    end=GoogleCalTime(
+                        date=event_parameters['end'], timeZone=timezone
+                    ),
+                    summary=event_parameters['gcal_summary'],
+                )
+                calendar_events.append(gcal_event)
+        else:
+            if event_parameters:
+                gcal_event = GoogleCalEvent(
+                    start=GoogleCalTime(dateTime=event_parameters['start']),
+                    end=GoogleCalTime(dateTime=event_parameters['end']),
+                    summary=event_parameters['gcal_summary'],
+                )
+                calendar_events.append(gcal_event)
+            else:
+                print(
+                    f"No {event.title()} for {date} at longitude {longitude} and latitude {latitude}."
+                )
     return calendar_events
 
 
@@ -137,7 +146,7 @@ def api(
     longitude: float,
     latitude: float,
 ) -> None:
-    """Calculate sunrise/sunset/moonrise/moonset for provided range of dates
+    """Calculate sunrise/sunset/moonrise/moonset/moonphase for provided range of dates
     and export calendar events directly to google calendar.
     """
     if not dev_mode:
@@ -183,9 +192,7 @@ def ics(
     latitude: float,
     filename: Optional[str] = None,
 ) -> None:
-    """Calculate sunrise/sunset/moonrise/moonset for provided range of dates
-    and export them to ics file.
-    """
+    """Calculate sunrise/sunset/moonrise/moonset/moonphase for provided range of datesand export them to ics file."""
     if not dev_mode:
         suncal_main(
             from_date=from_date,

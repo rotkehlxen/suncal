@@ -5,9 +5,9 @@ import pytz
 from skyfield import almanac
 from skyfield import api as skyfield_api
 from skyfield.timelib import Time
-from skyfield.timelib import Timescale
 
 from suncal.models.astro import Celestial
+from suncal.models.astro import extract_moon_phase
 from suncal.models.astro import rise_set_dict
 from suncal.utils import tz_aware_dt
 
@@ -35,9 +35,40 @@ def test_celestial():
     assert "🌞↓" in celestial.events['sunset']['gcal_summary']
 
 
+def test_extract_moon_phase():
+    ts = skyfield_api.load.timescale()
+    # create a skyfield Time object in a sneaky way
+    time = ts.now()
+    # we have to set tt to an array, because that is the kind of object we get from phase calculation
+    skyfield_t = Time(tt=np.array([time.tt]), ts=ts)
+    skyfield_y = np.array([0])
+    timezone = 'Europe/Berlin'
+
+    phase_name, phase_symbol, phase_time = extract_moon_phase(
+        skyfield_t, skyfield_y, timezone
+    )
+
+    assert phase_name == "New Moon"
+    assert phase_symbol == "🌚"
+    assert isinstance(phase_time, dt.datetime)
+    assert phase_time.date() == dt.date.today()
+
+
+def test_moon_phase():
+    timezone = "Europe/Berlin"
+    date = dt.date(2023, 3, 15)
+    lat = 52.520008
+    long = 13.404954
+
+    celestial = Celestial(
+        timezone=timezone, date=date, longitude=long, latitude=lat
+    )
+
+    assert celestial.events['moonphase']['start'] == date
+    assert 'Last Quarter' in celestial.events['moonphase']['gcal_summary']
+
+
 def test_celestial_north_pole():
-    """The current version of astral throws a ValueError for locations in which there is no actual sunrise,
-    e.g. at the north pole. In that sitation we set start and end values of events to None."""
 
     timezone = "Europe/Berlin"
     date = dt.date.today()
@@ -48,9 +79,7 @@ def test_celestial_north_pole():
         timezone=timezone, date=date, longitude=longitude, latitude=latitude
     )
 
-    assert not celestial.events['sunrise']['start']
-    assert not celestial.events['sunrise']['end']
-    assert not celestial.events['sunrise']['gcal_summary']
+    assert 'sunrise' not in celestial.events.keys()
 
 
 def test_celestial_calculations():

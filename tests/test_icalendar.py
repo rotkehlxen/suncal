@@ -24,6 +24,9 @@ start_time = GoogleCalTime(dateTime=start_datetime)
 end_time = GoogleCalTime(dateTime=end_datetime)
 now = dt.datetime.now(dt.timezone.utc)
 
+start_date = GoogleCalTime(date=start_datetime.date())
+end_date = GoogleCalTime(date=start_datetime.date() + dt.timedelta(days=1))
+
 
 def test_vcalendar():
     vcal = VCalendar()
@@ -42,7 +45,7 @@ def test_vcalendar():
 
 def test_vevent():
 
-    # test creation of VEvent from GoogleCalTime
+    # test creation of VEvent from GoogleCalTime with dateTime in start and end
 
     gcal_event = GoogleCalEvent(
         start=start_time, end=end_time, summary="event_summary"
@@ -78,6 +81,22 @@ def test_vevent():
             uid="bla",
             transp="transparent",
         )
+
+    # test VEVENT from GoogleCalTime with date in start and end time (all-day events)
+    gcal_all_day_event = GoogleCalEvent(
+        start=start_date, end=end_date, summary="event_summary"
+    )
+    vevent_all_day = VEvent.fromGoogleCalEvent(
+        ge=gcal_all_day_event, dtstamp=now
+    )
+    ics = vevent_all_day.to_ics()
+
+    assert isinstance(ics, list)
+    assert ics[0] == 'BEGIN:VEVENT'
+    assert ics[-1] == 'END:VEVENT'
+    assert ics[-2] == 'TRANSP:TRANSPARENT'
+    assert ics[-3] == f'SUMMARY:{gcal_all_day_event.summary}'
+    assert ics[1] == "DTSTART;VALUE=DATE:20210228"
 
 
 def test_ics_content():

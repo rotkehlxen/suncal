@@ -1,4 +1,5 @@
 import datetime as dt
+from typing import Tuple
 
 import numpy as np
 import pytz
@@ -6,9 +7,10 @@ from pydantic import BaseModel  # pylint: disable=E0611
 from skyfield import almanac
 from skyfield import api as skyfield_api
 from skyfield.timelib import Time
-from skyfield.timelib import Timescale
 
 from suncal.utils import tz_aware_dt
+
+MOON_PHASE_SYMBOLS = ['🌚', '🌓', '🌝', '🌗']
 
 
 def rise_set_dict(
@@ -44,6 +46,25 @@ def rise_set_dict(
     return events
 
 
+def extract_moon_phase(
+    skyfield_t: Time, skyfield_y: np.ndarray, timezone: str
+) -> Tuple[str, str, dt.datetime]:
+    """
+    Using the information in skyfield_y we extract the name and the symbol of the moon phase that was found.
+    The Time provided in skyfield_t is converted to an aware datetime timestamp.
+    There is only one moon phase max per day - so we can safely assume that the skyfield_t and the skyfield_y array
+    hold only 1 item, respectively.
+    """
+
+    event_time = skyfield_t.astimezone(pytz.timezone(timezone)).item()
+
+    phase_idx = skyfield_y.item()
+    phase_symbol = MOON_PHASE_SYMBOLS[phase_idx]
+    phase_name = almanac.MOON_PHASES[phase_idx]
+
+    return phase_name, phase_symbol, event_time
+
+
 class Celestial(BaseModel):
     timezone: str
     date: dt.date
@@ -51,8 +72,9 @@ class Celestial(BaseModel):
     latitude: float
 
     @property
-    def events(self):
+    def events(self) -> dict:
 
+        events = {}
         ts = (
             skyfield_api.load.timescale()
         )  # representation of time within skyfield
@@ -87,6 +109,19 @@ class Celestial(BaseModel):
         sunrise = sun_events['rise']
         sunset = sun_events['set']
 
+        if sunrise:
+            events['sunrise'] = {
+                "start": sunrise,
+                "end": sunrise,
+                "gcal_summary": f"🌞↑ {sunrise.strftime('%I:%M %p')}",
+            }
+        if sunset:
+            events['sunset'] = {
+                "start": sunset,
+                "end": sunset,
+                "gcal_summary": f"🌞↓ {sunset.strftime('%I:%M %p')}",
+            }
+
         # calculate moonrise and moonset
         t_moon, y_moon = almanac.find_discrete(
             ts.from_datetime(t_start),
@@ -101,33 +136,34 @@ class Celestial(BaseModel):
         moonrise = moon_events['rise']
         moonset = moon_events['set']
 
-        return {
-            "sunrise": {
-                "start": sunrise,
-                "end": sunrise,
-                "gcal_summary": f"🌞↑ {sunrise.strftime('%I:%M %p')}"
-                if sunrise
-                else None,
-            },
-            "sunset": {
-                "start": sunset,
-                "end": sunset,
-                "gcal_summary": f"🌞↓ {sunset.strftime('%I:%M %p')}"
-                if sunset
-                else None,
-            },
-            "moonrise": {
+        if moonrise:
+            events['moonrise'] = {
                 "start": moonrise,
                 "end": moonrise,
-                "gcal_summary": f"🌜↑ {moonrise.strftime('%I:%M %p')}"
-                if moonrise
-                else None,
-            },
-            "moonset": {
+                "gcal_summary": f"🌜↑ {moonrise.strftime('%I:%M %p')}",
+            }
+        if moonset:
+            events["moonset"] = {
                 "start": moonset,
                 "end": moonset,
-                "gcal_summary": f"🌜↓ {moonset.strftime('%I:%M %p')}"
-                if moonset
-                else None,
-            },
-        }
+                "gcal_summary": f"🌜↓ {moonset.strftime('%I:%M %p')}",
+            }
+
+        # calculate moon phase
+        t_phase, y_phase = almanac.find_discrete(
+            ts.from_datetime(t_start),
+            ts.from_datetime(t_end),
+            almanac.moon_phases(eph),
+        )
+
+        if t_phase:
+            phase_name, phase_symbol, phase_time = extract_moon_phase(
+                skyfield_t=t_phase, skyfield_y=y_phase, timezone=self.timezone
+            )
+            events['moonphase'] = {
+                "start": phase_time.date(),
+                "end": phase_time.date() + dt.timedelta(days=1),
+                "gcal_summary": f"{phase_symbol} {phase_name} at {phase_time.strftime('%I:%M %p')}",
+            }
+
+        return events
