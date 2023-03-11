@@ -72,7 +72,7 @@ class Celestial(BaseModel):
     latitude: float
 
     @property
-    def events(self):
+    def events(self) -> dict:
 
         events = {}
         ts = (
