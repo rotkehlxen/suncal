@@ -137,7 +137,7 @@ class GoogleCalEvent(BaseModel):
         if isinstance(c_event, MoonPhase):
             return GoogleCalEvent.from_moon_phase(c_event)
         elif isinstance(c_event, RiseSet):
-            return GoogleCalEvent.from_moon_phase(c_event)  # type: ignore
+            return GoogleCalEvent.from_rise_set(c_event)
         else:
             raise NotImplementedError(
                 'This method currently only supports events of type MoonPhase or RiseSet.'
