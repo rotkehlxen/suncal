@@ -2,7 +2,8 @@ import datetime as dt
 import json
 from typing import Dict
 from typing import List
-from typing import Optional, Union
+from typing import Optional
+from typing import Union
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -125,17 +126,22 @@ class GoogleCalEvent(BaseModel):
             ),
             summary=summary,
         )
+
     @staticmethod
-    def from_celestial_event(c_event: Union[MoonPhase, RiseSet]) -> 'GoogleCalEvent':
+    def from_celestial_event(
+        c_event: Union[MoonPhase, RiseSet]
+    ) -> 'GoogleCalEvent':
         """
         Interface method that calls either constructor 'from_rise_set' or 'from_moon_phase' depending on input type.
         """
         if isinstance(c_event, MoonPhase):
             return GoogleCalEvent.from_moon_phase(c_event)
         elif isinstance(c_event, RiseSet):
-            return GoogleCalEvent.from_moon_phase(c_event) # type: ignore
+            return GoogleCalEvent.from_moon_phase(c_event)  # type: ignore
         else:
-            raise NotImplementedError('This method currently only supports events of type MoonPhase or RiseSet.')
+            raise NotImplementedError(
+                'This method currently only supports events of type MoonPhase or RiseSet.'
+            )
 
 
 def get_sun_calendar_id(
