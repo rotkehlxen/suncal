@@ -218,39 +218,31 @@ class Celestial(BaseModel):
 def calculate_rise_set(
     date: dt.date, location: Location, rise: bool, body: CelestialBody
 ) -> Optional[RiseSet]:
+    """
+    Calculate sun/moon rise/set. Only return a RiseSet event if the body rises/sets on the given date.
+    """
 
     # period of time to scan for rise and set events
     t_start, t_end = time_range_of_date(date=date, timezone=location.timezone)
 
-    # conversion of time to skyfield timescale
-    ts = skyfield_api.load.timescale()
-    t_start_skyfield = ts.from_datetime(t_start)
-    t_end_skyfield = ts.from_datetime(t_end)
-
-    # calculate rise and set events -----
-    # load ephemeris with coordinates of celestial bodies
-    # (downloaded only once, then loaded from local storage if available)
     eph = skyfield_api.load('de421.bsp')
-    # skyfield location
     skyfield_location = skyfield_api.wgs84.latlon(
         location.latitude, location.longitude
     )
 
     if body == CelestialBody.SUN:
-        t, y = almanac.find_discrete(
-            t_start_skyfield,
-            t_end_skyfield,
-            almanac.sunrise_sunset(eph, skyfield_location),
-        )
-    else:  # Moon
+        f = almanac.sunrise_sunset(eph, skyfield_location)
+    else:
         assert (
             body == CelestialBody.MOON
         ), "No rising/setting implementation for bodies other than sun or moon"
-        t, y = almanac.find_discrete(
-            t_start_skyfield,
-            t_end_skyfield,
-            almanac.risings_and_settings(eph, eph['moon'], skyfield_location),
-        )
+        f = almanac.risings_and_settings(eph, eph['moon'], skyfield_location)
+
+    ts = skyfield_api.load.timescale()
+    t, y = almanac.find_discrete(
+        ts.from_datetime(t_start), ts.from_datetime(t_end), f
+    )
+
     idx = 1 if rise else 0
 
     if idx not in y:
