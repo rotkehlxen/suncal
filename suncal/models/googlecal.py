@@ -14,7 +14,7 @@ from skyfield.almanac import MOON_PHASES
 
 from suncal.models.astro import MOON_PHASE_SYMBOLS
 from suncal.models.astro import MoonPhase
-from suncal.models.astro import Planet
+from suncal.models.astro import CelestialBody
 from suncal.models.astro import RiseSet
 from suncal.utils import create_batches
 
@@ -91,7 +91,7 @@ class GoogleCalEvent(BaseModel):
         """
         Create calendar event from a RiseSet event (e.g. sunrise, moonset ...).
         """
-        symbol = '🌞' if rise_set.planet == Planet.SUN else '🌜'
+        symbol = '🌞' if rise_set.body == CelestialBody.SUN else '🌜'
         direction = '↑' if rise_set.rise else '↓'
 
         summary = (

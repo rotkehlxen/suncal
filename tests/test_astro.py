@@ -11,7 +11,7 @@ from skyfield.timelib import Time
 from suncal.models.astro import Celestial
 from suncal.models.astro import Location
 from suncal.models.astro import MoonPhase
-from suncal.models.astro import Planet
+from suncal.models.astro import CelestialBody
 from suncal.models.astro import RiseSet
 from suncal.models.astro import extract_moon_phase
 from suncal.models.astro import rise_set_dict
@@ -35,20 +35,26 @@ def test_rise_set_class():
 
     # test sunrise
     sunrise = RiseSet(
-        location=location, event_time=event_time, planet=Planet.SUN, rise=True
+        location=location,
+        event_time=event_time,
+        planet=CelestialBody.SUN,
+        rise=True,
     )
 
-    assert sunrise.planet == Planet.SUN
+    assert sunrise.body == CelestialBody.SUN
     assert sunrise.event_time == event_time
     assert sunrise.rise
     assert sunrise.location == location
 
     # test moonset
     moonset = RiseSet(
-        location=location, event_time=event_time, planet=Planet.MOON, rise=False
+        location=location,
+        event_time=event_time,
+        planet=CelestialBody.MOON,
+        rise=False,
     )
 
-    assert moonset.planet == Planet.MOON
+    assert moonset.body == CelestialBody.MOON
     assert moonset.event_time == event_time
     assert not moonset.rise
     assert moonset.location == location

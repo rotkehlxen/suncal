@@ -21,7 +21,7 @@ class Location(BaseModel):
     longitude: float
 
 
-class Planet(Enum):
+class CelestialBody(Enum):
     SUN = 'sun'
     MOON = 'moon'
 
@@ -29,7 +29,7 @@ class Planet(Enum):
 class RiseSet(BaseModel):
     location: Location
     event_time: dt.datetime
-    planet: Planet
+    body: CelestialBody
     rise: bool
 
 
