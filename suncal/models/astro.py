@@ -1,5 +1,6 @@
 import datetime as dt
 from enum import Enum
+from typing import Optional
 from typing import Tuple
 
 import numpy as np
@@ -211,3 +212,64 @@ class Celestial(BaseModel):
             }
 
         return events
+
+
+def calculate_rise_set(
+    date: dt.date, location: Location, rise: bool, body: CelestialBody
+) -> Optional[RiseSet]:
+
+    # period of time to scan for rise and set events in datetime format
+    t_start = tz_aware_dt(
+        dt.datetime(
+            year=date.year,
+            month=date.month,
+            day=date.day,
+        ),
+        timezone=location.timezone,
+    )
+
+    t_end = t_start + dt.timedelta(days=1, microseconds=-1)
+
+    # conversion of time to skyfield timescale
+    ts = skyfield_api.load.timescale()
+    t_start_skyfield = ts.from_datetime(t_start)
+    t_end_skyfield = ts.from_datetime(t_end)
+
+    # calculate rise and set events -----
+    # load ephemeris with coordinates of celestial bodies
+    # (downloaded only once, then loaded from local storage if available)
+    eph = skyfield_api.load('de421.bsp')
+    # skyfield location
+    skyfield_location = skyfield_api.wgs84.latlon(
+        location.latitude, location.longitude
+    )
+
+    if body == CelestialBody.SUN:
+        t, y = almanac.find_discrete(
+            t_start_skyfield,
+            t_end_skyfield,
+            almanac.sunrise_sunset(eph, skyfield_location),
+        )
+    else:  # Moon
+        assert (
+            body == CelestialBody.MOON
+        ), "No rising/setting implementation for bodies other than sun or moon"
+        t, y = almanac.find_discrete(
+            t_start_skyfield,
+            t_end_skyfield,
+            almanac.risings_and_settings(eph, eph['moon'], skyfield_location),
+        )
+    idx = 1 if rise else 0
+
+    if idx not in y:
+        print(
+            f"The {body.value} does not {'rise' if rise else 'set'} on {date.strftime('%d.%m.%Y')}"
+        )
+        return None
+    else:
+        t_skyfield = t[y == idx]
+        event_time = t_skyfield.astimezone(pytz.timezone(location.timezone))
+
+        return RiseSet(
+            location=location, event_time=event_time, body=body, rise=rise
+        )
