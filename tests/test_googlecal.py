@@ -20,7 +20,7 @@ time_zone = "Europe/Berlin"
 def test_gcal_event_from_celestial_event():
     location = Location(timezone=time_zone, longitude=0, latitude=0)
     moon_phase = MoonPhase(
-        location=location,
+        timezone=time_zone,
         event_time=tz_aware_dt(now, timezone=time_zone),
         phase_idx=2,
     )

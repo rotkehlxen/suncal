@@ -110,7 +110,7 @@ class GoogleCalEvent(BaseModel):
         Create calendar event from a MoonPhase event. We are using an all-day event for that purpose.
         """
         event_date = moon_phase.event_time.date()
-        timezone = moon_phase.location.timezone
+        timezone = moon_phase.timezone
 
         symbol = MOON_PHASE_SYMBOLS[moon_phase.phase_idx]
         desc = MOON_PHASES[moon_phase.phase_idx]
