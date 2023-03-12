@@ -1,9 +1,11 @@
 import datetime as dt
-from typing import Tuple
 from enum import Enum
+from typing import Tuple
+
 import numpy as np
 import pytz
-from pydantic import BaseModel, validator # pylint: disable=E0611
+from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import validator
 from skyfield import almanac
 from skyfield import api as skyfield_api
 from skyfield.timelib import Time
@@ -13,11 +15,11 @@ from suncal.utils import tz_aware_dt
 MOON_PHASE_SYMBOLS = ['🌚', '🌓', '🌝', '🌗']
 
 
-
 class Location(BaseModel):
     timezone: str
     latitude: float
     longitude: float
+
 
 class Planet(Enum):
     SUN = 'sun'

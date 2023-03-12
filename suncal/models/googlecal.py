@@ -9,13 +9,18 @@ from googleapiclient.discovery import build
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import root_validator
 from pydantic import validator
+from skyfield.almanac import MOON_PHASES
 
+from suncal.models.astro import MOON_PHASE_SYMBOLS
+from suncal.models.astro import MoonPhase
+from suncal.models.astro import Planet
+from suncal.models.astro import RiseSet
 from suncal.utils import create_batches
 
 
 class GoogleCalTime(BaseModel):
     """
-    Model for a google calendar time. Used to specify start and end of a google calendar event.
+    Model for a Google calendar time. Used to specify start and end of a google calendar event.
     """
 
     date: Optional[dt.date] = None  # for all-day events
@@ -49,7 +54,7 @@ class GoogleCalTime(BaseModel):
 
 
 class GoogleCalEvent(BaseModel):
-    """Model for google calendar event.
+    """Model for Google calendar event.
 
     The only required fields are 'start' and 'end'. More fields can be added when necessary."""
 
@@ -79,6 +84,47 @@ class GoogleCalEvent(BaseModel):
         'null" before - however, this is accepted by the api client (tested).
         """
         return json.loads(self.json())
+
+    @staticmethod
+    def from_rise_set(rise_set: RiseSet) -> 'GoogleCalEvent':
+        """
+        Create calendar event from a RiseSet event (e.g. sunrise, moonset ...).
+        """
+        symbol = '🌞' if rise_set.planet == Planet.SUN else '🌜'
+        direction = '↑' if rise_set.rise else '↓'
+
+        summary = (
+            f"{symbol}{direction} at {rise_set.event_time.strftime('%I:%M %p')}"
+        )
+
+        return GoogleCalEvent(
+            start=GoogleCalTime(datetime=rise_set.event_time),
+            end=GoogleCalTime(datetime=rise_set.event_time),
+            summary=summary,
+        )
+
+    @staticmethod
+    def from_moon_phase(moon_phase: MoonPhase) -> 'GoogleCalEvent':
+        """
+        Create calendar event from a MoonPhase event. We are using an all-day event for that purpose.
+        """
+        event_date = moon_phase.event_time.date()
+        timezone = moon_phase.location.timezone
+
+        symbol = MOON_PHASE_SYMBOLS[moon_phase.phase_idx]
+        desc = MOON_PHASES[moon_phase.phase_idx]
+
+        summary = (
+            f"{symbol} {desc} at {moon_phase.event_time.strftime('%I:%M %p')}"
+        )
+
+        return GoogleCalEvent(
+            start=GoogleCalTime(date=event_date, timezone=timezone),
+            end=GoogleCalTime(
+                date=event_date + dt.timedelta(days=1), timezone=timezone
+            ),
+            summary=summary,
+        )
 
 
 def get_sun_calendar_id(
