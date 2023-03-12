@@ -39,7 +39,7 @@ class MoonPhase(BaseModel):
     phase_idx: int
 
     @validator('phase_idx')
-    def transparency_valid(cls, phase_idx):  # pylint: disable=E0213
+    def moon_phase_valid(cls, phase_idx):  # pylint: disable=E0213
         if phase_idx not in range(4):
             raise ValueError(
                 'The phase_idx has to be either 0, 1, 2 or 3. This is the convention of skyfield '
