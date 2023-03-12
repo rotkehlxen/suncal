@@ -3,6 +3,10 @@ import datetime as dt
 import pytest
 from pydantic import ValidationError
 
+from suncal.models.astro import CelestialBody
+from suncal.models.astro import Location
+from suncal.models.astro import MoonPhase
+from suncal.models.astro import RiseSet
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.googlecal import GoogleCalTime
 from suncal.suncal import create_calendar_events
@@ -11,6 +15,38 @@ from suncal.utils import tz_aware_dt
 now = dt.datetime.now()
 today = dt.date.today()
 time_zone = "Europe/Berlin"
+
+
+def test_gcal_event_from_celestial_event():
+    location = Location(timezone=time_zone, longitude=0, latitude=0)
+    moon_phase = MoonPhase(
+        location=location,
+        event_time=tz_aware_dt(now, timezone=time_zone),
+        phase_idx=2,
+    )
+
+    gcal_event = GoogleCalEvent.from_celestial_event(moon_phase)
+
+    assert gcal_event.start.date == now.date()
+    assert gcal_event.start.dateTime is None
+    assert gcal_event.end.date == now.date() + dt.timedelta(days=1)
+    assert "Full Moon" in gcal_event.summary
+    assert "🌝" in gcal_event.summary
+
+    sunrise = RiseSet(
+        location=location,
+        event_time=tz_aware_dt(now, timezone=time_zone),
+        rise=True,
+        body=CelestialBody.SUN,
+    )
+
+    gcal_event = GoogleCalEvent.from_celestial_event(sunrise)
+
+    assert gcal_event.start.date is None
+    assert gcal_event.start.dateTime == tz_aware_dt(now, timezone=time_zone)
+    assert gcal_event.end.dateTime == tz_aware_dt(now, timezone=time_zone)
+    assert '🌞' in gcal_event.summary
+    assert '↑' in gcal_event.summary
 
 
 def test_date_or_datetime_check():

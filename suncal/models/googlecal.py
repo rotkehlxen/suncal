@@ -13,8 +13,8 @@ from pydantic import validator
 from skyfield.almanac import MOON_PHASES
 
 from suncal.models.astro import MOON_PHASE_SYMBOLS
-from suncal.models.astro import MoonPhase
 from suncal.models.astro import CelestialBody
+from suncal.models.astro import MoonPhase
 from suncal.models.astro import RiseSet
 from suncal.utils import create_batches
 
@@ -99,8 +99,8 @@ class GoogleCalEvent(BaseModel):
         )
 
         return GoogleCalEvent(
-            start=GoogleCalTime(datetime=rise_set.event_time),
-            end=GoogleCalTime(datetime=rise_set.event_time),
+            start=GoogleCalTime(dateTime=rise_set.event_time),
+            end=GoogleCalTime(dateTime=rise_set.event_time),
             summary=summary,
         )
 
@@ -120,9 +120,9 @@ class GoogleCalEvent(BaseModel):
         )
 
         return GoogleCalEvent(
-            start=GoogleCalTime(date=event_date, timezone=timezone),
+            start=GoogleCalTime(date=event_date, timeZone=timezone),
             end=GoogleCalTime(
-                date=event_date + dt.timedelta(days=1), timezone=timezone
+                date=event_date + dt.timedelta(days=1), timeZone=timezone
             ),
             summary=summary,
         )

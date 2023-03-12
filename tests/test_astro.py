@@ -9,9 +9,9 @@ from skyfield import api as skyfield_api
 from skyfield.timelib import Time
 
 from suncal.models.astro import Celestial
+from suncal.models.astro import CelestialBody
 from suncal.models.astro import Location
 from suncal.models.astro import MoonPhase
-from suncal.models.astro import CelestialBody
 from suncal.models.astro import RiseSet
 from suncal.models.astro import extract_moon_phase
 from suncal.models.astro import rise_set_dict
@@ -37,7 +37,7 @@ def test_rise_set_class():
     sunrise = RiseSet(
         location=location,
         event_time=event_time,
-        planet=CelestialBody.SUN,
+        body=CelestialBody.SUN,
         rise=True,
     )
 
@@ -50,7 +50,7 @@ def test_rise_set_class():
     moonset = RiseSet(
         location=location,
         event_time=event_time,
-        planet=CelestialBody.MOON,
+        body=CelestialBody.MOON,
         rise=False,
     )
 

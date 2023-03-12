@@ -34,6 +34,15 @@ class RiseSet(BaseModel):
 
 
 class MoonPhase(BaseModel):
+    """
+    The field phase_idx indicated the MoonPhase of interest:
+
+    0 : 'New Moon'
+    1 : 'First Quarter'
+    2 : 'Full Moon'
+    3 : 'Last Quarter'
+    """
+
     location: Location
     event_time: dt.datetime
     phase_idx: int
