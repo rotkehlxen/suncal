@@ -1,5 +1,5 @@
 import datetime as dt
-
+import pytest
 import numpy as np
 import pytz
 from skyfield import almanac
@@ -9,7 +9,51 @@ from skyfield.timelib import Time
 from suncal.models.astro import Celestial
 from suncal.models.astro import extract_moon_phase
 from suncal.models.astro import rise_set_dict
+from suncal.models.astro import Location, RiseSet, MoonPhase, Planet
 from suncal.utils import tz_aware_dt
+from pydantic import ValidationError
+
+def test_location_class():
+    location = Location(timezone='Europe/Berlin', longitude = '10', latitude = 20)
+
+    assert location.timezone == 'Europe/Berlin'
+    assert location.longitude == 10
+    assert location.latitude == 20
+
+
+def test_rise_set_class():
+    timezone = 'Europe/Berlin'
+    location = Location(timezone=timezone, longitude=0, latitude=0)
+    event_time = tz_aware_dt(naive_datetime=dt.datetime.now(), timezone=timezone)
+
+    # test sunrise
+    sunrise = RiseSet(location=location, event_time=event_time, planet=Planet.SUN, rise=True)
+
+    assert sunrise.planet == Planet.SUN
+    assert sunrise.event_time == event_time
+    assert sunrise.rise
+    assert sunrise.location == location
+
+    # test moonset
+    moonset = RiseSet(location=location, event_time=event_time, planet=Planet.MOON, rise=False)
+
+    assert moonset.planet == Planet.MOON
+    assert moonset.event_time == event_time
+    assert not moonset.rise
+    assert moonset.location == location
+
+
+def test_moon_phase_class():
+    timezone = 'Europe/Berlin'
+    location = Location(timezone=timezone, longitude=0, latitude=0)
+    event_time = tz_aware_dt(naive_datetime=dt.datetime.now(), timezone=timezone)
+
+    moonphase = MoonPhase(location=location, event_time= event_time, phase_idx=3)
+    assert moonphase.phase_idx == 3
+
+    with pytest.raises(ValidationError):
+        # there is no moon phase with phase_idx 4
+        MoonPhase(location=location, event_time=event_time, phase_idx=4)
 
 
 def test_celestial():

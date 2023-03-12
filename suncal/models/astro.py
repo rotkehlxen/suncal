@@ -1,9 +1,9 @@
 import datetime as dt
 from typing import Tuple
-from dataclasses import dataclass
+from enum import Enum
 import numpy as np
 import pytz
-from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import BaseModel, validator # pylint: disable=E0611
 from skyfield import almanac
 from skyfield import api as skyfield_api
 from skyfield.timelib import Time
@@ -13,44 +13,37 @@ from suncal.utils import tz_aware_dt
 MOON_PHASE_SYMBOLS = ['🌚', '🌓', '🌝', '🌗']
 
 
-@dataclass
-class Location:
+
+class Location(BaseModel):
     timezone: str
     latitude: float
     longitude: float
 
+class Planet(Enum):
+    SUN = 'sun'
+    MOON = 'moon'
 
-@dataclass
-class Sunrise:
+
+class RiseSet(BaseModel):
     location: Location
     event_time: dt.datetime
-    name: str = 'sunrise' # Do I need the name ??
-
-@dataclass
-class Sunset:
-    location: Location
-    event_time: dt.datetime
-    name: str = 'sunset'
-
-@dataclass
-class Moonrise:
-    location: Location
-    event_time: dt.datetime
-    name: str = 'moonrise'
-
-@dataclass
-class Moonset:
-    location: Location
-    event_time: dt.datetime
-    name: str = 'moonset'
+    planet: Planet
+    rise: bool
 
 
-@dataclass
-class Moonphase:
+class MoonPhase(BaseModel):
     location: Location
     event_time: dt.datetime
     phase_idx: int
-    name: str = 'moonphase'
+
+    @validator('phase_idx')
+    def transparency_valid(cls, phase_idx):  # pylint: disable=E0213
+        if phase_idx not in range(4):
+            raise ValueError(
+                'The phase_idx has to be either 0, 1, 2 or 3. This is the convention of skyfield '
+                'for identification of the 4 main moon phases'
+            )
+        return phase_idx
 
 
 def rise_set_dict(
