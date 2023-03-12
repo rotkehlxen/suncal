@@ -147,8 +147,8 @@ def test_rise_set_calculations():
         for celestial_event in ['sunrise', 'sunset', 'moonrise', 'moonset']:
 
             tad_time = tz_aware_dt(
-                dt.datetime.combine(date, city[celestial_event]), # type: ignore
-                city['timezone'], # type: ignore
+                dt.datetime.combine(date, city[celestial_event]),  # type: ignore
+                city['timezone'],  # type: ignore
             )
             rise_set_event = CALC[celestial_event](date=date, location=location)
 
