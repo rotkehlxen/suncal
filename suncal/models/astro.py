@@ -11,6 +11,7 @@ from skyfield import almanac
 from skyfield import api as skyfield_api
 from skyfield.timelib import Time
 
+from suncal.utils import time_range_of_date
 from suncal.utils import tz_aware_dt
 
 MOON_PHASE_SYMBOLS = ['🌚', '🌓', '🌝', '🌗']
@@ -218,17 +219,8 @@ def calculate_rise_set(
     date: dt.date, location: Location, rise: bool, body: CelestialBody
 ) -> Optional[RiseSet]:
 
-    # period of time to scan for rise and set events in datetime format
-    t_start = tz_aware_dt(
-        dt.datetime(
-            year=date.year,
-            month=date.month,
-            day=date.day,
-        ),
-        timezone=location.timezone,
-    )
-
-    t_end = t_start + dt.timedelta(days=1, microseconds=-1)
+    # period of time to scan for rise and set events
+    t_start, t_end = time_range_of_date(date=date, timezone=location.timezone)
 
     # conversion of time to skyfield timescale
     ts = skyfield_api.load.timescale()

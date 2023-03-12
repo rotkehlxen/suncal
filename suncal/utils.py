@@ -1,5 +1,6 @@
 import datetime as dt
 from typing import List
+from typing import Tuple
 
 import click
 import pytz
@@ -28,6 +29,26 @@ def tz_aware_dt(
     timezone_obj = pytz.timezone(timezone)
     aware_datetime = timezone_obj.localize(naive_datetime)
     return aware_datetime
+
+
+def time_range_of_date(
+    date: dt.date, timezone: str
+) -> Tuple[dt.datetime, dt.datetime]:
+    """
+    Get start and end timestamp of one date, timezone aware.
+    """
+    t_start = tz_aware_dt(
+        dt.datetime(
+            year=date.year,
+            month=date.month,
+            day=date.day,
+        ),
+        timezone=timezone,
+    )
+
+    t_end = t_start + dt.timedelta(days=1, microseconds=-1)
+
+    return t_start, t_end
 
 
 def aware_datetime_to_ical_date_with_utc_time(
