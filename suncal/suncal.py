@@ -23,12 +23,7 @@ SCOPES = [
 
 
 def create_calendar_events(
-    event: str,
-    from_date: dt.date,
-    to_date: dt.date,
-    timezone: str,
-    longitude: float,
-    latitude: float,
+    event: str, from_date: dt.date, to_date: dt.date, location: Location
 ) -> List[GoogleCalEvent]:
     """
     Calculate event times for [event] (either sunset, sunrise, moonrise, moonset or moonphase) between [from_date]
@@ -37,9 +32,6 @@ def create_calendar_events(
 
     calendar_events: List = []
     dates = date_range(from_date, to_date)
-    location = Location(
-        timezone=timezone, latitude=latitude, longitude=longitude
-    )
 
     for date in dates:
         celestial_event = CALC[event](date, location)
@@ -64,10 +56,15 @@ def suncal_main(
 ) -> None:
 
     assert to_date >= from_date, "to_date must be >= from_date."
+    # for ics files the timezone is not required, so we use UTC for all internal calculations
     timezone = timezone or "UTC"
 
+    location = Location(
+        timezone=timezone, longitude=longitude, latitude=latitude
+    )
+
     events: List[GoogleCalEvent] = create_calendar_events(
-        event_name, from_date, to_date, timezone, longitude, latitude
+        event_name, from_date, to_date, location
     )
 
     if events:
