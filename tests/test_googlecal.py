@@ -122,13 +122,15 @@ def test_create_calendar_events():
     longitude = 13.23
     latitude = 52.32
 
+    location = Location(
+        timezone=time_zone, longitude=longitude, latitude=latitude
+    )
+
     gcal_event_list = create_calendar_events(
         event="sunrise",
         from_date=from_date,
         to_date=to_date,
-        timezone=time_zone,
-        longitude=longitude,
-        latitude=latitude,
+        location=location,
     )
 
     assert len(gcal_event_list) == 3
@@ -140,13 +142,15 @@ def test_create_calendar_events():
     latitude = 90
     longitude = 0
 
+    location = Location(
+        timezone=time_zone, longitude=longitude, latitude=latitude
+    )
+
     gcal_event_list = create_calendar_events(
         event="sunrise",
         from_date=from_date,
         to_date=to_date,
-        timezone=time_zone,
-        longitude=longitude,
-        latitude=latitude,
+        location=location,
     )
 
     assert len(gcal_event_list) == 0
