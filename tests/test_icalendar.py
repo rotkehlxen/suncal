@@ -23,9 +23,12 @@ end_datetime = tz_aware_dt(
 start_time = GoogleCalTime(datetime=start_datetime)
 end_time = GoogleCalTime(datetime=end_datetime)
 now = dt.datetime.now(dt.timezone.utc)
+timezone = 'Europe/Berlin'
 
-start_date = GoogleCalTime(date=start_datetime.date())
-end_date = GoogleCalTime(date=start_datetime.date() + dt.timedelta(days=1))
+start_date = GoogleCalTime(date=start_datetime.date(), timezone=timezone)
+end_date = GoogleCalTime(
+    date=start_datetime.date() + dt.timedelta(days=1), timezone=timezone
+)
 
 
 def test_vcalendar():
