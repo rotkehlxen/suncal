@@ -110,7 +110,7 @@ class GoogleCalEvent(BaseModel):
             raise ValueError(
                 'Transparency of google calendar event can only be "transparent" or "opaque".'
             )
-        return v.title()
+        return v
 
     def payload(self):
         """pydantic provides method json() that serializes our model, especially datetime objects are converted
