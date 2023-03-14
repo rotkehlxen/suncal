@@ -47,13 +47,22 @@ class GoogleCalTime(BaseModel):
 
     @root_validator(pre=True)
     def timezone_provided_if_non_aware_datetime(cls, values):
-        datetime, timezone = values.get("datetime"), values.get("timezone")
+        datetime, timezone, date = (
+            values.get("datetime"),
+            values.get("timezone"),
+            values.get("date"),
+        )
         if datetime and (
             datetime.tzinfo is None or datetime.utcoffset() is None
         ):
             assert (
                 timezone is not None
-            ), "If the datetime is unaware you have to provide a timeZone."
+            ), "If the datetime is unaware you have to provide a timezone."
+
+        if date:
+            assert (
+                timezone is not None
+            ), "Always provide a timezone if you specify date instead of datetime."
         return values
 
 
@@ -84,6 +93,15 @@ class GoogleCalEvent(BaseModel):
                 values['end'].date is None
             ), "If start has a datetime, end needs to have a datetime also."
 
+        return values
+
+    @root_validator()
+    def end_date_larger_than_start_date(cls, values):
+        if values['start'].date and values['end'].date:
+            assert values['end'].date > values['start'].date, (
+                "End is the exclusive(!) end date of the event so "
+                "it has to be larger than the start date."
+            )
         return values
 
     @validator('transparency')

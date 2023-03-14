@@ -17,6 +17,61 @@ today = dt.date.today()
 time_zone = "Europe/Berlin"
 
 
+# tests on GoogleCalTime
+def test_google_cal_time():
+    gtime = GoogleCalTime(datetime=now, timezone=time_zone)
+    # field names are NOT the alias names
+    assert gtime.datetime == now
+    assert gtime.timezone == time_zone
+    # also the schema does not contain alias field names by default
+    assert 'datetime' in gtime.dict().keys()
+    # but we can configure the schema to use the alias names
+    assert 'dateTime' in gtime.dict(by_alias=True).keys()
+    assert 'timeZone' in gtime.dict(by_alias=True).keys()
+
+
+def test_date_or_datetime_check():
+    with pytest.raises(ValidationError):
+        # supply only either date or datetime
+        GoogleCalTime(date=today, datetime=now, timezone=time_zone)
+
+    with pytest.raises(ValidationError):
+        # at least one date type has to be provided
+        GoogleCalTime(date=None, datetime=None, timezone=time_zone)
+
+
+def test_timezone_added_if_datetime_non_aware():
+    with pytest.raises(ValidationError):
+        GoogleCalTime(datetime=now)
+
+    gcaltime = GoogleCalTime(datetime=now, timezone=time_zone)
+    assert gcaltime.datetime == now
+    assert gcaltime.timezone == time_zone
+
+    with pytest.raises(ValidationError):
+        gcaltime = GoogleCalTime(date=today)
+
+
+# tests on GoogleCalEvent
+def test_start_and_end_match():
+    # Either use datetime or date in start and end
+    with pytest.raises(ValidationError):
+        GoogleCalEvent(
+            start=GoogleCalTime(date=today, timezone=time_zone),
+            end=GoogleCalTime(datetime=now, timezone=time_zone),
+            summary='bla',
+        )
+
+
+def test_end_date_larger_start_date():
+    with pytest.raises(ValidationError):
+        GoogleCalEvent(
+            start=GoogleCalTime(date=today, timezone=time_zone),
+            end=GoogleCalTime(date=today, timezone=time_zone),
+            summary='bla',
+        )
+
+
 def test_gcal_event_from_celestial_event():
     location = Location(timezone=time_zone, longitude=0, latitude=0)
     moon_phase = MoonPhase(
@@ -49,30 +104,13 @@ def test_gcal_event_from_celestial_event():
     assert '↑' in gcal_event.summary
 
 
-def test_date_or_datetime_check():
-    with pytest.raises(ValidationError):
-        # supply only either date or datetime
-        GoogleCalTime(date=today, datetime=now, timezone=time_zone)
-
-    with pytest.raises(ValidationError):
-        # at least one date type has to be provided
-        GoogleCalTime(date=None, datetime=None, timezone=time_zone)
-
-
-def test_timezone_added_if_datetime_non_aware():
-    with pytest.raises(ValidationError):
-        GoogleCalTime(datetime=now)
-
-    gcaltime = GoogleCalTime(datetime=now, timezone=time_zone)
-    assert gcaltime.datetime == now
-    assert gcaltime.timezone == time_zone
-
-
 def test_transparency_validation():
     with pytest.raises(ValidationError):
         GoogleCalEvent(
-            start=GoogleCalTime(date=today),
-            end=GoogleCalTime(date=today),
+            start=GoogleCalTime(date=today, timezone=time_zone),
+            end=GoogleCalTime(
+                date=today + dt.timedelta(days=1), timezone=time_zone
+            ),
             summary='summary',
             transparency="non-opaque",
         )
@@ -80,8 +118,10 @@ def test_transparency_validation():
 
 def test_transparency_default():
     event = GoogleCalEvent(
-        start=GoogleCalTime(date=today),
-        end=GoogleCalTime(date=today),
+        start=GoogleCalTime(date=today, timezone=time_zone),
+        end=GoogleCalTime(
+            date=today + dt.timedelta(days=1), timezone=time_zone
+        ),
         summary='summary',
     )
 
