@@ -7,7 +7,7 @@ from typing import Union
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import BaseModel
 from pydantic import Field
 from pydantic import root_validator
 from pydantic import validator
@@ -37,7 +37,7 @@ class GoogleCalTime(BaseModel):
         allow_population_by_field_name = True
 
     @root_validator(pre=True)
-    # make sure that either date OR datetime is provided (but not both at the same time)  # pylint: disable=E0213
+    # make sure that either date OR datetime is provided (but not both at the same time)
     def date_or_datetime_provided(cls, values):
         date, datetime = values.get("date"), values.get("datetime")
         assert (date is None and datetime is not None) or (
@@ -46,9 +46,7 @@ class GoogleCalTime(BaseModel):
         return values
 
     @root_validator(pre=True)
-    def timezone_provided_if_non_aware_datetime(
-        cls, values
-    ):  # pylint: disable=E0213
+    def timezone_provided_if_non_aware_datetime(cls, values):
         datetime, timezone = values.get("datetime"), values.get("timezone")
         if datetime and (
             datetime.tzinfo is None or datetime.utcoffset() is None
@@ -89,7 +87,7 @@ class GoogleCalEvent(BaseModel):
         return values
 
     @validator('transparency')
-    def transparency_valid(cls, v):  # pylint: disable=E0213
+    def transparency_valid(cls, v):
         if v not in ['transparent', 'opaque']:
             raise ValueError(
                 'Transparency of google calendar event can only be "transparent" or "opaque".'

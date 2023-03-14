@@ -5,7 +5,7 @@ from typing import List
 from typing import Union
 from uuid import uuid4
 
-from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import BaseModel
 from pydantic import validator
 
 from suncal.models.googlecal import GoogleCalEvent
@@ -29,7 +29,7 @@ class VEvent(BaseModel):
     transp: str  # transparency of event
 
     @validator("dtend", "dtstart", "dtstamp")
-    def validate_timezone_awareness(cls, timestamp):  # pylint: disable=E0213
+    def validate_timezone_awareness(cls, timestamp):
         if type(timestamp) == dt.datetime:
             assert (
                 timestamp.tzinfo is not None

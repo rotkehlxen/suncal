@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional
 
 import pytz
-from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import BaseModel
 from pydantic import validator
 from skyfield import almanac
 from skyfield import api as skyfield_api
@@ -46,7 +46,7 @@ class MoonPhase(BaseModel):
     phase_idx: int
 
     @validator('phase_idx')
-    def moon_phase_valid(cls, phase_idx):  # pylint: disable=E0213
+    def moon_phase_valid(cls, phase_idx):
         if phase_idx not in range(4):
             raise ValueError(
                 'The phase_idx has to be either 0, 1, 2 or 3. This is the convention of skyfield '

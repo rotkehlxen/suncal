@@ -109,9 +109,9 @@ def test_google_cal_event_payload():
     payload = event.payload()
 
     assert payload["start"]["date"] is None
-    assert payload["start"]["datetime"] == "2021-02-28T16:30:00+01:00"
+    assert payload["start"]["dateTime"] == "2021-02-28T16:30:00+01:00"
     assert payload["start"]["timeZone"] is None
-    assert payload["end"]["datetime"] == "2021-02-28T17:30:00+01:00"
+    assert payload["end"]["dateTime"] == "2021-02-28T17:30:00+01:00"
     assert payload["summary"] == "test event"
 
 
