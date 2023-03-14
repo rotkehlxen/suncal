@@ -40,8 +40,8 @@ class VEvent(BaseModel):
     @staticmethod
     def fromGoogleCalEvent(ge: GoogleCalEvent, dtstamp: dt.datetime) -> VEvent:
         ical_event = VEvent(
-            dtstart=ge.start.dateTime or ge.start.date,
-            dtend=ge.end.dateTime or ge.end.date,
+            dtstart=ge.start.datetime or ge.start.date,
+            dtend=ge.end.datetime or ge.end.date,
             dtstamp=dtstamp,
             uid=f"{uuid4()}@itsalwaysbeen.photography",
             summary=ge.summary,

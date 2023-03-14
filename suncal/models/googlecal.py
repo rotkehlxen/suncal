@@ -8,6 +8,7 @@ from typing import Union
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import Field
 from pydantic import root_validator
 from pydantic import validator
 from skyfield.almanac import MOON_PHASES
@@ -25,32 +26,36 @@ class GoogleCalTime(BaseModel):
     """
 
     date: Optional[dt.date] = None  # for all-day events
-    dateTime: Optional[dt.datetime] = None  # for timed events
-    timeZone: Optional[
-        str
-    ] = None  # required only if provided dateTime is not aware
+    datetime: Optional[dt.datetime] = Field(
+        alias='dateTime', default=None
+    )  # for timed events
+    timezone: Optional[str] = Field(
+        alias='timeZone', default=None
+    )  # required only if provided dateTime is not aware
+
+    class Config:
+        allow_population_by_field_name = True
 
     @root_validator(pre=True)
-    # make sure that either date OR dateTime is provided (but not both at the same time)  # pylint: disable=E0213
+    # make sure that either date OR datetime is provided (but not both at the same time)  # pylint: disable=E0213
     def date_or_datetime_provided(cls, values):
-        date, datetime = values.get("date"), values.get("dateTime")
+        date, datetime = values.get("date"), values.get("datetime")
         assert (date is None and datetime is not None) or (
             date is not None and datetime is None
         ), "You have to provide a date for all day events OR a datetime for timed events!"
         return values
 
-    # if the root validator above fails, the following root validator is NOT executed
     @root_validator(pre=True)
     def timezone_provided_if_non_aware_datetime(
         cls, values
     ):  # pylint: disable=E0213
-        datetime, timezone = values.get("dateTime"), values.get("timeZone")
+        datetime, timezone = values.get("datetime"), values.get("timezone")
         if datetime and (
             datetime.tzinfo is None or datetime.utcoffset() is None
         ):
             assert (
                 timezone is not None
-            ), "If the dateTime is unaware you have to provide a timeZone."
+            ), "If the datetime is unaware you have to provide a timeZone."
         return values
 
 
@@ -65,6 +70,23 @@ class GoogleCalEvent(BaseModel):
     transparency: str = (
         'transparent'  # sun calendar events are definitely no time blockers
     )
+
+    @root_validator()
+    def start_and_end_match(cls, values):
+        """
+        If start is defined by a date, end has to be defined by date also. Same for defintion of start and end by
+        datetime.
+        """
+        if values['start'].datetime is None:
+            assert (
+                values['end'].datetime is None
+            ), "If start has a date, end needs to have a date also."
+        if values['start'].date is None:
+            assert (
+                values['end'].date is None
+            ), "If start has a datetime, end needs to have a datetime also."
+
+        return values
 
     @validator('transparency')
     def transparency_valid(cls, v):  # pylint: disable=E0213
@@ -84,7 +106,7 @@ class GoogleCalEvent(BaseModel):
         We convert this json string back to a dictionary. This creates None type objects in places where we had string
         'null" before - however, this is accepted by the api client (tested).
         """
-        return json.loads(self.json())
+        return json.loads(self.json(by_alias=True))
 
     @staticmethod
     def from_rise_set(rise_set: RiseSet) -> 'GoogleCalEvent':
@@ -99,9 +121,10 @@ class GoogleCalEvent(BaseModel):
         )
 
         return GoogleCalEvent(
-            start=GoogleCalTime(dateTime=rise_set.event_time),
-            end=GoogleCalTime(dateTime=rise_set.event_time),
+            start=GoogleCalTime(datetime=rise_set.event_time),
+            end=GoogleCalTime(datetime=rise_set.event_time),
             summary=summary,
+            transparency='transparent',
         )
 
     @staticmethod
@@ -120,11 +143,12 @@ class GoogleCalEvent(BaseModel):
         )
 
         return GoogleCalEvent(
-            start=GoogleCalTime(date=event_date, timeZone=timezone),
+            start=GoogleCalTime(date=event_date, timezone=timezone),
             end=GoogleCalTime(
-                date=event_date + dt.timedelta(days=1), timeZone=timezone
+                date=event_date + dt.timedelta(days=1), timezone=timezone
             ),
             summary=summary,
+            transparency='transparent',
         )
 
     @staticmethod

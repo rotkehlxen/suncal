@@ -20,8 +20,8 @@ end_datetime = tz_aware_dt(
     timezone="Europe/Berlin",
 )
 
-start_time = GoogleCalTime(dateTime=start_datetime)
-end_time = GoogleCalTime(dateTime=end_datetime)
+start_time = GoogleCalTime(datetime=start_datetime)
+end_time = GoogleCalTime(datetime=end_datetime)
 now = dt.datetime.now(dt.timezone.utc)
 
 start_date = GoogleCalTime(date=start_datetime.date())
@@ -53,8 +53,8 @@ def test_vevent():
 
     vevent = VEvent.fromGoogleCalEvent(ge=gcal_event, dtstamp=now)
 
-    assert vevent.dtend == gcal_event.end.dateTime
-    assert vevent.dtstart == gcal_event.start.dateTime
+    assert vevent.dtend == gcal_event.end.datetime
+    assert vevent.dtstart == gcal_event.start.datetime
     assert vevent.summary == gcal_event.summary
     assert "itsalwaysbeen.photography" in vevent.uid
     assert vevent.transp == "transparent"

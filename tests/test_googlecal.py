@@ -28,7 +28,7 @@ def test_gcal_event_from_celestial_event():
     gcal_event = GoogleCalEvent.from_celestial_event(moon_phase)
 
     assert gcal_event.start.date == now.date()
-    assert gcal_event.start.dateTime is None
+    assert gcal_event.start.datetime is None
     assert gcal_event.end.date == now.date() + dt.timedelta(days=1)
     assert "Full Moon" in gcal_event.summary
     assert "🌝" in gcal_event.summary
@@ -43,8 +43,8 @@ def test_gcal_event_from_celestial_event():
     gcal_event = GoogleCalEvent.from_celestial_event(sunrise)
 
     assert gcal_event.start.date is None
-    assert gcal_event.start.dateTime == tz_aware_dt(now, timezone=time_zone)
-    assert gcal_event.end.dateTime == tz_aware_dt(now, timezone=time_zone)
+    assert gcal_event.start.datetime == tz_aware_dt(now, timezone=time_zone)
+    assert gcal_event.end.datetime == tz_aware_dt(now, timezone=time_zone)
     assert '🌞' in gcal_event.summary
     assert '↑' in gcal_event.summary
 
@@ -61,11 +61,11 @@ def test_date_or_datetime_check():
 
 def test_timezone_added_if_datetime_non_aware():
     with pytest.raises(ValidationError):
-        GoogleCalTime(dateTime=now)
+        GoogleCalTime(datetime=now)
 
-    gcaltime = GoogleCalTime(dateTime=now, timeZone=time_zone)
-    assert gcaltime.dateTime == now
-    assert gcaltime.timeZone == time_zone
+    gcaltime = GoogleCalTime(datetime=now, timezone=time_zone)
+    assert gcaltime.datetime == now
+    assert gcaltime.timezone == time_zone
 
 
 def test_transparency_validation():
@@ -90,7 +90,7 @@ def test_transparency_default():
 
 def test_google_cal_event_payload():
     start = GoogleCalTime(
-        dateTime=tz_aware_dt(
+        datetime=tz_aware_dt(
             dt.datetime(
                 year=2021, month=2, day=28, hour=16, minute=30, second=0
             ),
@@ -98,7 +98,7 @@ def test_google_cal_event_payload():
         )
     )
     end = GoogleCalTime(
-        dateTime=tz_aware_dt(
+        datetime=tz_aware_dt(
             dt.datetime(
                 year=2021, month=2, day=28, hour=17, minute=30, second=0
             ),
@@ -109,9 +109,9 @@ def test_google_cal_event_payload():
     payload = event.payload()
 
     assert payload["start"]["date"] is None
-    assert payload["start"]["dateTime"] == "2021-02-28T16:30:00+01:00"
+    assert payload["start"]["datetime"] == "2021-02-28T16:30:00+01:00"
     assert payload["start"]["timeZone"] is None
-    assert payload["end"]["dateTime"] == "2021-02-28T17:30:00+01:00"
+    assert payload["end"]["datetime"] == "2021-02-28T17:30:00+01:00"
     assert payload["summary"] == "test event"
 
 
