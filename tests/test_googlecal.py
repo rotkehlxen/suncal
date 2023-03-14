@@ -52,11 +52,11 @@ def test_gcal_event_from_celestial_event():
 def test_date_or_datetime_check():
     with pytest.raises(ValidationError):
         # supply only either date or datetime
-        GoogleCalTime(date=today, dateTime=now, timeZone=time_zone)
+        GoogleCalTime(date=today, datetime=now, timezone=time_zone)
 
     with pytest.raises(ValidationError):
         # at least one date type has to be provided
-        GoogleCalTime(date=None, dateTime=None, timeZone=time_zone)
+        GoogleCalTime(date=None, datetime=None, timezone=time_zone)
 
 
 def test_timezone_added_if_datetime_non_aware():
