@@ -3,53 +3,71 @@ import json
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Union
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import Field
 from pydantic import root_validator
 from pydantic import validator
+from skyfield.almanac import MOON_PHASES
 
+from suncal.models.astro import MOON_PHASE_SYMBOLS
+from suncal.models.astro import CelestialBody
+from suncal.models.astro import MoonPhase
+from suncal.models.astro import RiseSet
 from suncal.utils import create_batches
 
 
 class GoogleCalTime(BaseModel):
     """
-    Model for a google calendar time. Used to specify start and end of a google calendar event.
+    Model for a Google calendar time. Used to specify start and end of a google calendar event.
     """
 
     date: Optional[dt.date] = None  # for all-day events
-    dateTime: Optional[dt.datetime] = None  # for timed events
-    timeZone: Optional[
-        str
-    ] = None  # required only if provided dateTime is not aware
+    datetime: Optional[dt.datetime] = Field(
+        alias='dateTime', default=None
+    )  # for timed events
+    timezone: Optional[str] = Field(
+        alias='timeZone', default=None
+    )  # required only if provided dateTime is not aware
+
+    class Config:
+        allow_population_by_field_name = True
 
     @root_validator(pre=True)
-    # make sure that either date OR dateTime is provided (but not both at the same time)  # pylint: disable=E0213
+    # make sure that either date OR datetime is provided (but not both at the same time)
     def date_or_datetime_provided(cls, values):
-        date, datetime = values.get("date"), values.get("dateTime")
+        date, datetime = values.get("date"), values.get("datetime")
         assert (date is None and datetime is not None) or (
             date is not None and datetime is None
         ), "You have to provide a date for all day events OR a datetime for timed events!"
         return values
 
-    # if the root validator above fails, the following root validator is NOT executed
     @root_validator(pre=True)
-    def timezone_provided_if_non_aware_datetime(
-        cls, values
-    ):  # pylint: disable=E0213
-        datetime, timezone = values.get("dateTime"), values.get("timeZone")
+    def timezone_provided_if_non_aware_datetime(cls, values):
+        datetime, timezone, date = (
+            values.get("datetime"),
+            values.get("timezone"),
+            values.get("date"),
+        )
         if datetime and (
             datetime.tzinfo is None or datetime.utcoffset() is None
         ):
             assert (
                 timezone is not None
-            ), "If the dateTime is unaware you have to provide a timeZone."
+            ), "If the datetime is unaware you have to provide a timezone."
+
+        if date:
+            assert (
+                timezone is not None
+            ), "Always provide a timezone if you specify date instead of datetime."
         return values
 
 
 class GoogleCalEvent(BaseModel):
-    """Model for google calendar event.
+    """Model for Google calendar event.
 
     The only required fields are 'start' and 'end'. More fields can be added when necessary."""
 
@@ -60,25 +78,111 @@ class GoogleCalEvent(BaseModel):
         'transparent'  # sun calendar events are definitely no time blockers
     )
 
+    @root_validator()
+    def start_and_end_match(cls, values):
+        """
+        If start is defined by a date, end has to be defined by date also. Same for defintion of start and end by
+        datetime.
+        """
+        if values['start'].datetime is None:
+            assert (
+                values['end'].datetime is None
+            ), "If start has a date, end needs to have a date also."
+        if values['start'].date is None:
+            assert (
+                values['end'].date is None
+            ), "If start has a datetime, end needs to have a datetime also."
+
+        return values
+
+    @root_validator()
+    def end_date_larger_than_start_date(cls, values):
+        if values['start'].date and values['end'].date:
+            assert values['end'].date > values['start'].date, (
+                "End is the exclusive(!) end date of the event so "
+                "it has to be larger than the start date."
+            )
+        return values
+
     @validator('transparency')
-    def transparency_valid(cls, v):  # pylint: disable=E0213
+    def transparency_valid(cls, v):
         if v not in ['transparent', 'opaque']:
             raise ValueError(
                 'Transparency of google calendar event can only be "transparent" or "opaque".'
             )
-        return v.title()
+        return v
 
     def payload(self):
         """pydantic provides method json() that serializes our model, especially datetime objects are converted
         to the isoformat sring automatically! For example, if a is an instance of GoogleCalEvent, we get sth like
 
-        a.json() = '{"start": {"date": null, "dateTime": "2011-11-04T00:05:23+04:00", "timeZone": null},
-                     "end": {"date": null, "dateTime": "2011-11-05T00:05:23+04:00", "timeZone": null},
-                     "summary": "Calender event"}'
+        a.json(by_alias=True) = '{"start": {"date": null, "dateTime": "2011-11-04T00:05:23+04:00", "timeZone": null},
+                                  "end": {"date": null, "dateTime": "2011-11-05T00:05:23+04:00", "timeZone": null},
+                                  "summary": "Calender event",
+                                  'transparency': 'transparent'}'
         We convert this json string back to a dictionary. This creates None type objects in places where we had string
-        'null" before - however, this is accepted by the api client (tested).
+        'null' before - however, this is what is accepted by the api client (tested).
         """
-        return json.loads(self.json())
+        return json.loads(self.json(by_alias=True))
+
+    @staticmethod
+    def from_rise_set(rise_set: RiseSet) -> 'GoogleCalEvent':
+        """
+        Create calendar event from a RiseSet event (e.g. sunrise, moonset ...).
+        """
+        symbol = '🌞' if rise_set.body == CelestialBody.SUN else '🌜'
+        direction = '↑' if rise_set.rise else '↓'
+
+        summary = (
+            f"{symbol}{direction} at {rise_set.event_time.strftime('%I:%M %p')}"
+        )
+
+        return GoogleCalEvent(
+            start=GoogleCalTime(datetime=rise_set.event_time),
+            end=GoogleCalTime(datetime=rise_set.event_time),
+            summary=summary,
+            transparency='transparent',
+        )
+
+    @staticmethod
+    def from_moon_phase(moon_phase: MoonPhase) -> 'GoogleCalEvent':
+        """
+        Create calendar event from a MoonPhase event. We are using an all-day event for that purpose.
+        """
+        event_date = moon_phase.event_time.date()
+        timezone = moon_phase.timezone
+
+        symbol = MOON_PHASE_SYMBOLS[moon_phase.phase_idx]
+        desc = MOON_PHASES[moon_phase.phase_idx]
+
+        summary = (
+            f"{symbol} {desc} at {moon_phase.event_time.strftime('%I:%M %p')}"
+        )
+
+        return GoogleCalEvent(
+            start=GoogleCalTime(date=event_date, timezone=timezone),
+            end=GoogleCalTime(
+                date=event_date + dt.timedelta(days=1), timezone=timezone
+            ),
+            summary=summary,
+            transparency='transparent',
+        )
+
+    @staticmethod
+    def from_celestial_event(
+        c_event: Union[MoonPhase, RiseSet]
+    ) -> 'GoogleCalEvent':
+        """
+        Interface method that calls either constructor 'from_rise_set' or 'from_moon_phase' depending on input type.
+        """
+        if isinstance(c_event, MoonPhase):
+            return GoogleCalEvent.from_moon_phase(c_event)
+        elif isinstance(c_event, RiseSet):
+            return GoogleCalEvent.from_rise_set(c_event)
+        else:
+            raise NotImplementedError(
+                'This method currently only supports events of type MoonPhase or RiseSet.'
+            )
 
 
 def get_sun_calendar_id(

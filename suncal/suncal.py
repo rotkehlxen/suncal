@@ -8,9 +8,9 @@ from suncal.auth import get_credentials
 from suncal.cli import IANATimeZoneString
 from suncal.cli import common_suncal_options
 from suncal.fileio import export_events_to_ics
-from suncal.models.astro import Celestial
+from suncal.models.astro import CALC
+from suncal.models.astro import Location
 from suncal.models.googlecal import GoogleCalEvent
-from suncal.models.googlecal import GoogleCalTime
 from suncal.models.googlecal import export_events_to_google_calendar
 from suncal.models.googlecal import get_sun_calendar_id
 from suncal.utils import collect_cli_arguments
@@ -23,47 +23,23 @@ SCOPES = [
 
 
 def create_calendar_events(
-    event: str,
-    from_date: dt.date,
-    to_date: dt.date,
-    timezone: str,
-    longitude: float,
-    latitude: float,
+    event: str, from_date: dt.date, to_date: dt.date, location: Location
 ) -> List[GoogleCalEvent]:
+    """
+    Calculate event times for [event] (either sunset, sunrise, moonrise, moonset or moonphase) between [from_date]
+    and [to_date]. If the events exist, export them to a GoogleCalEvent and append them to the list of calendar events.
+    """
 
     calendar_events: List = []
     dates = date_range(from_date, to_date)
-    for date in dates:
-        # calculate times of sun event for this date and location
-        event_parameters = Celestial(
-            timezone=timezone, date=date, longitude=longitude, latitude=latitude
-        ).events.get(event, None)
 
-        # create an all-day event for moon phase
-        if event == 'moonphase':
-            if event_parameters:
-                gcal_event = GoogleCalEvent(
-                    start=GoogleCalTime(
-                        date=event_parameters['start'], timeZone=timezone
-                    ),
-                    end=GoogleCalTime(
-                        date=event_parameters['end'], timeZone=timezone
-                    ),
-                    summary=event_parameters['gcal_summary'],
-                )
-                calendar_events.append(gcal_event)
-        else:
-            if event_parameters:
-                gcal_event = GoogleCalEvent(
-                    start=GoogleCalTime(dateTime=event_parameters['start']),
-                    end=GoogleCalTime(dateTime=event_parameters['end']),
-                    summary=event_parameters['gcal_summary'],
-                )
-                calendar_events.append(gcal_event)
-            else:
-                print(
-                    f"No {event.title()} for {date} at longitude {longitude} and latitude {latitude}."
-                )
+    for date in dates:
+        celestial_event = CALC[event](date, location)
+        if celestial_event:
+            calendar_events.append(
+                GoogleCalEvent.from_celestial_event(celestial_event)
+            )
+
     return calendar_events
 
 
@@ -80,10 +56,15 @@ def suncal_main(
 ) -> None:
 
     assert to_date >= from_date, "to_date must be >= from_date."
+    # for ics files the timezone is not required, so we use UTC for all internal calculations
     timezone = timezone or "UTC"
 
+    location = Location(
+        timezone=timezone, longitude=longitude, latitude=latitude
+    )
+
     events: List[GoogleCalEvent] = create_calendar_events(
-        event_name, from_date, to_date, timezone, longitude, latitude
+        event_name, from_date, to_date, location
     )
 
     if events:

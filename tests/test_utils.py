@@ -3,7 +3,21 @@ import datetime as dt
 from suncal.utils import aware_datetime_to_ical_date_with_utc_time
 from suncal.utils import create_batches
 from suncal.utils import date_range
+from suncal.utils import time_range_of_date
 from suncal.utils import tz_aware_dt
+
+
+def test_time_range_of_date():
+    date = dt.date(2023, 3, 14)
+    timezone = 'Europe/Berlin'
+
+    start = dt.datetime(2023, 3, 14, 0, 0, 0, 0)
+    end = dt.datetime(2023, 3, 14, 23, 59, 59, int(1e6 - 1))
+
+    s, e = time_range_of_date(date=date, timezone=timezone)
+
+    assert s == tz_aware_dt(start, timezone)
+    assert e == tz_aware_dt(end, timezone)
 
 
 def test_date_range():

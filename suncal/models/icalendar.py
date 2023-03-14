@@ -29,7 +29,7 @@ class VEvent(BaseModel):
     transp: str  # transparency of event
 
     @validator("dtend", "dtstart", "dtstamp")
-    def validate_timezone_awareness(cls, timestamp):  # pylint: disable=E0213
+    def validate_timezone_awareness(cls, timestamp):
         if type(timestamp) == dt.datetime:
             assert (
                 timestamp.tzinfo is not None
@@ -40,8 +40,8 @@ class VEvent(BaseModel):
     @staticmethod
     def fromGoogleCalEvent(ge: GoogleCalEvent, dtstamp: dt.datetime) -> VEvent:
         ical_event = VEvent(
-            dtstart=ge.start.dateTime or ge.start.date,
-            dtend=ge.end.dateTime or ge.end.date,
+            dtstart=ge.start.datetime or ge.start.date,
+            dtend=ge.end.datetime or ge.end.date,
             dtstamp=dtstamp,
             uid=f"{uuid4()}@itsalwaysbeen.photography",
             summary=ge.summary,
