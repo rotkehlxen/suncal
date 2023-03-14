@@ -7,7 +7,7 @@ from typing import Union
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from pydantic import BaseModel
+from pydantic import BaseModel # pylint: disable=E0611
 from pydantic import Field
 from pydantic import root_validator
 from pydantic import validator

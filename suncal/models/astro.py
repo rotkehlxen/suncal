@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional
 
 import pytz
-from pydantic import BaseModel
+from pydantic import BaseModel # pylint: disable=E0611
 from pydantic import validator
 from skyfield import almanac
 from skyfield import api as skyfield_api

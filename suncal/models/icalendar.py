@@ -5,7 +5,7 @@ from typing import List
 from typing import Union
 from uuid import uuid4
 
-from pydantic import BaseModel
+from pydantic import BaseModel # pylint: disable=E0611
 from pydantic import validator
 
 from suncal.models.googlecal import GoogleCalEvent
