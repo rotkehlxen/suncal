@@ -116,11 +116,12 @@ class GoogleCalEvent(BaseModel):
         """pydantic provides method json() that serializes our model, especially datetime objects are converted
         to the isoformat sring automatically! For example, if a is an instance of GoogleCalEvent, we get sth like
 
-        a.json() = '{"start": {"date": null, "dateTime": "2011-11-04T00:05:23+04:00", "timeZone": null},
-                     "end": {"date": null, "dateTime": "2011-11-05T00:05:23+04:00", "timeZone": null},
-                     "summary": "Calender event"}'
+        a.json(by_alias=True) = '{"start": {"date": null, "dateTime": "2011-11-04T00:05:23+04:00", "timeZone": null},
+                                  "end": {"date": null, "dateTime": "2011-11-05T00:05:23+04:00", "timeZone": null},
+                                  "summary": "Calender event",
+                                  'transparency': 'transparent'}'
         We convert this json string back to a dictionary. This creates None type objects in places where we had string
-        'null" before - however, this is accepted by the api client (tested).
+        'null' before - however, this is what is accepted by the api client (tested).
         """
         return json.loads(self.json(by_alias=True))
 
