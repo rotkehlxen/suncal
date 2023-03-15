@@ -99,6 +99,14 @@ def common_suncal_options(function: Callable) -> Callable:
         required=True,
     )(function)
 
+    function = click.option(
+        "--timezone",
+        "timezone",
+        type=IANATimeZoneString(),
+        help="Timezone of the target calendar. IANA timezone string. Case-insensitive matching enabled.",
+        required=True,
+    )(function)
+
     function = click.option('--dev/--no-dev', 'dev_mode', default=False)(
         function
     )
