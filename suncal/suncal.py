@@ -5,7 +5,6 @@ from typing import Optional
 import click
 
 from suncal.auth import get_credentials
-from suncal.cli import IANATimeZoneString
 from suncal.cli import common_suncal_options
 from suncal.fileio import export_events_to_ics
 from suncal.models.astro import CALC
@@ -49,15 +48,13 @@ def suncal_main(
     event_name: str,
     longitude: float,
     latitude: float,
+    timezone: str,
     return_val: str,
     filename: Optional[str] = None,
     calendar_title: Optional[str] = None,
-    timezone: Optional[str] = None,
 ) -> None:
 
     assert to_date >= from_date, "to_date must be >= from_date."
-    # for ics files the timezone is not required, so we use UTC for all internal calculations
-    timezone = timezone or "UTC"
 
     location = Location(
         timezone=timezone, longitude=longitude, latitude=latitude
@@ -110,12 +107,6 @@ def suncal():
     type=click.STRING,
     required=True,
     help="Google calendar name.",
-)
-@click.option(
-    "--timezone",
-    type=IANATimeZoneString(),
-    help="Default timezone of google calendar. IANA timezone string. Case-insensitive matching enabled.",
-    required=True,
 )
 def api(
     dev_mode: bool,
@@ -171,6 +162,7 @@ def ics(
     event_name: str,
     longitude: float,
     latitude: float,
+    timezone: str,
     filename: Optional[str] = None,
 ) -> None:
     """Calculate sunrise/sunset/moonrise/moonset/moonphase for provided range of datesand export them to ics file."""
@@ -183,6 +175,7 @@ def ics(
             latitude=latitude,
             return_val="ics",
             filename=filename,
+            timezone=timezone,
         )
     else:
         # print all parsed arguments to the console (as dict)
@@ -194,4 +187,5 @@ def ics(
             longitude=longitude,
             latitude=latitude,
             filename=filename,
+            timezone=timezone,
         )
