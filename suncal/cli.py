@@ -103,7 +103,7 @@ def common_suncal_options(function: Callable) -> Callable:
         "--timezone",
         "timezone",
         type=IANATimeZoneString(),
-        help="Timezone of the target calendar. IANA timezone string. Case-insensitive matching enabled.",
+        help="Timezone of the user location. IANA timezone string. Case-insensitive matching enabled.",
         required=True,
     )(function)
 

@@ -15,13 +15,13 @@ differently across the latitudes.
 
 Parameters like geographic location (longitude & latitude), timezone and the range of dates for which these events 
 should be created can be specified ad libitum. If you register this application in Google Cloud and grant read and write
-access to your personal Google calendar, the events can be inserted directly into your Google calendar using api calls.
+access to your personal Google Calendar, the events can be inserted directly into your Google Calendar using api calls.
 You specify the name of your target calendar and if it does not exist, it will be created for you.
 
 Alternatively you can use this application to create an ics file and import it to any calendar you like. In that case,
 registration/authentication are unnecessary.  
 
-While the api functionality is only of interest for users of Google calendar, the generated calendar ics file is 
+While the api functionality is only of interest for users of Google Calendar, the generated calendar ics file is 
 universal (conforms to this [standard](https://datatracker.ietf.org/doc/html/rfc5545#page-102)) and so it can be 
 imported to every calendar application. 
  
@@ -40,10 +40,10 @@ poetry install
 ```
 This will set up a virtual environment and install the application (including all dev and non-dev dependencies).
 
-## Use google calendar api to create calendar events
+## Use Google Calendar api to create calendar events
 
-To allow insertion of events into your Google calendar, the app has to be registered in Google cloud and access to the
-api enabled. The Google cloud console is also the place where you can create credentials (a file named "credentials.json").
+To allow insertion of events into your Google Calendar, the app has to be registered in Google Cloud and access to the
+api enabled. The Google Cloud console is also the place where you can create credentials (a file named "credentials.json").
 When you run the application for the first time, the authentication flow will lead to the creation of access tokens (the
 credentials are required in this process!). All details of the process are outlined 
 [here](https://developers.google.com/calendar/quickstart/python). 
@@ -62,7 +62,7 @@ Example for a complete set of options:
 poetry run suncal api --cal Sonne --from 2023-6-10 --to 2023-6-10 --event sunrise --timezone 'Europe/Berlin' \
 --long 14.32 --lat 52
 ```
-The command above will create only one entry in a Google calendar named "Sonne" - for the sunrise on 6.10.2023.
+The command above will create only one entry in a Google Calendar named "Sonne" - for the sunrise on 6.10.2023.
 
 or for Redwood City:
 
@@ -74,7 +74,7 @@ The command above creates sunrise events for the whole year 2023.
 
 ## Export events to ics file
 
-If you want to export the sun calendar to an ics file, registration of this app in Google cloud is unnecessary.
+If you want to export the sun calendar to an ics file, registration of this app in Google Cloud is unnecessary.
 You can provide a name for the ics file, but if you don't, the name will be created automatically. You can see a
 description of all command line options with:
 
@@ -107,7 +107,7 @@ you also add a corresponding test.
 Our calculations of sun and moon events are based on [skyfield](https://rhodesmill.org/skyfield/).
 
 ## google-api-python-client, google-auth-oauthlib, google
-Tools for communication with the Google api and authentication flow.
+Tools for communication with the Google API and authentication flow.
 
 ## pydantic
 Data validation and settings management using python type annotations.
