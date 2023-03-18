@@ -13,6 +13,13 @@ moonset and moonphase. We currently support these moon phases:
 We are using the standard symbols for those phases, although we are aware that the partially lit moon appears 
 differently across the latitudes.
 
+You can also calculate the **Golden** and **Blue Hour** which might be of particular interest for photographers. 
+The Golden Hour is a period of time around sunrise/sunset, i.e. where the center of the sun is between -4 and 6 degrees 
+above the horizon. The Blue Hour is a period before sunrise/after sunset where the natural light is infused by a lot of 
+blue tones. We define it as the period in which the center of the sun is between 8 and 4 degrees below the horizon. 
+The Golden/Blue Hour actually varies a lot in length depending on location. You can create the corresponding calendar 
+events by using the event names 'golden_hour_morning', 'golden_hour_evening', 'blue_hour_morning' or 'blue_hour_evening'. 
+
 Parameters like geographic location (longitude & latitude), timezone and the range of dates for which these events 
 should be created can be specified ad libitum. If you register this application in Google Cloud and grant read and write
 access to your personal Google Calendar, the events can be inserted directly into your Google Calendar using api calls.
