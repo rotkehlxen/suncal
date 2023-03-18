@@ -157,3 +157,11 @@ def test_rise_set_calculations():
             assert (
                 tad_time - prec <= rise_set_event.event_time <= tad_time + prec
             )
+
+def test_magic_hour_calculations():
+    location = Location(timezone='Europe/Berlin', longitude= 13.404954, latitude= 52.520008)
+    # reference values from timeanddate.com
+    magic = {'golden_hour_morning': {'start': dt.time(5, 50), 'end': dt.time(6,56)},
+             'blue_hour_morning': {'start': dt.time(5, 24), 'end': dt.time(5, 50)},
+             'golden_hour_evening': {'start': dt.time(17, 29), 'end': dt.time(18, 35)},
+             'blue_hour_evening': {'start': dt.time(18,35), 'end': dt.time(19,0)}}

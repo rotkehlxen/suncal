@@ -172,7 +172,7 @@ class GoogleCalEvent(BaseModel):
     @staticmethod
     def from_magic_hour(magic_hour: MagicHour) -> 'GoogleCalEvent':
 
-        symbol = '🌆' if magic_hour.color == 'golden' else '🏙'
+        symbol = '🌇' if magic_hour.color == 'golden' else '🏙'
         desc = 'Golden Hour' if magic_hour.color == 'golden' else 'Blue Hour'
 
         return GoogleCalEvent(
