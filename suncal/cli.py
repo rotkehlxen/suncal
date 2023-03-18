@@ -77,8 +77,7 @@ def common_suncal_options(function: Callable) -> Callable:
     function = click.option(
         "--event",
         "event_name",
-        type=click.Choice([e.value for e in list(Event)]),
-        case_sensitive=False,
+        type=click.Choice([e.value for e in list(Event)], case_sensitive=False),
         required=True,
         help="Sun/Moon parameter for which to create calendar events.",
     )(function)
