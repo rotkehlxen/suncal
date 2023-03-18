@@ -15,7 +15,8 @@ from skyfield.almanac import MOON_PHASES
 
 from suncal.models.astro import MOON_PHASE_SYMBOLS
 from suncal.models.astro import CelestialBody
-from suncal.models.astro import MoonPhase, MagicHour
+from suncal.models.astro import MagicHour
+from suncal.models.astro import MoonPhase
 from suncal.models.astro import RiseSet
 from suncal.utils import create_batches
 
@@ -174,10 +175,12 @@ class GoogleCalEvent(BaseModel):
         symbol = '🌆' if magic_hour.color == 'golden' else '🏙'
         desc = 'Golden Hour' if magic_hour.color == 'golden' else 'Blue Hour'
 
-        return GoogleCalEvent(start=GoogleCalTime(datetime=magic_hour.start),
-                              end=GoogleCalTime(datetime=magic_hour.end),
-                              summary=f'{symbol} {desc}',
-                              transparency='transparent')
+        return GoogleCalEvent(
+            start=GoogleCalTime(datetime=magic_hour.start),
+            end=GoogleCalTime(datetime=magic_hour.end),
+            summary=f'{symbol} {desc}',
+            transparency='transparent',
+        )
 
     @staticmethod
     def from_celestial_event(

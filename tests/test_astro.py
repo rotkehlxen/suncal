@@ -153,6 +153,7 @@ def test_rise_set_calculations():
             rise_set_event = CALC[celestial_event](date=date, location=location)
 
             assert rise_set_event is not None
+            assert isinstance(rise_set_event, RiseSet)
             assert (
                 tad_time - prec <= rise_set_event.event_time <= tad_time + prec
             )
