@@ -6,7 +6,8 @@ from pydantic import ValidationError
 from suncal.models.astro import CALC
 from suncal.models.astro import CelestialBody
 from suncal.models.astro import Location
-from suncal.models.astro import MoonPhase, MagicHour
+from suncal.models.astro import MagicHour
+from suncal.models.astro import MoonPhase
 from suncal.models.astro import RiseSet
 from suncal.models.astro import calculate_moon_phase
 from suncal.utils import tz_aware_dt
@@ -178,16 +179,15 @@ def test_magic_hour_calculations():
     for event in magic.keys():
 
         magic_hour = CALC[event](date, location)
-        ref_start = tz_aware_dt(dt.datetime.combine(date, magic[event]['start']), location.timezone)
-        ref_end = tz_aware_dt(dt.datetime.combine(date, magic[event]['end']), location.timezone)
+        ref_start = tz_aware_dt(
+            dt.datetime.combine(date, magic[event]['start']), location.timezone
+        )
+        ref_end = tz_aware_dt(
+            dt.datetime.combine(date, magic[event]['end']), location.timezone
+        )
         prec = dt.timedelta(minutes=4)
 
         assert magic_hour is not None
         assert isinstance(magic_hour, MagicHour)
-        assert (
-                ref_start - prec <= magic_hour.start <= ref_start + prec
-        )
-        assert (
-            ref_end - prec <= magic_hour.end <= ref_end + prec
-    )
-
+        assert ref_start - prec <= magic_hour.start <= ref_start + prec
+        assert ref_end - prec <= magic_hour.end <= ref_end + prec
