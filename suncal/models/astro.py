@@ -116,6 +116,57 @@ def calculate_rise_set(
         )
 
 
+def calculate_magic_hour(date: dt.date, location: Location, color: str, morning: bool) -> Optional[MagicHour]:
+    """
+    The golden hour starts with the center of the sun 4 degrees below the horizon and ends when the center of the sun
+    is 6 degrees above the horizon. Similar for the Blue hour: it starts with the sun at 8 degrees below the
+    horizon and ends with 4 degrees below.
+
+    We only return a MagicHour object if both start and end time are available.
+    """
+
+    idx = 1 if morning else 0
+
+    degree = {'blue': {'from': -8, 'to': -4},
+              'golden': {'from': -4, 'to': 6}}
+
+    t_start, t_end = time_range_of_date(date=date, timezone=location.timezone)
+
+    eph = skyfield_api.load('de421.bsp')
+    skyfield_location = skyfield_api.wgs84.latlon(
+        location.latitude, location.longitude
+    )
+
+    ts = skyfield_api.load.timescale()
+    t, y = almanac.find_discrete(ts.from_datetime(t_start),
+                                 ts.from_datetime(t_end),
+                                 almanac.risings_and_settings(eph, eph['sun'],
+                                                              skyfield_location,
+                                                              horizon_degrees=degree[color]['from']))
+    if idx not in y:
+        return None
+    else:
+        t_skyfield = t[y == idx]
+        t1 = t_skyfield.astimezone(pytz.timezone(location.timezone)).item()
+
+        t, y = almanac.find_discrete(ts.from_datetime(t_start),
+                                     ts.from_datetime(t_end),
+                                     almanac.risings_and_settings(eph, eph['sun'],
+                                                                  skyfield_location,
+                                                                  horizon_degrees=degree[color]['to']))
+
+        if idx not in y:
+            return None
+        else:
+            t_skyfield = t[y == idx]
+            t2 = t_skyfield.astimezone(pytz.timezone(location.timezone)).item()
+
+            return MagicHour(start=t1 if morning else t2,
+                             end=t2 if morning else t1,
+                             color=color,
+                             morning=morning)
+
+
 def calculate_moon_phase(date: dt.date, timezone: str) -> Optional[MoonPhase]:
     """
     In general, we can calculate a moon phase (angle between 0 and 360 deg) for every single second. This function here
@@ -163,4 +214,12 @@ CALC = {
     'moonphase': lambda date, location: calculate_moon_phase(
         date=date, timezone=location.timezone
     ),
+    'golden_hour_morning': lambda date, location: calculate_magic_hour(date=date, location=location,
+                                                                       color='golden', morning=True),
+    'golden_hour_evening': lambda date, location: calculate_magic_hour(date=date, location=location,
+                                                                       color='golden', morning=False),
+    'blue_hour_morning': lambda date, location: calculate_magic_hour(date=date, location=location,
+                                                                       color='blue', morning=True),
+    'blue_hour_evening': lambda date, location: calculate_magic_hour(date=date, location=location,
+                                                                       color='blue', morning=False),
 }
