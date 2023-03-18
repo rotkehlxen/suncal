@@ -6,6 +6,7 @@ import click
 import pytz
 from click.core import Context as ClickContext
 from click.core import Parameter as ClickParameter
+
 from suncal.models.astro import Event
 
 
