@@ -19,6 +19,18 @@ class Location(BaseModel):
     longitude: float
 
 
+class Event(Enum):
+    SUNRISE = 'sunrise'
+    SUNSET = 'sunset'
+    MOONRISE = 'moonrise'
+    MOONSET = 'moonset'
+    MOONPHASE = 'moonphase'
+    GOLDEN_HOUR_MORNING = 'golden_hour_morning'
+    GOLDEN_HOUR_EVENING = 'golden_hour_evening'
+    BLUE_HOUR_MORNING = 'blue_hour_morning'
+    BLUE_HOUR_EVENING = 'blue_hour_evening'
+
+
 class CelestialBody(Enum):
     SUN = 'sun'
     MOON = 'moon'

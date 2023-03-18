@@ -6,6 +6,7 @@ import click
 import pytz
 from click.core import Context as ClickContext
 from click.core import Parameter as ClickParameter
+from suncal.models.astro import Event
 
 
 class IANATimeZoneString(click.ParamType):
@@ -75,10 +76,8 @@ def common_suncal_options(function: Callable) -> Callable:
     function = click.option(
         "--event",
         "event_name",
-        type=click.Choice(
-            ['sunrise', 'sunset', 'moonrise', 'moonset', 'moonphase'],
-            case_sensitive=False,
-        ),
+        type=click.Choice([e.value for e in list(Event)]),
+        case_sensitive=False,
         required=True,
         help="Sun/Moon parameter for which to create calendar events.",
     )(function)

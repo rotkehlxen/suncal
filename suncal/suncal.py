@@ -25,8 +25,19 @@ def create_calendar_events(
     event: str, from_date: dt.date, to_date: dt.date, location: Location
 ) -> List[GoogleCalEvent]:
     """
-    Calculate event times for [event] (either sunset, sunrise, moonrise, moonset or moonphase) between [from_date]
-    and [to_date]. If the events exist, export them to a GoogleCalEvent and append them to the list of calendar events.
+    Calculate event times for [event] (either
+    sunset,
+    sunrise,
+    moonrise,
+    moonset,
+    moonphase,
+    golden_hour_morning,
+    golden_hour_evening,
+    blue_hour_morning,
+    blue_hour_evening)
+
+    between [from_date] and [to_date]. If the events exist, export them to a GoogleCalEvent and
+    append them to the list of calendar events.
     """
 
     calendar_events: List = []
@@ -118,8 +129,8 @@ def api(
     longitude: float,
     latitude: float,
 ) -> None:
-    """Calculate sunrise/sunset/moonrise/moonset/moonphase for provided range of dates
-    and export calendar events directly to google calendar.
+    """Calculate suncal.models.astro.Event for provided range of dates and export calendar events directly
+    to Google Calendar.
     """
     if not dev_mode:
         suncal_main(
@@ -165,7 +176,9 @@ def ics(
     timezone: str,
     filename: Optional[str] = None,
 ) -> None:
-    """Calculate sunrise/sunset/moonrise/moonset/moonphase for provided range of datesand export them to ics file."""
+    """
+    Calculate suncal.models.astro.Event for provided range of dates and export them to ics file.
+    """
     if not dev_mode:
         suncal_main(
             from_date=from_date,
