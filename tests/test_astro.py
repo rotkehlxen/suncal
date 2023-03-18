@@ -175,6 +175,7 @@ def test_magic_hour_calculations():
         },
         'blue_hour_evening': {'start': dt.time(18, 35), 'end': dt.time(19, 0)},
     }
+    prec = dt.timedelta(minutes=4)
 
     for event in magic.keys():
 
@@ -185,7 +186,6 @@ def test_magic_hour_calculations():
         ref_end = tz_aware_dt(
             dt.datetime.combine(date, magic[event]['end']), location.timezone
         )
-        prec = dt.timedelta(minutes=4)
 
         assert magic_hour is not None
         assert isinstance(magic_hour, MagicHour)
