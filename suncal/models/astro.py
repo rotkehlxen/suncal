@@ -55,6 +55,21 @@ class MoonPhase(BaseModel):
         return phase_idx
 
 
+class MagicHour(BaseModel):
+    color: str # either golden or blue
+    start: dt.datetime
+    end: dt.datetime
+    morning: bool # in the morning or in the evening
+
+    @validator('color')
+    def color_valid(cls, color):
+        if color not in ['golden', 'blue']:
+            raise ValueError(
+                'Color of the light in the Magic Hour can only be "blue" or "golden"'
+            )
+        return color
+
+
 def calculate_rise_set(
     date: dt.date, location: Location, rise: bool, body: CelestialBody
 ) -> Optional[RiseSet]:
