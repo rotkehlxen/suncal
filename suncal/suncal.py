@@ -25,19 +25,8 @@ def create_calendar_events(
     event: str, from_date: dt.date, to_date: dt.date, location: Location
 ) -> List[GoogleCalEvent]:
     """
-    Calculate event times for [event] (either
-    sunset,
-    sunrise,
-    moonrise,
-    moonset,
-    moonphase,
-    golden_hour_morning,
-    golden_hour_evening,
-    blue_hour_morning,
-    blue_hour_evening)
-
-    between [from_date] and [to_date]. If the events exist, export them to a GoogleCalEvent and
-    append them to the list of calendar events.
+    Calculate event times for any of the events of type suncal.models.astro.Event between [from_date] and [to_date].
+    If the events exist, export them to a GoogleCalEvent and append them to the list of calendar events.
     """
 
     calendar_events: List = []
