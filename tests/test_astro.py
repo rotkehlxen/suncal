@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from suncal.models.astro import CALC
 from suncal.models.astro import CelestialBody
 from suncal.models.astro import Location
+from suncal.models.astro import MagicHour
 from suncal.models.astro import MoonPhase
 from suncal.models.astro import RiseSet
 from suncal.models.astro import calculate_moon_phase
@@ -153,6 +154,40 @@ def test_rise_set_calculations():
             rise_set_event = CALC[celestial_event](date=date, location=location)
 
             assert rise_set_event is not None
+            assert isinstance(rise_set_event, RiseSet)
             assert (
                 tad_time - prec <= rise_set_event.event_time <= tad_time + prec
             )
+
+
+def test_magic_hour_calculations():
+    location = Location(
+        timezone='Europe/Berlin', longitude=13.404954, latitude=52.520008
+    )
+    date = dt.date(2023, 3, 18)
+    # reference values from timeanddate.com
+    magic = {
+        'golden_hour_morning': {'start': dt.time(5, 50), 'end': dt.time(6, 56)},
+        'blue_hour_morning': {'start': dt.time(5, 24), 'end': dt.time(5, 50)},
+        'golden_hour_evening': {
+            'start': dt.time(17, 29),
+            'end': dt.time(18, 35),
+        },
+        'blue_hour_evening': {'start': dt.time(18, 35), 'end': dt.time(19, 0)},
+    }
+    prec = dt.timedelta(minutes=4)
+
+    for event in magic.keys():
+
+        magic_hour = CALC[event](date, location)
+        ref_start = tz_aware_dt(
+            dt.datetime.combine(date, magic[event]['start']), location.timezone
+        )
+        ref_end = tz_aware_dt(
+            dt.datetime.combine(date, magic[event]['end']), location.timezone
+        )
+
+        assert magic_hour is not None
+        assert isinstance(magic_hour, MagicHour)
+        assert ref_start - prec <= magic_hour.start <= ref_start + prec
+        assert ref_end - prec <= magic_hour.end <= ref_end + prec

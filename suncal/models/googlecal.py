@@ -15,6 +15,7 @@ from skyfield.almanac import MOON_PHASES
 
 from suncal.models.astro import MOON_PHASE_SYMBOLS
 from suncal.models.astro import CelestialBody
+from suncal.models.astro import MagicHour
 from suncal.models.astro import MoonPhase
 from suncal.models.astro import RiseSet
 from suncal.utils import create_batches
@@ -169,8 +170,21 @@ class GoogleCalEvent(BaseModel):
         )
 
     @staticmethod
+    def from_magic_hour(magic_hour: MagicHour) -> 'GoogleCalEvent':
+
+        symbol = '🌇' if magic_hour.color == 'golden' else '🏙'
+        desc = 'Golden Hour' if magic_hour.color == 'golden' else 'Blue Hour'
+
+        return GoogleCalEvent(
+            start=GoogleCalTime(datetime=magic_hour.start),
+            end=GoogleCalTime(datetime=magic_hour.end),
+            summary=f'{symbol} {desc}',
+            transparency='transparent',
+        )
+
+    @staticmethod
     def from_celestial_event(
-        c_event: Union[MoonPhase, RiseSet]
+        c_event: Union[MoonPhase, RiseSet, MagicHour]
     ) -> 'GoogleCalEvent':
         """
         Interface method that calls either constructor 'from_rise_set' or 'from_moon_phase' depending on input type.
@@ -179,9 +193,11 @@ class GoogleCalEvent(BaseModel):
             return GoogleCalEvent.from_moon_phase(c_event)
         elif isinstance(c_event, RiseSet):
             return GoogleCalEvent.from_rise_set(c_event)
+        elif isinstance(c_event, MagicHour):
+            return GoogleCalEvent.from_magic_hour(c_event)
         else:
             raise NotImplementedError(
-                'This method currently only supports events of type MoonPhase or RiseSet.'
+                'This method currently only supports events of type MoonPhase, RiseSet or MagicHour.'
             )
 
 
