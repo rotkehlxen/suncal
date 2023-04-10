@@ -69,16 +69,20 @@ to see a description of all command line options.
 Example for a complete set of options:
 
 ```bash
-poetry run suncal api --cal Sonne --from 2023-6-10 --to 2023-6-10 --event sunrise --long 14.32 --lat 52
+poetry run suncal api --cal Sonne --from 2023-6-10 --to 2023-6-10 --event sunrise \
+ --long 14.32 --lat 52
 ```
-The command above will create only one entry in a Google Calendar named "Sonne" - for the sunrise on 6.10.2023.
-You have to specify the name of your target calendar (`--cal Sonne` in the command above) **but** if a calendar with 
-that name does not exist, it will be created for you.
+The command above will create only one event in a Google Calendar named "Sonne" - for the sunrise on 6.10.2023 in 
+Berlin/Germany.
 
-Another example for Redwood City:
+Note: you have to specify the name of your target calendar (`--cal Sonne` in the example above) **but** if a calendar 
+with that name does not exist, it will be created for you automatically.
+
+Another example for Redwood City in California:
 
 ```bash
-poetry run suncal api --cal Sonnenaufgang --from 2023-1-01 --to 2023-12-31 --event sunrise --long -122.2281 --lat 37.4848
+poetry run suncal api --cal Sonnenaufgang --from 2023-1-01 --to 2023-12-31 --event sunrise \ 
+--long -122.2281 --lat 37.4848
 ```
 The command above creates sunrise events for the whole year 2023.
 
