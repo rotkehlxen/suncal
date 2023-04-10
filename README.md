@@ -1,3 +1,11 @@
+- [What suncal can do for you](https://github.com/rotkehlxen/suncal#what-does-suncal-do-%EF%B8%8F)
+  - [Supported Events](https://github.com/rotkehlxen/suncal#supported-events)
+- [Initial Setup](https://github.com/rotkehlxen/suncal#initial-setup)
+  - [Export events to Google Calendar](https://github.com/rotkehlxen/suncal#use-google-calendar-api-to-create-calendar-events)
+  - [Export events to ics file](https://github.com/rotkehlxen/suncal#export-events-to-an-ics-file)
+- [Rules for collaborators](https://github.com/rotkehlxen/suncal#rules-for-collaborators)
+
+
 # What suncal can do for you 🌞❤️🌜
 Would you like to know when the sun rises next week on Tue and have an entry in your calendar for this event without any 
 manual effort and 100% for free? Then suncal is the right tool for you!
