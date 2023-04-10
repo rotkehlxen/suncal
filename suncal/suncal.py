@@ -91,7 +91,7 @@ def suncal_main(
 
     else:
         click.echo(
-            f"*** {event_name.title()} could not be calculated for the specified location. "
+            f"*** {event_name.title()} could not be calculated for the specified location on any of the provided dates."
             f"No calendar events created. ***"
         )
 
