@@ -1,9 +1,9 @@
 import datetime as dt
 from typing import List
 from typing import Optional
-from timezonefinder import TimezoneFinder
 
 import click
+from timezonefinder import TimezoneFinder
 
 from suncal.auth import get_credentials
 from suncal.cli import common_suncal_options
@@ -71,6 +71,7 @@ def suncal_main(
 
         if return_val == "api":
             assert calendar_title is not None
+            assert timezone is not None
 
             # refresh access tokens or create them if they do not exist (authentication flow)
             credentials = get_credentials(SCOPES)
