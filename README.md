@@ -1,6 +1,6 @@
 - [What suncal can do for you](https://github.com/rotkehlxen/suncal#what-does-suncal-do-%EF%B8%8F)
   - [Supported Events](https://github.com/rotkehlxen/suncal#supported-events)
-- [Initial Setup](https://github.com/rotkehlxen/suncal#initial-setup)
+- [Install and run Suncal](https://github.com/rotkehlxen/suncal#install-and-run-suncal)
   - [Export events to Google Calendar](https://github.com/rotkehlxen/suncal#use-google-calendar-api-to-create-calendar-events)
   - [Export events to ics file](https://github.com/rotkehlxen/suncal#export-events-to-an-ics-file)
 - [Rules for collaborators](https://github.com/rotkehlxen/suncal#rules-for-collaborators)
@@ -43,7 +43,7 @@ We are using standard symbols for those phases, although we are aware that the p
 differently across the latitudes. Suncal creates an all-day event for each phase but the event description contains the 
 precise time at which this phase can be observed.
 
-# Initial setup
+# Install and run Suncal
 
 The application was built with [poetry](https://python-poetry.org/) and depends on python 3.11.2, so make sure you have 
 *poetry* and any minor version of python 3.11 installed on your system. The package will probably work with any python 
