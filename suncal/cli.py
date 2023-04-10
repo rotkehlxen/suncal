@@ -102,8 +102,9 @@ def common_suncal_options(function: Callable) -> Callable:
         "--timezone",
         "timezone",
         type=IANATimeZoneString(),
-        help="Timezone of the user location. IANA timezone string. Case-insensitive matching enabled.",
-        required=True,
+        help="IANA timezone string. Only provide this argument if you want to override the timezone which is set "
+             "according to your GPS coordinates automatically. Case-insensitive matching enabled.",
+        required=False,
     )(function)
 
     function = click.option('--dev/--no-dev', 'dev_mode', default=False)(

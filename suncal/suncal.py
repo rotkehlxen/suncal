@@ -1,6 +1,7 @@
 import datetime as dt
 from typing import List
 from typing import Optional
+from timezonefinder import TimezoneFinder
 
 import click
 
@@ -48,14 +49,16 @@ def suncal_main(
     event_name: str,
     longitude: float,
     latitude: float,
-    timezone: str,
     return_val: str,
+    timezone: Optional[str] = None,
     filename: Optional[str] = None,
     calendar_title: Optional[str] = None,
 ) -> None:
 
     assert to_date >= from_date, "to_date must be >= from_date."
 
+    tf = TimezoneFinder()
+    timezone = timezone or tf.timezone_at(lng=longitude, lat=latitude)
     location = Location(
         timezone=timezone, longitude=longitude, latitude=latitude
     )
