@@ -99,7 +99,8 @@ poetry run suncal ics --help
 Example:
 
 ```bash
-poetry run suncal ics --from 2021-6-10 --to 2021-6-10 --event sunrise --long 14.32 --lat 52 --filename myIcsFile.ics
+poetry run suncal ics --from 2021-6-10 --to 2021-6-10 --event sunrise --long 14.32 --lat 52 \ 
+--filename myIcsFile.ics
 ```
 
 The file name is an optional argument: if you don't provide a name, it will be generated from the name of the event and
