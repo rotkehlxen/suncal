@@ -1,4 +1,4 @@
-- [What suncal can do for you](https://github.com/rotkehlxen/suncal#what-does-suncal-do-%EF%B8%8F)
+- [What suncal can do for you](https://github.com/rotkehlxen/suncal#what-suncal-can-do-for-you-%EF%B8%8F)
   - [Supported Events](https://github.com/rotkehlxen/suncal#supported-events)
 - [Install and run Suncal](https://github.com/rotkehlxen/suncal#install-and-run-suncal)
   - [Export events to Google Calendar](https://github.com/rotkehlxen/suncal#use-google-calendar-api-to-create-calendar-events)
