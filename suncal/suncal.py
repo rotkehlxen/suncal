@@ -3,6 +3,7 @@ from typing import List
 from typing import Optional
 
 import click
+from timezonefinder import TimezoneFinder
 
 from suncal.auth import get_credentials
 from suncal.cli import common_suncal_options
@@ -48,14 +49,16 @@ def suncal_main(
     event_name: str,
     longitude: float,
     latitude: float,
-    timezone: str,
     return_val: str,
+    timezone: Optional[str] = None,
     filename: Optional[str] = None,
     calendar_title: Optional[str] = None,
 ) -> None:
 
     assert to_date >= from_date, "to_date must be >= from_date."
 
+    tf = TimezoneFinder()
+    timezone = timezone or tf.timezone_at(lng=longitude, lat=latitude)
     location = Location(
         timezone=timezone, longitude=longitude, latitude=latitude
     )
@@ -68,6 +71,7 @@ def suncal_main(
 
         if return_val == "api":
             assert calendar_title is not None
+            assert timezone is not None
 
             # refresh access tokens or create them if they do not exist (authentication flow)
             credentials = get_credentials(SCOPES)
@@ -87,7 +91,7 @@ def suncal_main(
 
     else:
         click.echo(
-            f"*** {event_name.title()} could not be calculated for the specified location. "
+            f"*** {event_name.title()} could not be calculated for the specified location on any of the provided dates."
             f"No calendar events created. ***"
         )
 

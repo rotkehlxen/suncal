@@ -27,6 +27,7 @@ click = "^8.0.1"
 google = "^3.0.0"
 pytz = "^2022.7.1"
 skyfield = "^1.45"
+timezonefinder = "^6.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.1"
