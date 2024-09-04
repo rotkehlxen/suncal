@@ -70,7 +70,8 @@ class GoogleCalTime(BaseModel):
 class GoogleCalEvent(BaseModel):
     """Model for Google calendar event.
 
-    The only required fields are 'start' and 'end'. More fields can be added when necessary."""
+    The only required fields are 'start' and 'end'. More fields can be added when necessary.
+    """
 
     start: GoogleCalTime  # required field
     end: GoogleCalTime  # required field

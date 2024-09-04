@@ -13,6 +13,6 @@ poetry run black --diff --check .
 echo "***** Sort module imports with isort *****"
 poetry run isort --check .
 echo "***** Check typing with mypy *****"
-poetry run mypy --install-types .
+poetry run mypy --install-types --non-interactive .
 echo "***** Lint the codebase *****"
 poetry run pylint -E suncal tests
