@@ -89,7 +89,9 @@ class VCalendar(BaseModel):
         "GREGORIAN"  # optional, included to mirror google calendar ics export
     )
     version: str = "2.0"  # icalendar version
-    prodid: str = "//rotkehlxen//suncal//EN"  # identifier of product that created this file
+    prodid: str = (
+        "//rotkehlxen//suncal//EN"  # identifier of product that created this file
+    )
 
     def header(self) -> List[str]:
         """Create icalender header. Items in returned list correspond to lines in ics file."""
