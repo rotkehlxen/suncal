@@ -17,6 +17,7 @@ class Location(BaseModel):
     """
     Location defined by latitude and longitude and local timezone.
     """
+
     timezone: str
     latitude: float
     longitude: float
@@ -26,6 +27,7 @@ class Event(Enum):
     """
     Enum class for the different celestial events that can be calculated.
     """
+
     SUNRISE = 'sunrise'
     SUNSET = 'sunset'
     MOONRISE = 'moonrise'
@@ -41,6 +43,7 @@ class CelestialBody(Enum):
     """
     Enum class for the different celestial bodies that can be calculated.
     """
+
     SUN = 'sun'
     MOON = 'moon'
 
@@ -49,6 +52,7 @@ class RiseSet(BaseModel):
     """
     Model for rise and set events of the sun and the moon.
     """
+
     location: Location
     event_time: dt.datetime
     body: CelestialBody
@@ -84,6 +88,7 @@ class MagicHour(BaseModel):
     """
     Model for the Golden and Blue Hour.
     """
+
     color: str  # either golden or blue
     start: dt.datetime
     end: dt.datetime
