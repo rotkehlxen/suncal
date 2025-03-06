@@ -56,7 +56,7 @@ def suncal_main(
 ) -> None:
     """
     Project main function. Creates events for the specified [event_name] between [from_date] and [to_date] for the
-    location specfiied by [longitude] and [latitude]. The events are then exported to a Google Calendar or an ics file
+    location specified by [longitude] and [latitude]. The events are then exported to a Google Calendar or an ics file
     depending on the value of [return_val].
     """
 
