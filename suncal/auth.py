@@ -37,7 +37,8 @@ def get_credentials(scopes: List[str]) -> Credentials:
                 "credentials.json", scopes
             )
             print("run local server")
-            creds = flow.run_local_server(port=0)
+            flow.run_local_server(port=0)
+            creds = flow.credentials
         # Save the credentials for the next run
         print("save token")
         with open("token.pickle", "wb") as token:
