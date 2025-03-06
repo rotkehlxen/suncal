@@ -1,8 +1,5 @@
 import datetime as dt
 import json
-
-# from suncal.auth import get_credentials
-import logging
 from typing import Dict
 from typing import List
 from typing import Optional
