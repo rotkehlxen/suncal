@@ -7,6 +7,7 @@ from typing import Union
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import Field
 from pydantic import root_validator
@@ -19,6 +20,10 @@ from suncal.models.astro import MagicHour
 from suncal.models.astro import MoonPhase
 from suncal.models.astro import RiseSet
 from suncal.utils import create_batches
+# from suncal.auth import get_credentials
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class GoogleCalTime(BaseModel):
@@ -231,7 +236,7 @@ def get_sun_calendar_id(
 
 
 def request_calendars(creds: Credentials) -> Dict[str, str]:
-
+    
     # TODO: what do we do in case we get no response?
     with build("calendar", "v3", credentials=creds) as service:
 
@@ -293,3 +298,16 @@ def export_events_to_google_calendar(
                 )
             batch_request.execute()
     print("... DONE.")
+
+
+# if __name__ == '__main__':
+#     print("getting scopes")
+#     SCOPES = [
+#     "https://www.googleapis.com/auth/calendar",
+#     "https://www.googleapis.com/auth/calendar.events",
+# ]
+#     print("getting credentials")
+#     credentials = get_credentials(SCOPES)
+#     print("making request")
+#     request_calendars(creds=credentials)
+ 
