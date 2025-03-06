@@ -22,7 +22,6 @@ line_length = 80
 python = "^3.11.2"
 google-api-python-client = "^2.162.0"
 google-auth-oauthlib = "^1.2.1"
-google-auth-httplib2 = "^0.2.0"
 pydantic = "^1.7.3"
 click = "^8.0.1"
 google = "^3.0.0"
