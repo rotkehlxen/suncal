@@ -29,7 +29,7 @@ def get_credentials(scopes: List[str]) -> Credentials:
             creds = pickle.load(token)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
+        if creds and creds.expired and creds.refresh_tokent:
             creds.refresh(Request())
         else:
             print("define authentication flow")
@@ -37,7 +37,8 @@ def get_credentials(scopes: List[str]) -> Credentials:
                 "credentials.json", scopes
             )
             print("run local server")
-            creds = flow.run_local_server(port=0)
+            flow.run_local_server(port=0)
+            creds = flow.credentials
         # Save the credentials for the next run
         print("save token")
         with open("token.pickle", "wb") as token:
