@@ -11,7 +11,7 @@ Would you like to know when the sun rises next week on Tue and have an entry in 
 manual effort and 100% for free? Then suncal is the right tool for you!
 
 You can use this command line tool to either generate a 
-[standard ics](https://datatracker.ietf.org/doc/html/rfc5545#page-102) file which you can import into any calendar
+[standard ics](https://datatracker.ietf.org/doc/html/rfc5545) file which you can import into any calendar
 application you like or you can have suncal create events in your Google calendar directly (via calls to the Google
 calendar API).
 
