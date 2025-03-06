@@ -21,9 +21,7 @@ application you like or you can have suncal create events in your Google calenda
 calendar API) which requires advanced setup (as detailed below).
 
 To create events you need to specify your geographic location (longitude & latitude) and a period of time (start and
-end date). Suncal will determine the timezone of the events according to the location automatically. (You can override
-this automatic timezone by providing your own.)
-
+end date). Suncal will determine the timezone of the events according to the location automatically. 
 # Getting started
 ## Installation of suncal
 
@@ -63,7 +61,7 @@ timezone setting, you can provide a valid [tz timezone](https://en.wikipedia.org
 ```bash
 --timezone  Europe/Kyiv
 ```
-The parsing of the timezone is case-insensitive, meaning you could also provide timezone string `europe/kyiv` or `Europe/kyiv` instead.
+The parsing of the timezone is case-insensitive, meaning you could e.g. also provide timezone string `europe/kyiv` or `Europe/kyiv` instead.
 
 ## Create astronomical calendars directly in your personal Google Calender 
 
