@@ -1,5 +1,8 @@
 import datetime as dt
 import json
+
+# from suncal.auth import get_credentials
+import logging
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -20,8 +23,6 @@ from suncal.models.astro import MagicHour
 from suncal.models.astro import MoonPhase
 from suncal.models.astro import RiseSet
 from suncal.utils import create_batches
-# from suncal.auth import get_credentials
-import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -236,7 +237,7 @@ def get_sun_calendar_id(
 
 
 def request_calendars(creds: Credentials) -> Dict[str, str]:
-    
+
     # TODO: what do we do in case we get no response?
     with build("calendar", "v3", credentials=creds) as service:
 
@@ -310,4 +311,3 @@ def export_events_to_google_calendar(
 #     credentials = get_credentials(SCOPES)
 #     print("making request")
 #     request_calendars(creds=credentials)
- 
