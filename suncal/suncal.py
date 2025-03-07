@@ -52,11 +52,17 @@ def suncal_main(
     filename: str | None = None,
     calendar_title: str | None = None,
 ) -> None:
+    """
+    Project main function. Creates events for the specified [event_name] between [from_date] and [to_date] for the
+    location specified by [longitude] and [latitude]. The events are then exported to a Google Calendar or an ics file
+    depending on the value of [return_val].
+    """
 
     assert to_date >= from_date, "to_date must be >= from_date."
 
     tf = TimezoneFinder()
     timezone = timezone or tf.timezone_at(lng=longitude, lat=latitude)
+    assert timezone is not None, "Timezone could not be determined."
     location = Location(
         timezone=timezone, longitude=longitude, latitude=latitude
     )

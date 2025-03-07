@@ -6,14 +6,16 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 
-def get_credentials(scopes: list[str]) -> Credentials:
-
+def get_credentials(scopes: List[str]) -> Credentials:
+    """
+    Create or refresh access tokens for the credentials provided in the credentials.json file.
+    """
     # check that credentials.json is available
     if not os.path.exists('credentials.json'):
         sys.exit(
             "File 'credentials.json' is missing! Make sure the file is located in the suncal project folder (in the "
-            "same folder as README.md). If you have no credentials file, you have to register this application "
-            "in google cloud console, grant this application access to the google calendar api and create "
+            "same folder as README.md). If you have no credentials file, you need to create a project "
+            "in google cloud console, grant the project access to the google calendar api and create "
             "credentials for your google account. For more information check out "
             "https://developers.google.com/workspace/guides/create-credentials"
         )
