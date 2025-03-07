@@ -1,6 +1,4 @@
 import datetime as dt
-from typing import Callable
-from typing import Optional
 
 import click
 import pytz
@@ -16,8 +14,8 @@ class IANATimeZoneString(click.ParamType):
     def convert(
         self,
         value: str,
-        param: Optional[ClickParameter],
-        ctx: Optional[ClickContext],
+        param: ClickParameter | None,
+        ctx: ClickContext | None,
     ):
 
         iana_timezones = pytz.all_timezones
@@ -39,8 +37,8 @@ class ClickDate(click.ParamType):
     def convert(
         self,
         value: str,
-        param: Optional[ClickParameter],
-        ctx: Optional[ClickContext],
+        param: ClickParameter | None,
+        ctx: ClickContext | None,
     ):
 
         try:
@@ -54,7 +52,7 @@ class ClickDate(click.ParamType):
             )
 
 
-def common_suncal_options(function: Callable) -> Callable:
+def common_suncal_options(function):
     """Create decorator for click sub-commands that holds all options that are common to the
     api and ics subcommands."""
 

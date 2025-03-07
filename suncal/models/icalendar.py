@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import List
-from typing import Union
 from uuid import uuid4
 
 from pydantic import BaseModel  # pylint: disable=E0611
@@ -17,12 +15,8 @@ class VEvent(BaseModel):
     IMPORTANT: all VEvents of an icalendar have to be initialised with the same [dtstamp],
     using e.g. dt.datetime.now(dt.timezone.utc) defined previously."""
 
-    dtend: Union[
-        dt.datetime, dt.date
-    ]  # start datetime (timezone aware) or date
-    dtstart: Union[
-        dt.datetime, dt.date
-    ]  # end datetime (timezone aware) or date
+    dtend: dt.datetime | dt.date  # start datetime (timezone aware) or date
+    dtstart: dt.datetime | dt.date  # end datetime (timezone aware) or date
     dtstamp: dt.datetime  # datetime of ics file creation (timezone aware)
     uid: str  # unique identifier of icalendar event
     summary: str  # event title
@@ -51,7 +45,7 @@ class VEvent(BaseModel):
 
     # vev = VEvent.fromGoogleCalEvent(ge, dtstamp)
 
-    def to_ics(self) -> List[str]:
+    def to_ics(self) -> list[str]:
         """Create lines in ics file from VEvent class object."""
 
         def ics_date_format(date: dt.date) -> str:
@@ -93,7 +87,7 @@ class VCalendar(BaseModel):
         "//rotkehlxen//suncal//EN"  # identifier of product that created this file
     )
 
-    def header(self) -> List[str]:
+    def header(self) -> list[str]:
         """Create icalender header. Items in returned list correspond to lines in ics file."""
         icalendar_header = [
             'BEGIN:VCALENDAR',
@@ -105,12 +99,12 @@ class VCalendar(BaseModel):
         return icalendar_header
 
     @classmethod
-    def footer(cls) -> List[str]:
+    def footer(cls) -> list[str]:
         """Create icalender footer."""
         return ['END:VCALENDAR']
 
 
-def create_ics_content(gcal_events: List[GoogleCalEvent]) -> List[str]:
+def create_ics_content(gcal_events: list[GoogleCalEvent]) -> list[str]:
     """Create all lines of ics file as list of strings."""
     dtstamp = dt.datetime.now(dt.timezone.utc)
     vcalendar = VCalendar()

@@ -1,13 +1,12 @@
 import os
 import sys
-from typing import List
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 
-def get_credentials(scopes: List[str]) -> Credentials:
+def get_credentials(scopes: list[str]) -> Credentials:
 
     # check that credentials.json is available
     if not os.path.exists('credentials.json'):

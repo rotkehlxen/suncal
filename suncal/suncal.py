@@ -1,6 +1,4 @@
 import datetime as dt
-from typing import List
-from typing import Optional
 
 import click
 from timezonefinder import TimezoneFinder
@@ -24,13 +22,13 @@ SCOPES = [
 
 def create_calendar_events(
     event: str, from_date: dt.date, to_date: dt.date, location: Location
-) -> List[GoogleCalEvent]:
+) -> list[GoogleCalEvent]:
     """
     Calculate event times for any of the events of type suncal.models.astro.Event between [from_date] and [to_date].
     If the events exist, export them to a GoogleCalEvent and append them to the list of calendar events.
     """
 
-    calendar_events: List = []
+    calendar_events: list = []
     dates = date_range(from_date, to_date)
 
     for date in dates:
@@ -50,9 +48,9 @@ def suncal_main(
     longitude: float,
     latitude: float,
     return_val: str,
-    timezone: Optional[str] = None,
-    filename: Optional[str] = None,
-    calendar_title: Optional[str] = None,
+    timezone: str | None = None,
+    filename: str | None = None,
+    calendar_title: str | None = None,
 ) -> None:
 
     assert to_date >= from_date, "to_date must be >= from_date."
@@ -63,7 +61,7 @@ def suncal_main(
         timezone=timezone, longitude=longitude, latitude=latitude
     )
 
-    events: List[GoogleCalEvent] = create_calendar_events(
+    events: list[GoogleCalEvent] = create_calendar_events(
         event_name, from_date, to_date, location
     )
 
@@ -167,7 +165,7 @@ def ics(
     longitude: float,
     latitude: float,
     timezone: str,
-    filename: Optional[str] = None,
+    filename: str | None = None,
 ) -> None:
     """
     Calculate suncal.models.astro.Event for provided range of dates and export them to ics file.
