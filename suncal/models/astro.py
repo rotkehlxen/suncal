@@ -1,6 +1,5 @@
 import datetime as dt
 from enum import Enum
-from typing import Optional
 
 import pytz
 from pydantic import BaseModel  # pylint: disable=E0611
@@ -105,7 +104,7 @@ class MagicHour(BaseModel):
 
 def calculate_rise_set(
     date: dt.date, location: Location, rise: bool, body: CelestialBody
-) -> Optional[RiseSet]:
+) -> RiseSet | None:
     """
     Calculate sun/moon rise/set. Only return a RiseSet event if the body rises/sets on the given date.
     """
@@ -151,7 +150,7 @@ def calculate_rise_set(
 
 def calculate_magic_hour(
     date: dt.date, location: Location, color: str, morning: bool
-) -> Optional[MagicHour]:
+) -> MagicHour | None:
     """
     The golden hour starts with the center of the sun 4 degrees below the horizon and ends when the center of the sun
     is 6 degrees above the horizon. Similar for the Blue hour: it starts with the sun at 8 degrees below the
@@ -213,7 +212,7 @@ def calculate_magic_hour(
             )
 
 
-def calculate_moon_phase(date: dt.date, timezone: str) -> Optional[MoonPhase]:
+def calculate_moon_phase(date: dt.date, timezone: str) -> MoonPhase | None:
     """
     In general, we can calculate a moon phase (angle between 0 and 360 deg) for every single second. This function here
     does not return the phase, but only returns a MoonPhase object when we have either First Quarter, Full Moon, Last

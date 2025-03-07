@@ -1,12 +1,10 @@
 import datetime as dt
-from typing import List
-from typing import Optional
 
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.models.icalendar import create_ics_content
 
 
-def list_to_file(lines: List[str], filename: str) -> None:
+def list_to_file(lines: list[str], filename: str) -> None:
     with open(filename, 'a') as f:
         f.writelines([line + '\n' for line in lines])
 
@@ -18,9 +16,9 @@ def ics_filename(event_name: str, local_time_now: dt.datetime) -> str:
 
 
 def export_events_to_ics(
-    events: List[GoogleCalEvent],
+    events: list[GoogleCalEvent],
     event_name: str,
-    filename: Optional[str],
+    filename: str | None,
 ) -> None:
     filename = filename or ics_filename(
         event_name=event_name,

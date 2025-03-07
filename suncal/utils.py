@@ -1,12 +1,10 @@
 import datetime as dt
-from typing import List
-from typing import Tuple
 
 import click
 import pytz
 
 
-def date_range(date_from: dt.date, date_to: dt.date) -> List[dt.date]:
+def date_range(date_from: dt.date, date_to: dt.date) -> list[dt.date]:
     """
     Create list of dates from [date_from] to [date_to] including the
     from and to dates.
@@ -33,7 +31,7 @@ def tz_aware_dt(
 
 def time_range_of_date(
     date: dt.date, timezone: str
-) -> Tuple[dt.datetime, dt.datetime]:
+) -> tuple[dt.datetime, dt.datetime]:
     """
     Get start and end timestamp of one date, timezone aware.
     """
@@ -73,7 +71,7 @@ def aware_datetime_to_ical_date_with_utc_time(
     return utc_datetime.strftime("%Y%m%dT%H%M%SZ")
 
 
-def create_batches(list_: List, batch_size: int = 500) -> List[List]:
+def create_batches(list_: list, batch_size: int = 500) -> list[list]:
     """Divide [list_] into batches (sub-lists) of max length [batch_size]."""
     batches = []
     for idx in range(0, len(list_), batch_size):

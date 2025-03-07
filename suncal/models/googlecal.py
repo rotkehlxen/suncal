@@ -1,9 +1,5 @@
 import datetime as dt
 import json
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Union
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -26,11 +22,11 @@ class GoogleCalTime(BaseModel):
     Model for a Google calendar time. Used to specify start and end of a google calendar event.
     """
 
-    date: Optional[dt.date] = None  # for all-day events
-    datetime: Optional[dt.datetime] = Field(
+    date: dt.date | None = None  # for all-day events
+    datetime: dt.datetime | None = Field(
         alias='dateTime', default=None
     )  # for timed events
-    timezone: Optional[str] = Field(
+    timezone: str | None = Field(
         alias='timeZone', default=None
     )  # required only if provided dateTime is not aware
 
@@ -185,7 +181,7 @@ class GoogleCalEvent(BaseModel):
 
     @staticmethod
     def from_celestial_event(
-        c_event: Union[MoonPhase, RiseSet, MagicHour]
+        c_event: MoonPhase | RiseSet | MagicHour,
     ) -> 'GoogleCalEvent':
         """
         Interface method that calls either constructor 'from_rise_set' or 'from_moon_phase' depending on input type.
@@ -233,7 +229,7 @@ def get_sun_calendar_id(
     return google_calendar_id
 
 
-def request_calendars(creds: Credentials) -> Dict[str, str]:
+def request_calendars(creds: Credentials) -> dict[str, str]:
     """
     Get all existing calendars of this Google account.
     """
@@ -243,7 +239,7 @@ def request_calendars(creds: Credentials) -> Dict[str, str]:
 
         # use calendar id as key and calendar summary as value in this dict (summary would be more handy as key,
         # but unfortunately calendar titles don"t have to be unique (verified!)
-        calendars: Dict[str, str] = {}
+        calendars: dict[str, str] = {}
         # response can have several pages (i.e. there is a max number of entries per page)
         page_token = None
         while True:
@@ -280,7 +276,7 @@ def create_sun_calendar(
 
 def export_events_to_google_calendar(
     google_calendar_id: str,
-    events: List[GoogleCalEvent],
+    events: list[GoogleCalEvent],
     credentials: Credentials,
 ) -> None:
     """
