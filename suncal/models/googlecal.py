@@ -205,6 +205,9 @@ class GoogleCalEvent(BaseModel):
 def get_sun_calendar_id(
     calendar_title: str, timezone: str, creds: Credentials
 ) -> str:
+    """
+    Get id of Google Calendar with name [calendar_title]. If no calendar with this name exists, create a new one.
+    """
 
     all_calendars = request_calendars(creds=creds)
     # dict of calendars with matching title
@@ -231,8 +234,11 @@ def get_sun_calendar_id(
 
 
 def request_calendars(creds: Credentials) -> Dict[str, str]:
+    """
+    Get all existing calendars of this Google account.
+    """
 
-    # TODO: what do we do in case we get no response?
+    #  TODO: what do we do in case we get no response?
     with build("calendar", "v3", credentials=creds) as service:
 
         # use calendar id as key and calendar summary as value in this dict (summary would be more handy as key,
@@ -260,6 +266,9 @@ def request_calendars(creds: Credentials) -> Dict[str, str]:
 def create_sun_calendar(
     calendar_title: str, timezone: str, creds: Credentials
 ) -> str:
+    """
+    Create a new Google calendar with title [calendar_title] in timezone [timezone].
+    """
 
     with build("calendar", "v3", credentials=creds) as service:
         calendar = {"summary": calendar_title, "timeZone": timezone}
@@ -274,6 +283,9 @@ def export_events_to_google_calendar(
     events: List[GoogleCalEvent],
     credentials: Credentials,
 ) -> None:
+    """
+    Add events to Google calendar with id [google_calendar_id]. Operate in batches of 1000.
+    """
 
     # create batches of events list of max size 1000 (current max of google api)
     event_batches = create_batches(list_=events, batch_size=1000)
