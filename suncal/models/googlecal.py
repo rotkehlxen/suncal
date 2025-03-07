@@ -229,7 +229,7 @@ def get_sun_calendar_id(
     return google_calendar_id
 
 
-def request_calendars(creds: Credentials) -> Dict[str, str]:
+def request_calendars(creds: Credentials) -> dict[str, str]:
     """
     Get all existing calendars of this Google account.
     """

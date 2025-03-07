@@ -6,7 +6,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 
-def get_credentials(scopes: List[str]) -> Credentials:
+def get_credentials(scopes: list[str]) -> Credentials:
     """
     Create or refresh access tokens for the credentials provided in the credentials.json file.
     """
