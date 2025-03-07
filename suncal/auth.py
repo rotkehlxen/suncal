@@ -1,5 +1,4 @@
 import os
-import pickle
 import sys
 from typing import List
 
@@ -24,24 +23,22 @@ def get_credentials(scopes: List[str]) -> Credentials:
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists("token.pickle"):
-        with open("token.pickle", "rb") as token:
-            creds = pickle.load(token)
+    if os.path.exists("token.json"):
+        creds = Credentials.from_authorized_user_file("token.json", scopes)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
+            print('refreshing your token')
             creds.refresh(Request())
         else:
-            print("define authentication flow")
             flow = InstalledAppFlow.from_client_secrets_file(
                 "credentials.json", scopes
             )
             print("run local server")
-            flow.run_local_server(port=0)
-            creds = flow.credentials
+            creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         print("save token")
-        with open("token.pickle", "wb") as token:
-            pickle.dump(creds, token)
+        with open("token.json", "w") as token:
+            token.write(creds.to_json())
 
     return creds
