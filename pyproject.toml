@@ -28,7 +28,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 black = "==25.1.0"
-deptry = "^0.23.0"
+deptry = "==0.16.0"
 isort = "^6.0.1"
 jupyterlab = "^4.2.5"
 mypy = "^1.15.0"
@@ -48,5 +48,5 @@ multi_line_output = 3
 force_single_line = true
 line_length = 80
 
-[tool.pylint.MASTER]
-load-plugins = "pylint_pydantic"
+# [tool.pylint.MASTER]
+# load-plugins = "pylint_pydantic"
