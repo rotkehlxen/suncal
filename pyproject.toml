@@ -7,7 +7,6 @@ authors = ["Franziska Witzel <franziska.witzel@gmail.com>"]
 deptry = "^0.8.0"
 pylint-pydantic = "^0.1.8"
 
-
 [tool.black]
 line-length = 80
 skip-string-normalization = true
@@ -19,25 +18,27 @@ force_single_line = true
 line_length = 80
 
 [tool.poetry.dependencies]
-python = "^3.11.2"
+click = "^8.0.1"
+google = "^3.0.0"
 google-api-python-client = "^2.162.0"
 google-auth-oauthlib = "^1.2.1"
 pydantic = "^1.7.3"
-click = "^8.0.1"
-google = "^3.0.0"
+python = "^3.11.2"
 pytz = "^2022.7.1"
 skyfield = "^1.45"
 timezonefinder = "^6.2.0"
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.2.1"
+[tool.poetry.group.dev.dependencies]
 black = "==24.8.0"
+deptry = "^0.8.0"
 isort = "^5.8.0"
+jupyterlab = "^4.2.5"
 mypy = "^1.0.0"
 pylint = "^2.16.2"
+pylint-pydantic = "^0.1.8"
+pytest = "^7.2.1"
 types-pytz = "^2022.7.1.0"
 types-setuptools = "^67.3.0.1"
-jupyterlab = "^4.2.5"
 
 [tool.poetry.scripts]
 suncal = "suncal.suncal:suncal"
