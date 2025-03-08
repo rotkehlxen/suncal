@@ -19,7 +19,8 @@ dependencies = [
 ]
 
 [project.scripts]
-my_package_cli = "suncal.suncal:suncal"
+# name on the left will be the name of the command line app
+suncal = "suncal.suncal:suncal" 
 
 [build-system]
 requires = ["poetry-core>=2.1.1, <3.0.0"]
