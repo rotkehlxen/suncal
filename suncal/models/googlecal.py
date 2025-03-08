@@ -1,5 +1,6 @@
 import datetime as dt
 import json
+import sys
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -258,8 +259,8 @@ def request_calendars(creds: Credentials) -> dict[str, str]:
                     break
         except HttpError as error:
             print(f'HTTP error {error.status_code} occured during the request for the list of existing \
-                  Google Calendars. Reason: {error.reason}.')
-            raise Exception('Exiting.')
+                  Google Calendars. Reason: {error.reason}.\nExiting.')
+            sys.exit(1)
 
     return calendars
 
@@ -279,8 +280,8 @@ def create_sun_calendar(
             print(f"Created new Google Calendar named '{calendar_title}'.")
         except HttpError as error:
             print(f"HTTP error {error.status_code} occured during the creation of the new Google Calendar '{calendar_title}'. \
-                  Reason: {error.reason}.")
-            raise Exception("Exiting.")
+                  Reason: {error.reason}.\nExiting.")
+            sys.exit(1)
 
     return created_calendar["id"]
 
@@ -319,12 +320,8 @@ def export_events_to_google_calendar(
                 print(f"HTTP error {error.status_code} occured during the batch request \
                       {batch_number}/{batch_count} for creating calendar events. \
                       Reason: {error.reason}.")
-            except Exception as error:
-                error_count +=1
-                print(f"An unknown error occured during the batch request {batch_number}/{batch_count} \
-                      for creating calendar events: {error}.")
-        
+
         if error_count > 0:
-            raise Exception("Something went wrong during the batch creation of calendar events. Exiting.")
+            sys.exit(1)
         else:
             print("... Done.")
