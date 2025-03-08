@@ -277,11 +277,11 @@ def create_sun_calendar(
         try:
             # pylint: disable=maybe-no-member"
             created_calendar = service.calendars().insert(body=calendar).execute()
-            print(f"Created new Google Calendar named '{calendar_title}'.")
         except HttpError as error:
             print(f"HTTP error {error.status_code} occured during the creation of the new Google Calendar '{calendar_title}'. \
                   Reason: {error.reason}.\nExiting.")
             sys.exit(1)
+        print(f"Created new Google Calendar named '{calendar_title}'.")
 
     return created_calendar["id"]
 
@@ -299,7 +299,6 @@ def export_events_to_google_calendar(
     event_batches = create_batches(list_=events, batch_size=1000)
     batch_count = len(event_batches)
     error_count = 0
-    print("Creating calendar events ...")
     with build("calendar", "v3", credentials=credentials) as service:
 
         for batch_number, event_batch in enumerate(event_batches, 1):
@@ -321,7 +320,9 @@ def export_events_to_google_calendar(
                       {batch_number}/{batch_count} for creating calendar events. \
                       Reason: {error.reason}.")
 
-        if error_count > 0:
+        if error_count:
+            if error_count == batch_count:
+                print("All batch requests failed. No calendar events created. Exiting.")
             sys.exit(1)
-        else:
-            print("... Done.")
+
+        print("Creation of calendar events successful.")
