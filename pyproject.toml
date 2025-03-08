@@ -1,18 +1,19 @@
-[tool.poetry]
+[project]
 name = "suncal"
-version = "0.1.4"
-description = ""
-authors = ["Franziska Witzel <franziska.witzel@gmail.com>"]
+version = "1.0.0"
+description = "Command line application for creation of astronomical calendars"
+authors = [
+    {name = "Franziska Witzel", email = "franziska.witzel@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
 
-[tool.black]
-line-length = 80
-skip-string-normalization = true
+[project.scripts]
+my_package_cli = "suncal.suncal:suncal"
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-force_single_line = true
-line_length = 80
+[build-system]
+requires = ["poetry-core>=2.1.1, <3.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
 click = "^8.0.1"
@@ -37,13 +38,15 @@ pytest = "^7.2.1"
 types-pytz = "^2022.7.1.0"
 types-setuptools = "^67.3.0.1"
 
-[tool.poetry.scripts]
-suncal = "suncal.suncal:suncal"
+[tool.black]
+line-length = 80
+skip-string-normalization = true
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+force_single_line = true
+line_length = 80
 
 [tool.pylint.MASTER]
 load-plugins = "pylint_pydantic"
-
