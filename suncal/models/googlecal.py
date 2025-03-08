@@ -259,6 +259,7 @@ def request_calendars(creds: Credentials) -> dict[str, str]:
         except HttpError as error:
             print(f'HTTP error {error.status_code} occured during the request for the list of existing \
                   google calendars. Reason: {error.reason}.')
+            raise Exception('Exiting.')
 
     return calendars
 
