@@ -2190,13 +2190,13 @@ pylint = ">=1.7"
 
 [[package]]
 name = "pylint-pydantic"
-version = "0.3.5"
+version = "0.3.0"
 description = "A Pylint plugin to help Pylint understand the Pydantic"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "pylint_pydantic-0.3.5-py3-none-any.whl", hash = "sha256:e7a54f09843b000676633ed02d5985a4a61c8da2560a3b0d46082d2ff171c4a1"},
+    {file = "pylint_pydantic-0.3.0-py3-none-any.whl", hash = "sha256:040603055f45168048fe86e07bb4b6d672ddc931e00a318102f6da42f6c65564"},
 ]
 
 [package.dependencies]
@@ -3158,4 +3158,4 @@ test = ["websockets"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11.2, <4.0.0"
-content-hash = "593a64f59994e9e8bee1bb5069b9468ce3f0e1eea7b725a55f98d8c4e044d39f"
+content-hash = "05464f596da521800eb7e14ca446cf1ce3701dc07a49d5a889be364f87c2d2aa"
