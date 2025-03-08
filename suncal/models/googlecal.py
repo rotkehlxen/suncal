@@ -258,8 +258,10 @@ def request_calendars(creds: Credentials) -> dict[str, str]:
                 if not page_token:
                     break
         except HttpError as error:
-            print(f'HTTP error {error.status_code} occured during the request for the list of existing \
-                  Google Calendars. Reason: {error.reason}.\nExiting.')
+            print(
+                f'HTTP error {error.status_code} occured during the request for the list of existing \
+                  Google Calendars. Reason: {error.reason}.\nExiting.'
+            )
             sys.exit(1)
 
     return calendars
@@ -276,10 +278,14 @@ def create_sun_calendar(
         calendar = {"summary": calendar_title, "timeZone": timezone}
         try:
             # pylint: disable=maybe-no-member"
-            created_calendar = service.calendars().insert(body=calendar).execute()
+            created_calendar = (
+                service.calendars().insert(body=calendar).execute()
+            )
         except HttpError as error:
-            print(f"HTTP error {error.status_code} occured during the creation of the new Google Calendar '{calendar_title}'. \
-                  Reason: {error.reason}.\nExiting.")
+            print(
+                f"HTTP error {error.status_code} occured during the creation of the new Google Calendar '{calendar_title}'. \
+                  Reason: {error.reason}.\nExiting."
+            )
             sys.exit(1)
         print(f"Created new Google Calendar named '{calendar_title}'.")
 
@@ -303,7 +309,9 @@ def export_events_to_google_calendar(
 
         for batch_number, event_batch in enumerate(event_batches, 1):
             # pylint: disable=maybe-no-member"
-            batch_request = service.new_batch_http_request()  # creates a BatchHttpRequest object
+            batch_request = (
+                service.new_batch_http_request()
+            )  # creates a BatchHttpRequest object
             for google_cal_event in event_batch:
                 batch_request.add(
                     # pylint: disable=maybe-no-member"
@@ -316,13 +324,17 @@ def export_events_to_google_calendar(
                 batch_request.execute()
             except HttpError as error:
                 error_count += 1
-                print(f"HTTP error {error.status_code} occured during the batch request \
+                print(
+                    f"HTTP error {error.status_code} occured during the batch request \
                       {batch_number}/{batch_count} for creating calendar events. \
-                      Reason: {error.reason}.")
+                      Reason: {error.reason}."
+                )
 
         if error_count:
             if error_count == batch_count:
-                print("All batch requests failed. No calendar events created. Exiting.")
+                print(
+                    "All batch requests failed. No calendar events created. Exiting."
+                )
             sys.exit(1)
 
         print("Creation of calendar events successful.")

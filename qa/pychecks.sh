@@ -5,7 +5,6 @@ set -e
 
 echo "***** Basic poetry health *****"
 poetry check
-poetry --check lock
 echo "***** Check poetry dependencies *****"
 poetry run deptry .
 echo "***** Check formating with black *****"
