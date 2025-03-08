@@ -14,4 +14,5 @@ poetry run isort --check .
 echo "***** Check typing with mypy *****"
 poetry run mypy --install-types --non-interactive .
 echo "***** Lint the codebase *****"
-poetry run pylint -E suncal tests
+poetry run pylint --load-plugins pylint_pydantic -E suncal tests
+# poetry run pylint -E suncal tests
