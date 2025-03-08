@@ -25,8 +25,8 @@ end date). Suncal will determine the timezone of the events according to the loc
 # Getting started
 ## Installation of suncal
 
-The application was built with [poetry](https://python-poetry.org/) and depends on python 3.11, so make sure you have 
-*poetry* and any minor version of python 3.11 installed on your system. The poetry version we tested with is 1.3.2. 
+The application was built with [poetry](https://python-poetry.org/) and python 3.11.2. Make sure you have a current 
+version of poetry and python >= 3.11.2 installed (we have tested this app for poetry 2.1.1 and python 3.11.2, 3.12.9 and 3.13.2).
 
 When poetry was installed successfully, clone this repository, cd to the repository and run
 
@@ -119,7 +119,3 @@ If any of the checks fail, the PR won't be accepted. If you add code, you also a
 Our calculations of sun and moon events are based on [skyfield](https://rhodesmill.org/skyfield/).
 We use [timezonefinder](https://github.com/jannikmi/timezonefinder) to determine the timezone from the GPS coordinates
 provided by the user.
-
-# Debugging
-## Installation issues
-1. We know that older poetry versions (1.1.3 and 1.1.4) do not correctly install the dev tool dependencies despite resolving them correctly. Make sure to use poetry 1.3.2 or try a higher version.
