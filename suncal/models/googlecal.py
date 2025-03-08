@@ -20,7 +20,7 @@ from suncal.utils import create_batches
 
 class GoogleCalTime(BaseModel):
     """
-    Model for a Google calendar time. Used to specify start and end of a google calendar event.
+    Model for a Google Calendar time. Used to specify start and end of a Google Calendar event.
     """
 
     date: dt.date | None = None  # for all-day events
@@ -65,7 +65,7 @@ class GoogleCalTime(BaseModel):
 
 
 class GoogleCalEvent(BaseModel):
-    """Model for Google calendar event.
+    """Model for Google Calendar event.
 
     The only required fields are 'start' and 'end'. More fields can be added when necessary.
     """
@@ -107,7 +107,7 @@ class GoogleCalEvent(BaseModel):
     def transparency_valid(cls, v):
         if v not in ['transparent', 'opaque']:
             raise ValueError(
-                'Transparency of google calendar event can only be "transparent" or "opaque".'
+                'Transparency of Google Calendar event can only be "transparent" or "opaque".'
             )
         return v
 
@@ -258,7 +258,7 @@ def request_calendars(creds: Credentials) -> dict[str, str]:
                     break
         except HttpError as error:
             print(f'HTTP error {error.status_code} occured during the request for the list of existing \
-                  google calendars. Reason: {error.reason}.')
+                  Google Calendars. Reason: {error.reason}.')
             raise Exception('Exiting.')
 
     return calendars
@@ -268,7 +268,7 @@ def create_sun_calendar(
     calendar_title: str, timezone: str, creds: Credentials
 ) -> str:
     """
-    Create a new Google calendar with title [calendar_title] in timezone [timezone].
+    Create a new Google Calendar with title [calendar_title] in timezone [timezone].
     """
 
     with build("calendar", "v3", credentials=creds) as service:
@@ -291,10 +291,10 @@ def export_events_to_google_calendar(
     credentials: Credentials,
 ) -> None:
     """
-    Add events to Google calendar with id [google_calendar_id]. Operate in batches of 1000.
+    Add events to Google Calendar with id [google_calendar_id]. Operate in batches of 1000.
     """
 
-    # create batches of events list of max size 1000 (current max of google api)
+    # create batches of events list of max size 1000 (current max of Google api)
     event_batches = create_batches(list_=events, batch_size=1000)
     batch_count = len(event_batches)
     error_count = 0
@@ -321,8 +321,8 @@ def export_events_to_google_calendar(
                       Reason: {error.reason}.")
             except Exception as error:
                 error_count +=1
-                print(f"An unknown erro occured during the batch request {batch_number}/{batch_count} \
-                      for creating calendar events: {error}")
+                print(f"An unknown error occured during the batch request {batch_number}/{batch_count} \
+                      for creating calendar events: {error}.")
         
         if error_count > 0:
             raise Exception("Something went wrong during the batch creation of calendar events. Exiting.")
