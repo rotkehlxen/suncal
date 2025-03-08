@@ -5,6 +5,7 @@ set -e
 
 echo "***** Validate content of pyproject.toml and its consistency with poetry.lock *****"
 poetry check --strict  # fail in case of warnings
+# newer versions of deptry (> 0.16.0) report faulty transitive dependency issues
 echo "***** Check poetry dependencies *****"
 poetry run deptry .
 echo "***** Check formating with black *****"
@@ -15,4 +16,3 @@ echo "***** Check typing with mypy *****"
 poetry run mypy --install-types --non-interactive .
 echo "***** Lint the codebase *****"
 poetry run pylint --load-plugins pylint_pydantic -E suncal tests
-# poetry run pylint -E suncal tests
