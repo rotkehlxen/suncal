@@ -35,24 +35,24 @@ class GoogleCalTime(BaseModel):
         allow_population_by_field_name = True
 
     @model_validator(mode='after')
-    # make sure that either date OR datetime is provided (but not both at the same time)
     def date_or_datetime_provided(self) -> Self:
+        """ 
+        Validate that either date OR datetime is provided (and never both at the same time). 
+        """
         if (self.date is None and self.datetime is None) or (
             self.date is not None and self.datetime is not None):
             raise ValueError("You have to provide a date for all day events OR a datetime for timed events!")
         return self
 
     @model_validator(mode='after')
-    # make sure that timezone is provided if datetime is not aware
     def timezone_provided_if_non_aware_datetime(self) -> Self:
-        if self.datetime and (
-            self.datetime.tzinfo is None or self.datetime.utcoffset() is None
-        ):
-            if self.timezone is None:
+        """ 
+        Validate that timezone is provided if datetime is not aware of if date was specified instead of datetime.
+        """
+        if self.timezone is None:
+            if self.datetime and (self.datetime.tzinfo is None or self.datetime.utcoffset() is None):
                 raise ValueError("If the datetime is unaware you have to provide a timezone")
-
-        if self.date:
-            if self.timezone is None:
+            if self.date:
                 raise ValueError("Always provide a timezone if you specify date instead of datetime.")
         return self
 
