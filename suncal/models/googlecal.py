@@ -1,8 +1,10 @@
 import datetime as dt
 import json
+import sys
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import ConfigDict
 from pydantic import Field
@@ -21,7 +23,7 @@ from suncal.utils import create_batches
 
 class GoogleCalTime(BaseModel):
     """
-    Model for a Google calendar time. Used to specify start and end of a google calendar event.
+    Model for a Google Calendar time. Used to specify start and end of a Google Calendar event.
     """
 
     model_config = ConfigDict(populate_by_name=True)
@@ -67,7 +69,7 @@ class GoogleCalTime(BaseModel):
 
 
 class GoogleCalEvent(BaseModel):
-    """Model for Google calendar event.
+    """Model for Google Calendar event.
 
     The only required fields are 'start' and 'end'. More fields can be added when necessary.
     """
@@ -116,7 +118,7 @@ class GoogleCalEvent(BaseModel):
         """
         if v not in ['transparent', 'opaque']:
             raise ValueError(
-                'Transparency of google calendar event can only be "transparent" or "opaque".'
+                'Transparency of Google Calendar event can only be "transparent" or "opaque".'
             )
         return v
 
@@ -244,7 +246,6 @@ def request_calendars(creds: Credentials) -> dict[str, str]:
     Get all existing calendars of this Google account.
     """
 
-    #  TODO: what do we do in case we get no response?
     with build("calendar", "v3", credentials=creds) as service:
 
         # use calendar id as key and calendar summary as value in this dict (summary would be more handy as key,
@@ -252,19 +253,26 @@ def request_calendars(creds: Credentials) -> dict[str, str]:
         calendars: dict[str, str] = {}
         # response can have several pages (i.e. there is a max number of entries per page)
         page_token = None
-        while True:
-            calendar_list = (
-                # pylint: disable=maybe-no-member"
-                service.calendarList()
-                .list(pageToken=page_token)
-                .execute()
-            )
-            for entry in calendar_list['items']:
-                calendars[entry['id']] = entry['summary']
+        try:
+            while True:
+                calendar_list = (
+                    # pylint: disable=maybe-no-member"
+                    service.calendarList()
+                    .list(pageToken=page_token)
+                    .execute()
+                )
+                for entry in calendar_list['items']:
+                    calendars[entry['id']] = entry['summary']
 
-            page_token = calendar_list.get('nextPageToken')
-            if not page_token:
-                break
+                page_token = calendar_list.get('nextPageToken')
+                if not page_token:
+                    break
+        except HttpError as error:
+            print(
+                f'HTTP error {error.status_code} occured during the request for the list of existing \
+                  Google Calendars. Reason: {error.reason}.\nExiting.'
+            )
+            sys.exit(1)
 
     return calendars
 
@@ -273,13 +281,23 @@ def create_sun_calendar(
     calendar_title: str, timezone: str, creds: Credentials
 ) -> str:
     """
-    Create a new Google calendar with title [calendar_title] in timezone [timezone].
+    Create a new Google Calendar with title [calendar_title] in timezone [timezone].
     """
 
     with build("calendar", "v3", credentials=creds) as service:
         calendar = {"summary": calendar_title, "timeZone": timezone}
-        # pylint: disable=maybe-no-member"
-        created_calendar = service.calendars().insert(body=calendar).execute()
+        try:
+            # pylint: disable=maybe-no-member"
+            created_calendar = (
+                service.calendars().insert(body=calendar).execute()
+            )
+        except HttpError as error:
+            print(
+                f"HTTP error {error.status_code} occured during the creation of the new Google Calendar '{calendar_title}'. \
+                  Reason: {error.reason}.\nExiting."
+            )
+            sys.exit(1)
+        print(f"Created new Google Calendar named '{calendar_title}'.")
 
     return created_calendar["id"]
 
@@ -290,17 +308,20 @@ def export_events_to_google_calendar(
     credentials: Credentials,
 ) -> None:
     """
-    Add events to Google calendar with id [google_calendar_id]. Operate in batches of 1000.
+    Add events to Google Calendar with id [google_calendar_id]. Operate in batches of 1000.
     """
 
-    # create batches of events list of max size 1000 (current max of google api)
+    # create batches of events list of max size 1000 (current max of Google api)
     event_batches = create_batches(list_=events, batch_size=1000)
-    print("Creating calendar events ...")
+    batch_count = len(event_batches)
+    error_count = 0
     with build("calendar", "v3", credentials=credentials) as service:
 
-        for event_batch in event_batches:
+        for batch_number, event_batch in enumerate(event_batches, 1):
             # pylint: disable=maybe-no-member"
-            batch_request = service.new_batch_http_request()
+            batch_request = (
+                service.new_batch_http_request()
+            )  # creates a BatchHttpRequest object
             for google_cal_event in event_batch:
                 batch_request.add(
                     # pylint: disable=maybe-no-member"
@@ -309,5 +330,21 @@ def export_events_to_google_calendar(
                         body=google_cal_event.payload(),
                     )
                 )
-            batch_request.execute()
-    print("... DONE.")
+            try:
+                batch_request.execute()
+            except HttpError as error:
+                error_count += 1
+                print(
+                    f"HTTP error {error.status_code} occured during the batch request \
+                      {batch_number}/{batch_count} for creating calendar events. \
+                      Reason: {error.reason}."
+                )
+
+        if error_count:
+            if error_count == batch_count:
+                print(
+                    "All batch requests failed. No calendar events created. Exiting."
+                )
+            sys.exit(1)
+
+        print("Creation of calendar events successful.")
