@@ -4,10 +4,12 @@ import json
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import ConfigDict
 from pydantic import Field
-from pydantic import root_validator
-from pydantic import validator
+from pydantic import field_validator
+from pydantic import model_validator
 from skyfield.almanac import MOON_PHASES
+from typing_extensions import Self
 
 from suncal.models.astro import MOON_PHASE_SYMBOLS
 from suncal.models.astro import CelestialBody
@@ -22,6 +24,7 @@ class GoogleCalTime(BaseModel):
     Model for a Google calendar time. Used to specify start and end of a google calendar event.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
     date: dt.date | None = None  # for all-day events
     datetime: dt.datetime | None = Field(
         alias='dateTime', default=None
@@ -30,37 +33,37 @@ class GoogleCalTime(BaseModel):
         alias='timeZone', default=None
     )  # required only if provided dateTime is not aware
 
-    class Config:
-        allow_population_by_field_name = True
-
-    @root_validator(pre=True)
-    # make sure that either date OR datetime is provided (but not both at the same time)
-    def date_or_datetime_provided(cls, values):
-        date, datetime = values.get("date"), values.get("datetime")
-        assert (date is None and datetime is not None) or (
-            date is not None and datetime is None
-        ), "You have to provide a date for all day events OR a datetime for timed events!"
-        return values
-
-    @root_validator(pre=True)
-    def timezone_provided_if_non_aware_datetime(cls, values):
-        datetime, timezone, date = (
-            values.get("datetime"),
-            values.get("timezone"),
-            values.get("date"),
-        )
-        if datetime and (
-            datetime.tzinfo is None or datetime.utcoffset() is None
+    @model_validator(mode='after')
+    def date_or_datetime_provided(self) -> Self:
+        """
+        Validate that either date OR datetime is provided (and never both at the same time).
+        """
+        if (self.date is None and self.datetime is None) or (
+            self.date is not None and self.datetime is not None
         ):
-            assert (
-                timezone is not None
-            ), "If the datetime is unaware you have to provide a timezone."
+            raise ValueError(
+                "You have to provide a date for all day events OR a datetime for timed events!"
+            )
+        return self
 
-        if date:
-            assert (
-                timezone is not None
-            ), "Always provide a timezone if you specify date instead of datetime."
-        return values
+    @model_validator(mode='after')
+    def timezone_provided_if_non_aware_datetime(self) -> Self:
+        """
+        Validate that timezone is provided if datetime is not aware of if date was specified instead of datetime.
+        """
+        if self.timezone is None:
+            if self.datetime and (
+                self.datetime.tzinfo is None
+                or self.datetime.utcoffset() is None
+            ):
+                raise ValueError(
+                    "If the datetime is unaware you have to provide a timezone"
+                )
+            if self.date:
+                raise ValueError(
+                    "Always provide a timezone if you specify date instead of datetime."
+                )
+        return self
 
 
 class GoogleCalEvent(BaseModel):
@@ -76,34 +79,41 @@ class GoogleCalEvent(BaseModel):
         'transparent'  # sun calendar events are definitely no time blockers
     )
 
-    @root_validator()
-    def start_and_end_match(cls, values):
+    @model_validator(mode='after')
+    def start_and_end_compatible(self) -> Self:
         """
         If start is defined by a date, end has to be defined by date also. Same for defintion of start and end by
         datetime.
         """
-        if values['start'].datetime is None:
-            assert (
-                values['end'].datetime is None
-            ), "If start has a date, end needs to have a date also."
-        if values['start'].date is None:
-            assert (
-                values['end'].date is None
-            ), "If start has a datetime, end needs to have a datetime also."
-
-        return values
-
-    @root_validator()
-    def end_date_larger_than_start_date(cls, values):
-        if values['start'].date and values['end'].date:
-            assert values['end'].date > values['start'].date, (
-                "End is the exclusive(!) end date of the event so "
-                "it has to be larger than the start date."
+        if self.start.datetime is None and self.end.datetime is not None:
+            raise ValueError(
+                "If start has a date, end needs to have a date also."
             )
-        return values
+        if self.start.date is None and self.end.date is not None:
+            raise ValueError(
+                "If start has a datetime, end needs to have a datetime also."
+            )
+        return self
 
-    @validator('transparency')
-    def transparency_valid(cls, v):
+    @model_validator(mode='after')
+    def end_date_larger_than_start_date(self) -> Self:
+        """
+        Validate that end date is larger than start date.
+        """
+        if self.start.date and self.end.date:
+            if not self.end.date > self.start.date:
+                raise ValueError(
+                    "End is the exclusive(!) end date of the event so "
+                    "it has to be larger than the start date."
+                )
+        return self
+
+    @field_validator('transparency', mode='after')
+    @classmethod
+    def transparency_valid(cls, v: str) -> str:
+        """
+        Validate transparency settings in Google Calendar Event.
+        """
         if v not in ['transparent', 'opaque']:
             raise ValueError(
                 'Transparency of google calendar event can only be "transparent" or "opaque".'
@@ -121,7 +131,7 @@ class GoogleCalEvent(BaseModel):
         We convert this json string back to a dictionary. This creates None type objects in places where we had string
         'null' before - however, this is what is accepted by the api client (tested).
         """
-        return json.loads(self.json(by_alias=True))
+        return json.loads(self.model_dump_json(by_alias=True))
 
     @staticmethod
     def from_rise_set(rise_set: RiseSet) -> 'GoogleCalEvent':
