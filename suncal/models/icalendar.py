@@ -24,7 +24,9 @@ class VEvent(BaseModel):
 
     @field_validator("dtend", "dtstart", "dtstamp", mode='after')
     @classmethod
-    def validate_timezone_awareness(cls, timestamp: dt.datetime | dt.date) -> dt.datetime | dt.date:
+    def validate_timezone_awareness(
+        cls, timestamp: dt.datetime | dt.date
+    ) -> dt.datetime | dt.date:
         if isinstance(timestamp, dt.datetime):
             if timestamp.tzinfo is None and timestamp.utcoffset() is None:
                 raise ValueError("All datetimes must be timezone-aware!")
@@ -52,12 +54,12 @@ class VEvent(BaseModel):
 
         dtstart_str = (
             ics_date_format(self.dtstart)
-            if isinstance(self.dtstart, dt.date)
+            if type(self.dtstart) == dt.date
             else f":{aware_datetime_to_ical_date_with_utc_time(self.dtstart)}"  # type: ignore
         )
         dtend_str = (
             ics_date_format(self.dtend)
-            if isinstance(self.dtend, dt.date)
+            if type(self.dtend) == dt.date
             else f":{aware_datetime_to_ical_date_with_utc_time(self.dtend)}"  # type: ignore
         )
 
