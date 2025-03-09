@@ -5,10 +5,10 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import Field
+from pydantic import field_validator
 from pydantic import model_validator
-from typing_extensions import Self
-from pydantic import validator
 from skyfield.almanac import MOON_PHASES
+from typing_extensions import Self
 
 from suncal.models.astro import MOON_PHASE_SYMBOLS
 from suncal.models.astro import CelestialBody
@@ -80,34 +80,41 @@ class GoogleCalEvent(BaseModel):
         'transparent'  # sun calendar events are definitely no time blockers
     )
 
-    @root_validator()
-    def start_and_end_match(cls, values):
+    @model_validator(mode='after')
+    def start_and_end_compatible(self) -> Self:
         """
         If start is defined by a date, end has to be defined by date also. Same for defintion of start and end by
         datetime.
         """
-        if values['start'].datetime is None:
-            assert (
-                values['end'].datetime is None
-            ), "If start has a date, end needs to have a date also."
-        if values['start'].date is None:
-            assert (
-                values['end'].date is None
-            ), "If start has a datetime, end needs to have a datetime also."
-
-        return values
-
-    @root_validator()
-    def end_date_larger_than_start_date(cls, values):
-        if values['start'].date and values['end'].date:
-            assert values['end'].date > values['start'].date, (
-                "End is the exclusive(!) end date of the event so "
-                "it has to be larger than the start date."
+        if self.start.datetime is None and self.end.datetime is not None:
+            raise ValueError(
+                "If start has a date, end needs to have a date also."
             )
-        return values
+        if self.start.date is None and self.end.date is not None:
+            raise ValueError(
+                "If start has a datetime, end needs to have a datetime also."
+            )
+        return self
 
-    @validator('transparency')
-    def transparency_valid(cls, v):
+    @model_validator(mode='after')
+    def end_date_larger_than_start_date(self) -> Self:
+        """
+        Validate that end date is larger than start date.
+        """
+        if self.start.date and self.end.date:
+            if not self.end.date > self.start.date:
+                raise ValueError(
+                    "End is the exclusive(!) end date of the event so "
+                    "it has to be larger than the start date."
+                )
+        return self
+
+    @field_validator('transparency', mode='after')
+    @classmethod
+    def transparency_valid(cls, v: str) -> str:
+        """
+        Validate transparency settings in Google Calendar Event.
+        """
         if v not in ['transparent', 'opaque']:
             raise ValueError(
                 'Transparency of google calendar event can only be "transparent" or "opaque".'
@@ -125,7 +132,7 @@ class GoogleCalEvent(BaseModel):
         We convert this json string back to a dictionary. This creates None type objects in places where we had string
         'null' before - however, this is what is accepted by the api client (tested).
         """
-        return json.loads(self.json(by_alias=True))
+        return json.loads(self.model_dump_json(by_alias=True))
 
     @staticmethod
     def from_rise_set(rise_set: RiseSet) -> 'GoogleCalEvent':
