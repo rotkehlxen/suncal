@@ -3,7 +3,7 @@ from enum import Enum
 
 import pytz
 from pydantic import BaseModel  # pylint: disable=E0611
-from pydantic import validator
+from pydantic import field_validator
 from skyfield import almanac
 from skyfield import api as skyfield_api
 
@@ -73,8 +73,12 @@ class MoonPhase(BaseModel):
     event_time: dt.datetime
     phase_idx: int
 
-    @validator('phase_idx')
-    def moon_phase_valid(cls, phase_idx):
+    @field_validator('phase_idx', mode='after')
+    @classmethod
+    def moon_phase_valid(cls, phase_idx: int) -> int:
+        """
+        Validate the phase_idx to be in the range of 0 to 3. Conforms to API of skyfield.
+        """
         if phase_idx not in range(4):
             raise ValueError(
                 'The phase_idx has to be either 0, 1, 2 or 3. This is the convention of skyfield '
@@ -93,8 +97,12 @@ class MagicHour(BaseModel):
     end: dt.datetime
     morning: bool  # in the morning or in the evening
 
-    @validator('color')
-    def color_valid(cls, color):
+    @field_validator('color', mode='after')
+    @classmethod
+    def color_valid(cls, color: str) -> str:
+        """
+        Validate the color to be either 'golden' or 'blue'.
+        """
         if color not in ['golden', 'blue']:
             raise ValueError(
                 'Color of the light in the Magic Hour can only be "blue" or "golden"'

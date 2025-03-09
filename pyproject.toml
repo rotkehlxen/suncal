@@ -16,6 +16,7 @@ dependencies = [
     "pytz>=2022.7.1, <=2023.0.0",
     "skyfield>=1.45.*",
     "timezonefinder>=6.2.0, <=7.0.0",
+    "typing-extensions>=4.12.2, <5.0.0",
 ]
 
 [project.scripts]
