@@ -4,6 +4,7 @@ import json
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from pydantic import BaseModel  # pylint: disable=E0611
+from pydantic import ConfigDict
 from pydantic import Field
 from pydantic import field_validator
 from pydantic import model_validator
@@ -23,6 +24,7 @@ class GoogleCalTime(BaseModel):
     Model for a Google calendar time. Used to specify start and end of a google calendar event.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
     date: dt.date | None = None  # for all-day events
     datetime: dt.datetime | None = Field(
         alias='dateTime', default=None
@@ -30,9 +32,6 @@ class GoogleCalTime(BaseModel):
     timezone: str | None = Field(
         alias='timeZone', default=None
     )  # required only if provided dateTime is not aware
-
-    class Config:
-        allow_population_by_field_name = True
 
     @model_validator(mode='after')
     def date_or_datetime_provided(self) -> Self:

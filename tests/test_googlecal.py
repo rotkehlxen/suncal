@@ -24,10 +24,10 @@ def test_google_cal_time():
     assert gtime.datetime == now
     assert gtime.timezone == time_zone
     # also the schema does not contain alias field names by default
-    assert 'datetime' in gtime.dict().keys()
+    assert 'datetime' in gtime.model_dump().keys()
     # but we can configure the schema to use the alias names
-    assert 'dateTime' in gtime.dict(by_alias=True).keys()
-    assert 'timeZone' in gtime.dict(by_alias=True).keys()
+    assert 'dateTime' in gtime.model_dump(by_alias=True).keys()
+    assert 'timeZone' in gtime.model_dump(by_alias=True).keys()
 
 
 def test_date_or_datetime_check():
