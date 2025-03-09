@@ -5,7 +5,8 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from pydantic import BaseModel  # pylint: disable=E0611
 from pydantic import Field
-from pydantic import root_validator
+from pydantic import model_validator
+from typing_extensions import Self
 from pydantic import validator
 from skyfield.almanac import MOON_PHASES
 
@@ -33,34 +34,27 @@ class GoogleCalTime(BaseModel):
     class Config:
         allow_population_by_field_name = True
 
-    @root_validator(pre=True)
+    @model_validator(mode='after')
     # make sure that either date OR datetime is provided (but not both at the same time)
-    def date_or_datetime_provided(cls, values):
-        date, datetime = values.get("date"), values.get("datetime")
-        assert (date is None and datetime is not None) or (
-            date is not None and datetime is None
-        ), "You have to provide a date for all day events OR a datetime for timed events!"
-        return values
+    def date_or_datetime_provided(self) -> Self:
+        if (self.date is None and self.datetime is None) or (
+            self.date is not None and self.datetime is not None):
+            raise ValueError("You have to provide a date for all day events OR a datetime for timed events!")
+        return self
 
-    @root_validator(pre=True)
-    def timezone_provided_if_non_aware_datetime(cls, values):
-        datetime, timezone, date = (
-            values.get("datetime"),
-            values.get("timezone"),
-            values.get("date"),
-        )
-        if datetime and (
-            datetime.tzinfo is None or datetime.utcoffset() is None
+    @model_validator(mode='after')
+    # make sure that timezone is provided if datetime is not aware
+    def timezone_provided_if_non_aware_datetime(self) -> Self:
+        if self.datetime and (
+            self.datetime.tzinfo is None or self.datetime.utcoffset() is None
         ):
-            assert (
-                timezone is not None
-            ), "If the datetime is unaware you have to provide a timezone."
+            if self.timezone is None:
+                raise ValueError("If the datetime is unaware you have to provide a timezone")
 
-        if date:
-            assert (
-                timezone is not None
-            ), "Always provide a timezone if you specify date instead of datetime."
-        return values
+        if self.date:
+            if self.timezone is None:
+                raise ValueError("Always provide a timezone if you specify date instead of datetime.")
+        return self
 
 
 class GoogleCalEvent(BaseModel):
