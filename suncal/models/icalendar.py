@@ -4,7 +4,7 @@ import datetime as dt
 from uuid import uuid4
 
 from pydantic import BaseModel  # pylint: disable=E0611
-from pydantic import validator
+from pydantic import field_validator
 
 from suncal.models.googlecal import GoogleCalEvent
 from suncal.utils import aware_datetime_to_ical_date_with_utc_time
@@ -22,13 +22,12 @@ class VEvent(BaseModel):
     summary: str  # event title
     transp: str  # transparency of event
 
-    @validator("dtend", "dtstart", "dtstamp")
-    def validate_timezone_awareness(cls, timestamp):
-        if type(timestamp) == dt.datetime:
-            assert (
-                timestamp.tzinfo is not None
-                and timestamp.utcoffset() is not None
-            ), "All datetimes must be timezone-aware!"
+    @field_validator("dtend", "dtstart", "dtstamp", mode='after')
+    @classmethod
+    def validate_timezone_awareness(cls, timestamp: dt.datetime | dt.date) -> dt.datetime | dt.date:
+        if isinstance(timestamp, dt.datetime):
+            if timestamp.tzinfo is None and timestamp.utcoffset() is None:
+                raise ValueError("All datetimes must be timezone-aware!")
         return timestamp
 
     @staticmethod
@@ -53,12 +52,12 @@ class VEvent(BaseModel):
 
         dtstart_str = (
             ics_date_format(self.dtstart)
-            if type(self.dtstart) == dt.date
+            if isinstance(self.dtstart, dt.date)
             else f":{aware_datetime_to_ical_date_with_utc_time(self.dtstart)}"  # type: ignore
         )
         dtend_str = (
             ics_date_format(self.dtend)
-            if type(self.dtend) == dt.date
+            if isinstance(self.dtend, dt.date)
             else f":{aware_datetime_to_ical_date_with_utc_time(self.dtend)}"  # type: ignore
         )
 
